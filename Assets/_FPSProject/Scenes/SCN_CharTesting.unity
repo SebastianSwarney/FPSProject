@@ -127,7 +127,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14990
+  m_Name: pb_Mesh14980
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -290,7 +290,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh15034
+  m_Name: pb_Mesh15038
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -490,7 +490,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh15066
+  m_Name: pb_Mesh15070
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2918,7 +2918,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14948
+  m_Name: pb_Mesh14938
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3081,7 +3081,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14966
+  m_Name: pb_Mesh14956
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3244,7 +3244,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh15012
+  m_Name: pb_Mesh15004
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3407,7 +3407,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14978
+  m_Name: pb_Mesh14968
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -7700,7 +7700,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14930
+  m_Name: pb_Mesh14920
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -7863,7 +7863,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14912
+  m_Name: pb_Mesh14902
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -8937,7 +8937,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh15078
+  m_Name: pb_Mesh15084
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -9510,7 +9510,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-7972
+  m_Name: pb_Mesh15022
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -9984,211 +9984,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallSpeedCurve.m_Curve.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_clamberSpeed
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallSpeedCurve.m_Curve.Array.data[0].inSlope
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallSpeedCurve.m_Curve.Array.data[0].outSlope
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallSpeedCurve.m_Curve.Array.data[1].time
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallSpeedCurve.m_Curve.Array.data[1].value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallSpeedUpTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_maxWallRunSpeed
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_tiltSpeed
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallRunCameraMaxTilt
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallRidingRayCount
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallRaySpacing
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallRunRayLength
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallRunBufferTime
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[0].inSlope
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[0].outSlope
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[0].tangentMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[0].weightedMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[0].outWeight
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[1].time
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[1].value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[1].inSlope
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[1].outSlope
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[1].weightedMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedCurve.m_Curve.Array.data[1].inWeight
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_maxWallClimbSpeed
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbSpeedUpTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbProperties.m_wallClimbFactor
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRaySpacing
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRayCount
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRayLength
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallConnectMask.m_Bits
-      value: 512
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallClimbTolerence
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunTolerence
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_postClamberSpeedBoostTime
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallRunJumpVelocity.x
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallRunJumpVelocity.y
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_wallRunProperties.m_wallRunJumpVelocity.z
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_jumpingProperties.m_maxJumpHeight
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
-        type: 3}
-      propertyPath: m_jumpingProperties.m_jumpBufferTime
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 5072337888313550595, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
         type: 3}
       propertyPath: m_Name
