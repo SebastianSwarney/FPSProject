@@ -788,7 +788,7 @@ public class PlayerController : MonoBehaviour
 
 			Vector3 wallRunVelocity = (m_wallVector * -m_wallFacingVector.y) * m_currentMovementSpeed;
 
-			float yProgress = t / 1f;
+			float yProgress = t / 0.5f;
 
 			float yVelocity = Mathf.Lerp(yVelStart, 0, yProgress);
 
@@ -1361,7 +1361,7 @@ public class PlayerController : MonoBehaviour
 
 		Vector3 horizontalMovement = rightMovement + forwardMovement;
 
-		Debug.Log(horizontalMovement);
+		//Debug.Log(horizontalMovement);
 
 		m_velocity = new Vector3(horizontalMovement.x, m_wallRunProperties.m_wallRunJumpVelocity.y, horizontalMovement.z);
 
