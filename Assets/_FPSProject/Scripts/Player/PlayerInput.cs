@@ -12,6 +12,8 @@ public class PlayerInput : MonoBehaviour
 
 	private bool m_lockLooking;
 
+    public EquipmentController m_equipmentController;
+
 	private void Start()
 	{
 		m_playerController = GetComponent<PlayerController>();
@@ -79,12 +81,14 @@ public class PlayerInput : MonoBehaviour
 
 		if (m_playerInputController.GetButtonDown("Aim"))
 		{
+            
+            m_equipmentController.OnShootInputDown();
 
-		}
+        }
 
 		if (m_playerInputController.GetButtonUp("Aim"))
 		{
-
-		}
+            m_equipmentController.OnShootInputUp();
+        }
 	}
 }
