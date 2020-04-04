@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Equipment_Gun : Equipment_Base
 {
+    
     [Header("Gun Variables")]
     public Transform m_fireSpot;
     public BulletProperties m_bulletProperties;
@@ -43,8 +44,10 @@ public class Equipment_Gun : Equipment_Base
     {
         m_pooler = ObjectPooler.instance;
     }
+
     public override void OnShootInputDown(Transform p_playerCam)
     {
+        base.OnShootInputDown(p_playerCam);
         if (m_canFire)
         {
             GameObject hitPlayerObject;
@@ -56,23 +59,22 @@ public class Equipment_Gun : Equipment_Base
 
     public override void OnShootInputUp(Transform p_playerCam)
     {
+        base.OnShootInputUp(p_playerCam);
     }
 
     private void CreateBullet(GameObject p_hitObj)
     {
-        
-        m_pooler.NewObject(m_bulletProperties.m_bulletPrefab, m_fireSpot.position, m_fireSpot.rotation).GetComponent<Projectiles_Base>().
-                            SetVariables(m_fireSpot.forward* m_bulletProperties.m_bulletSpeed);
+        m_pooler.NewObject(m_bulletProperties.m_bulletPrefab, m_fireSpot.position, m_fireSpot.rotation).GetComponent<Projectiles_Base>().SetVariables(m_teamLabel.m_myTeam, m_fireSpot.forward * m_bulletProperties.m_bulletSpeed, p_hitObj.transform,m_bulletProperties.m_bulletDamage);
     }
 
     private void PerformAimAssist(Transform p_playerCam, out GameObject p_hitPlayer)
     {
         RaycastHit hit;
-        if (Physics.Raycast(p_playerCam.position + (p_playerCam.forward*m_aimAssist.m_minAssistDistance), p_playerCam.forward,out hit, m_aimAssist.m_maxAssistDistance,m_aimAssist.m_hitDetectLayer))
+        if (Physics.Raycast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_hitDetectLayer))
         {
             m_fireSpot.LookAt(hit.point);
             p_hitPlayer = null;
-            if(Physics.Raycast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer))
+            if (Physics.Raycast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer))
             {
                 p_hitPlayer = hit.transform.gameObject;
             }
@@ -86,7 +88,7 @@ public class Equipment_Gun : Equipment_Base
     {
         m_canFire = false;
         m_currentFireRateDelay = 0;
-        if(m_cor_fireDelay == null)
+        if (m_cor_fireDelay == null)
         {
             StartCoroutine(FireRateDelay());
         }
@@ -94,7 +96,7 @@ public class Equipment_Gun : Equipment_Base
     private IEnumerator FireRateDelay()
     {
         float corLifetime = 0;
-        while(corLifetime < m_coroutineLifeTime)
+        while (corLifetime < m_coroutineLifeTime)
         {
             while (m_currentFireRateDelay < m_bulletProperties.m_gunFireDelay)
             {
@@ -114,6 +116,6 @@ public class Equipment_Gun : Equipment_Base
     {
         if (!m_debugGizmos) return;
         Gizmos.color = m_gizmosColor1;
-        Gizmos.DrawLine(m_camera.position + (m_camera.forward * m_aimAssist.m_minAssistDistance), m_camera.position + m_camera.forward * m_aimAssist.m_maxAssistDistance); 
+        Gizmos.DrawLine(m_camera.position + (m_camera.forward * m_aimAssist.m_minAssistDistance), m_camera.position + m_camera.forward * m_aimAssist.m_maxAssistDistance);
     }
 }

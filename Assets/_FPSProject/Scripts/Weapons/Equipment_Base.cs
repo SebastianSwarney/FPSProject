@@ -7,6 +7,12 @@ using UnityEngine;
 public class EquipmentEvent : UnityEngine.Events.UnityEvent { };
 public abstract class Equipment_Base : MonoBehaviour
 {
+    [HideInInspector]
+    public TeamLabel m_teamLabel;
+
+    [HideInInspector]
+    public bool m_canUse = false;
+
     [Header("Equipment Events")]
     [Tooltip("The events that are fired when the player presses the fire button, or stops pressing the fire button.")]
     public EquipmentEvents m_equipmentEvents;
@@ -17,7 +23,23 @@ public abstract class Equipment_Base : MonoBehaviour
         public EquipmentEvent m_equipmentStopUse;
     }
 
-	public abstract void OnShootInputDown(Transform p_playerCam);
 
-	public abstract void OnShootInputUp(Transform p_playerCam);
+    public virtual void SetUpEquipment(TeamTypes.TeamType p_currentTeam)
+    {
+        m_teamLabel.SetTeamType(p_currentTeam);
+        m_canUse = true;
+    }
+    public virtual void PutEquipmentAway()
+    {
+        m_canUse = false;
+    }
+
+	public virtual void OnShootInputDown(Transform p_playerCam)
+    {
+        if (!m_canUse) return;
+    }
+
+	public virtual void OnShootInputUp(Transform p_playerCam)
+    {
+    }
 }

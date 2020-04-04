@@ -6,6 +6,7 @@ using UnityEngine.Events;
 [System.Serializable]
 public class HealthActivationEvent : UnityEvent { }
 
+[RequireComponent(typeof(TeamLabel))]
 public class Health : MonoBehaviour
 {
     #region Generic Health Values
@@ -34,10 +35,13 @@ public class Health : MonoBehaviour
     private bool m_canLoseHealth = true;
 
     private ObjectPooler m_pooler;
+    [HideInInspector]
+    public TeamLabel m_teamLabel;
 
 
     private void Start()
     {
+        m_teamLabel = GetComponent<TeamLabel>();
         m_pooler = ObjectPooler.instance;
         m_shieldRegenDelayTimer = new WaitForSeconds(m_shieldRegenDelay);
         Respawn();
@@ -121,4 +125,5 @@ public class Health : MonoBehaviour
     {
         m_pooler.ReturnToPool(this.gameObject);
     }
+
 }
