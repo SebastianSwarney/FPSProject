@@ -1431,7 +1431,7 @@ MonoBehaviour:
     m_cameraTilt: {fileID: 5072337888881270402}
     m_cameraMain: {fileID: 5072337888155200248}
   m_baseMovementProperties:
-    m_baseMovementSpeed: 10
+    m_baseMovementSpeed: 15
     m_crouchMovementSpeed: 5
     m_accelerationTimeGrounded: 0.1
     m_accelerationTimeAir: 0.1
@@ -1667,14 +1667,38 @@ MonoBehaviour:
   m_postClamberSpeedBoost: 50
   m_postClamberSpeedBoostTime: 0.5
   m_movementInput: {x: 0, y: 0}
-  m_wallRaySpacing: 180
-  m_wallRayCount: 5
-  m_wallRayLength: 1
   m_wallConnectMask:
     serializedVersion: 2
     m_Bits: 512
-  m_wallClimbTolerence: 0.1
-  m_wallRunTolerence: 0.5
+  m_wallRunTolerenceMax: 0.3
+  m_wallRunTolerenceMin: -0.3
+  m_wallRunSpeed: 50
+  m_wallRunSpeedUpTime: 1
+  m_wallRunYVelocityStopTime: 0.2
+  m_wallRunSpeedUpCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 41.462265
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0
+      outWeight: 0.025028441
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.10060698
+      outSlope: 0.10060698
+      tangentMode: 0
+      weightedMode: 1
+      inWeight: 0.77360636
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &2848933224995770463
 MonoBehaviour:
   m_ObjectHideFlags: 0

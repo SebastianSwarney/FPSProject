@@ -297,12 +297,8 @@ public class PlayerController : MonoBehaviour
 
     [Space]
 
-    public float m_wallRaySpacing;
-    public float m_wallRayCount;
-    public float m_wallRayLength;
     public LayerMask m_wallConnectMask;
 
-    public float m_wallClimbTolerence;
     public float m_wallRunTolerenceMax;
     public float m_wallRunTolerenceMin;
 
@@ -346,12 +342,6 @@ public class PlayerController : MonoBehaviour
         CalculateCurrentSpeed();
         CalculateVelocity();
 
-        //CheckWall();
-
-        //CheckWallRun();
-
-        //CheckWallConnection();
-
         CheckWallConnection();
 
         m_characterController.Move(m_velocity * Time.deltaTime);
@@ -382,55 +372,19 @@ public class PlayerController : MonoBehaviour
             RaycastHit hitTop;
             RaycastHit hitBottom;
 
-            if (Physics.Raycast(top, transform.forward, out hitTop, Mathf.Infinity, m_wallClamberMask))
+            if (Physics.Raycast(top, transform.forward, out hitTop, 1f, m_wallClamberMask))
             {
                 collidedTop = true;
             }
 
-            if (Physics.Raycast(bottom, transform.forward, out hitBottom, Mathf.Infinity, m_wallClamberMask))
+            if (Physics.Raycast(bottom, transform.forward, out hitBottom, 1f, m_wallClamberMask))
             {
                 collidedBottom = true;
             }
 
             if (collidedBottom && !collidedTop)
             {
-                if (!m_isClambering)
-                {
-                    if (m_hasJumped)
-                    {
-                        if (!m_isWallRunning)
-                        {
-                            Debug.Log("ran clamber");
-
-                            StartCoroutine(RunWallClamber());
-
-                            return;
-                        }
-
-                    }
-
-                }
-            }
-
-            if (collidedBottom && collidedTop)
-            {
-                if (!m_isClimbing)
-                {
-                    if (m_canWallClimb)
-                    {
-                        if (m_hasJumped)
-                        {
-                            if (!m_isWallRunning)
-                            {
-                                Debug.Log("ran climb");
-
-                                StartCoroutine(RunWallClimb());
-                                return;
-                            }
-                        }
-                    }
-
-                }
+                StartWallClamber();
             }
             #endregion
 
@@ -461,7 +415,6 @@ public class PlayerController : MonoBehaviour
                             {
                                 if (wallFacingVector.y > (m_wallRunTolerenceMax * -1))
                                 {
-                                    Debug.Log("ran wall run");
                                     StartWallRun(-hit.normal, moveDir);
                                 }
                             }
@@ -469,11 +422,18 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
-			#endregion
-		}
+            #endregion
+
+            if (collidedBottom && collidedTop)
+            {
+                StartWallClimb();
+                return;
+            }
+        }
 	}
 
-    private void StartWallRun(Vector3 p_dirToWallStart, float p_wallRunMovementDir)
+	#region Wall Run Code
+	private void StartWallRun(Vector3 p_dirToWallStart, float p_wallRunMovementDir)
     {
         if (!m_isWallRunning)
         {
@@ -481,16 +441,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void StopWallRun()
+    {
+        m_isWallRunning = false;
+    }
+
     private IEnumerator RunWallRun(Vector3 p_dirToWallStart, float p_wallRunMovementDir)
     {
         m_isWallRunning = true;
+
         m_states.m_gravityControllState = GravityState.GravityDisabled;
         m_states.m_movementControllState = MovementControllState.MovementDisabled;
 
         Vector3 dirToWall = p_dirToWallStart;
-
         float yVelStart = m_velocity.y;
-
         float speedStart = m_characterController.velocity.magnitude;
 
         float t = 0;
@@ -520,22 +484,20 @@ public class PlayerController : MonoBehaviour
                     dirToWall = -hit.normal;
 
                     Vector3 wallRunVelocity = (wallVector * p_wallRunMovementDir) * currentWallRunSpeed;
-                    m_velocity = new Vector3(wallRunVelocity.x, yVelocity, wallRunVelocity.z);
+                    m_velocity = new Vector3(wallRunVelocity.x, wallRunVelocity.y, wallRunVelocity.z);
                 }
                 else
                 {
-                    m_isWallRunning = false;
+                    StopWallRun();
                 }
             }
             else
             {
-                m_isWallRunning = false;
+                StopWallRun();
             }
 
             yield return new WaitForFixedUpdate();
         }
-
-        //m_velocity = Vector3.zero;
 
         m_tiltTarget = 0f;
 
@@ -544,36 +506,35 @@ public class PlayerController : MonoBehaviour
 
         m_isWallRunning = false;
     }
+	#endregion
 
-    private IEnumerator InAirBoost(float p_yVelocity, float p_forwardSpeed, Vector3 p_movementDirection)
+	#region Wall Clamber Code
+    private void StartWallClamber()
     {
-        //m_velocity.y = p_yVelocity;
-
-        JumpMaxMultiplied(p_yVelocity);
-
-        while (!IsGrounded() && !m_isWallRunning)
+        if (m_hasJumped)
         {
-            Vector3 movementVelocity = p_movementDirection * p_forwardSpeed;
-
-            m_velocity = new Vector3(movementVelocity.x, m_velocity.y, movementVelocity.z);
-
-            yield return new WaitForFixedUpdate();
+            if (!m_isWallRunning)
+            {
+                if (!m_isClambering)
+                {
+                    StartCoroutine(RunWallClamber());
+                }
+            }
         }
+    }
+
+    private void StopClamber()
+    {
+        m_isClambering = false;
     }
 
     private IEnumerator RunWallClamber()
     {
-        m_states.m_gravityControllState = GravityState.GravityDisabled;
-
-        m_jumpedDuringClamber = false;
-
         m_isClambering = true;
 
-        bool isClamber = true;
+        m_states.m_gravityControllState = GravityState.GravityDisabled;
 
-        bool pressedJumpDuringClamber = false;
-
-        while (isClamber)
+        while (m_isClambering)
         {
             Vector3 bottom = m_characterController.transform.position - new Vector3(0, m_characterController.height / 2, 0);
 
@@ -581,64 +542,76 @@ public class PlayerController : MonoBehaviour
 
             if (Physics.Raycast(bottom, transform.forward, out hitBottom, Mathf.Infinity, m_wallClamberMask))
             {
-                isClamber = true;
+                m_isClambering = true;
             }
             else
             {
-                isClamber = false;
+                StopClamber();
             }
 
             if (!HitSide())
             {
-                isClamber = false;
+                StopClamber();
             }
 
             m_velocity.y = m_clamberSpeed;
-
-            if (m_jumpedDuringClamber)
-            {
-                pressedJumpDuringClamber = true;
-
-                m_jumpedDuringClamber = false;
-            }
 
             yield return new WaitForFixedUpdate();
 
         }
 
-        m_isClambering = false;
-
         m_states.m_gravityControllState = GravityState.GravityEnabled;
 
-        if (pressedJumpDuringClamber)
+        m_isClambering = false;
+    }
+	#endregion
+
+	#region Wall Climb Code
+    private void StartWallClimb()
+    {
+        if (m_hasJumped)
         {
-            //StartCoroutine(PostClamberSpeedBoost());
+            if (!m_isWallRunning)
+            {
+                if (!m_isClimbing)
+                {
+                    if (m_canWallClimb)
+                    {
+                        StartCoroutine(RunWallClimb());
+                    }
+                }
+            }
         }
     }
 
-    private IEnumerator RunWallClimb()
+    private void StopWallClimb()
+    {
+        m_isClimbing = false;
+    }
+
+	private IEnumerator RunWallClimb()
     {
         m_isClimbing = true;
 
+        m_states.m_gravityControllState = GravityState.GravityDisabled;
+
         float t = 0;
 
-        while (t < m_climbTime)
+        while (t < m_climbTime && m_isClimbing)
         {
             t += Time.fixedDeltaTime;
 
             float progress = m_climbSpeedDecreaseCurve.Evaluate(t / m_climbTime);
 
-
             Vector3 top = m_characterController.transform.position + new Vector3(0, m_characterController.height / 2, 0);
 
             RaycastHit hitTop;
-
 
             if (!Physics.Raycast(top, transform.forward, out hitTop, Mathf.Infinity, m_wallClamberMask))
             {
                 t = m_climbTime;
 
-                StartCoroutine(RunWallClamber());
+                StartWallClimb();
             }
 
             if (!HitSide())
@@ -654,385 +627,33 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        m_isClimbing = false;
+        m_states.m_gravityControllState = GravityState.GravityEnabled;
 
         m_canWallClimb = false;
+
+        m_isClimbing = false;
     }
+	#endregion
 
-
-    #region Wall Code
-
-    private void CheckWallConnectionForVault()
-    {
-        bool collidedTop = false;
-        bool collidedBottom = false;
-
-        Vector3 top = m_characterController.transform.position + new Vector3(0, m_characterController.height / 2, 0);
-        collidedTop = GetWallHitData(top);
-
-        Vector3 bottom = m_characterController.transform.position - new Vector3(0, m_characterController.height / 2, 0);
-        collidedBottom = GetWallHitData(bottom);
-
-        if (HitSide())
-        {
-            if (collidedBottom && !collidedTop)
-            {
-                if (!m_isClambering)
-                {
-                    if (m_hasJumped)
-                    {
-                        StartCoroutine(RunWallClamber());
-                        return;
-                    }
-                }
-            }
-
-            if (m_holdingJumpInput)
-            {
-                if (m_localWallFacingVector.x >= m_wallClimbTolerence)
-                {
-                    if (collidedBottom && collidedTop)
-                    {
-                        if (!m_isClimbing)
-                        {
-                            if (m_canWallClimb)
-                            {
-                                if (m_hasJumped)
-                                {
-                                    StartCoroutine(RunWallClimb());
-
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (collidedBottom)
-            {
-                if (Mathf.Abs(m_localWallFacingVector.y) >= m_wallRunTolerenceMax)
-                {
-                    if (!m_isWallRunning && (!m_isClimbing || m_isClambering))
-                    {
-                        StartCoroutine(WallRunning());
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    private bool GetWallHitData(Vector3 p_castOrigin)
-    {
-        float m_angleBetweenRays = m_wallRaySpacing / m_wallRayCount;
-        bool anyRayHit = false;
-
-        for (int i = 0; i < m_wallRayCount; i++)
-        {
-            Quaternion raySpaceQ = Quaternion.Euler(0, (i * m_angleBetweenRays) - (m_angleBetweenRays * (m_wallRayCount / 2)), 0);
-            RaycastHit hit;
-
-            if (Physics.Raycast(p_castOrigin, raySpaceQ * transform.forward, out hit, m_wallRayLength, m_wallConnectMask))
-            {
-                if (Vector3.Dot(hit.normal, Vector3.up) == 0)
-                {
-                    anyRayHit = true;
-
-                    m_wallVector = Vector3.Cross(hit.normal, Vector3.up);
-                    m_wallFacingVector = Vector3.Cross(hit.normal, m_cameraProperties.m_camera.transform.forward);
-                    m_wallNormal = hit.normal;
-
-                    m_localWallFacingVector = m_cameraProperties.m_camera.transform.InverseTransformDirection(m_wallFacingVector);
-
-                    Debug.DrawLine(m_characterController.transform.position, hit.point);
-
-                    return true;
-
-                    //CheckWallMovementType();
-                }
-
-
-            }
-        }
-
-
-        if (!anyRayHit)
-        {
-            m_isWallRunning = false;
-            m_isWallClimbing = false;
-            m_connectedWithWall = false;
-        }
-
-        return false;
-    }
-
-    public void CheckWall()
-    {
-        if (HitSide())
-        {
-            bool collidedTop = false;
-            bool collidedBottom = false;
-
-            Vector3 top = m_characterController.transform.position + new Vector3(0, m_characterController.height / 2, 0);
-            Vector3 bottom = m_characterController.transform.position - new Vector3(0, m_characterController.height / 2, 0);
-
-            RaycastHit hitTop;
-            RaycastHit hitBottom;
-
-            if (Physics.Raycast(top, transform.forward, out hitTop, Mathf.Infinity, m_wallClamberMask))
-            {
-                collidedTop = true;
-            }
-
-            if (Physics.Raycast(bottom, transform.forward, out hitBottom, Mathf.Infinity, m_wallClamberMask))
-            {
-                collidedBottom = true;
-            }
-
-            if (collidedBottom && !collidedTop)
-            {
-                if (!m_isClambering)
-                {
-                    if (m_hasJumped)
-                    {
-                        StartCoroutine(RunWallClamber());
-                        return;
-                    }
-
-                }
-            }
-
-            if (collidedBottom && collidedTop)
-            {
-                if (!m_isClimbing)
-                {
-                    if (m_canWallClimb)
-                    {
-                        if (m_hasJumped)
-                        {
-                            StartCoroutine(RunWallClimb());
-                        }
-                    }
-
-                }
-            }
-        }
-    }
-
-    private IEnumerator PostClamberSpeedBoost()
-    {
-        float t = 0;
-
-        JumpMaxMultiplied(0.5f);
-
-        m_currentPostClamberSpeedBoost = m_postClamberSpeedBoost;
-
-        while (t < m_postClamberSpeedBoostTime)
-        {
-            t += Time.fixedDeltaTime;
-
-            float progress = m_postClamberSpeedBoostDecay.Evaluate(t / m_postClamberSpeedBoostTime);
-
-            m_currentPostClamberSpeedBoost = Mathf.Lerp(m_postClamberSpeedBoost, 0, progress);
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_currentPostClamberSpeedBoost = 0;
-    }
-
-    #endregion
-
-    #region Wall Run Code
-
-    private void CheckWallRun()
-    {
-        float m_angleBetweenRays = m_wallRunProperties.m_wallRaySpacing / m_wallRunProperties.m_wallRidingRayCount;
-        bool anyRayHit = false;
-
-        for (int i = 0; i < m_wallRunProperties.m_wallRidingRayCount; i++)
-        {
-            Quaternion raySpaceQ = Quaternion.Euler(0, (i * m_angleBetweenRays) - (m_angleBetweenRays * (m_wallRunProperties.m_wallRidingRayCount / 2)), 0);
-            RaycastHit hit;
-
-            if (Physics.Raycast(m_characterController.transform.position, raySpaceQ * transform.forward, out hit, m_wallRunProperties.m_wallRunRayLength, m_wallRunProperties.m_wallMask))
-            {
-                if (Vector3.Dot(hit.normal, Vector3.up) == 0)
-                {
-                    anyRayHit = true;
-
-                    m_wallVector = Vector3.Cross(hit.normal, Vector3.up);
-                    m_wallFacingVector = Vector3.Cross(hit.normal, m_cameraProperties.m_camera.transform.forward);
-                    m_wallNormal = hit.normal;
-
-                    m_localWallFacingVector = m_cameraProperties.m_camera.transform.InverseTransformDirection(m_wallFacingVector);
-
-                    if (!m_connectedWithWall)
-                    {
-                        OnWallConnect();
-                    }
-
-                    CheckToStartWallRun();
-                }
-
-                Debug.DrawLine(m_characterController.transform.position, hit.point);
-            }
-        }
-
-        if (!anyRayHit)
-        {
-            m_isWallRunning = false;
-            m_isWallClimbing = false;
-            m_connectedWithWall = false;
-        }
-
-    }
-
-    private void OnWallConnect()
-    {
-        m_connectedWithWall = true;
-        m_wallJumpBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_wallJumpBufferTimer = (x), m_wallRunProperties.m_wallJumpBufferTime));
-    }
-
-    private void TiltLerp()
+	private void TiltLerp()
     {
         m_cameraProperties.m_cameraTilt.localRotation = Quaternion.Slerp(m_cameraProperties.m_cameraTilt.localRotation, Quaternion.Euler(0, 0, m_tiltTarget), m_wallRunProperties.m_tiltSpeed);
     }
 
-    private void OnWallRideRelease()
+    private IEnumerator InAirBoost(float p_yVelocity, float p_forwardSpeed, Vector3 p_movementDirection)
     {
-        m_isWallRunning = false;
-        m_isWallClimbing = false;
-        m_wallRunBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_wallRunBufferTimer = (x), m_wallRunProperties.m_wallRunBufferTime));
-    }
+        JumpMaxMultiplied(p_yVelocity);
 
-    private void CheckToStartWallRun()
-    {
-        if (m_holdingWallRideStick)
+        while (!IsGrounded() && !m_isWallRunning)
         {
-            if (m_isWallClimbing)
-            {
-                return;
-            }
+            Vector3 movementVelocity = p_movementDirection * p_forwardSpeed;
 
-            if (m_isWallRunning)
-            {
-                return;
-            }
-
-            if (m_localWallFacingVector.x >= m_wallClimbProperties.m_wallClimbFactor)
-            {
-                if (!m_isWallClimbing)
-                {
-                    if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
-                    {
-                        StartCoroutine(WallClimbing());
-                        return;
-                    }
-                }
-            }
-
-            if (!m_isWallRunning)
-            {
-                if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
-                {
-                    StartCoroutine(WallRunning());
-                    return;
-
-                }
-            }
-        }
-
-    }
-
-    private IEnumerator WallClimbing()
-    {
-        m_events.m_onWallClimbBeginEvent.Invoke();
-
-        m_isWallClimbing = true;
-
-        m_states.m_gravityControllState = GravityState.GravityDisabled;
-        m_states.m_movementControllState = MovementControllState.MovementDisabled;
-
-        m_currentWallClimbSpeed = 0;
-
-        float t = 0;
-
-        while (m_isWallClimbing)
-        {
-            t += Time.deltaTime;
-
-
-            m_velocity = Vector3.zero;
-
-            m_velocity.y = m_localWallFacingVector.x * m_currentMovementSpeed;
-
-            float progress = m_wallClimbProperties.m_wallClimbSpeedCurve.Evaluate(t / m_wallClimbProperties.m_wallClimbSpeedUpTime);
-            m_currentWallClimbSpeed = Mathf.Lerp(0f, m_wallClimbProperties.m_maxWallClimbSpeed, progress);
-
-            yield return null;
-        }
-
-        m_states.m_movementControllState = MovementControllState.MovementEnabled;
-        m_states.m_gravityControllState = GravityState.GravityEnabled;
-
-        m_currentWallClimbSpeed = 0;
-
-        m_events.m_onWallClimbEndEvent.Invoke();
-    }
-
-    private IEnumerator WallRunning()
-    {
-        m_events.m_onWallRunBeginEvent.Invoke();
-
-        m_isWallRunning = true;
-        m_states.m_gravityControllState = GravityState.GravityDisabled;
-        m_states.m_movementControllState = MovementControllState.MovementDisabled;
-
-        m_currentWallRunningSpeed = 0;
-
-        float t = 0;
-
-        float yVelStart = m_velocity.y;
-
-        while (m_isWallRunning)
-        {
-            t += Time.fixedDeltaTime;
-
-            float result = Mathf.Lerp(-m_wallRunProperties.m_wallRunCameraMaxTilt, m_wallRunProperties.m_wallRunCameraMaxTilt, m_wallFacingVector.y);
-            m_tiltTarget = result;
-
-            Vector3 wallRunVelocity = (m_wallVector * -m_wallFacingVector.y) * m_currentMovementSpeed;
-
-            float yProgress = t / 0.5f;
-
-            float yVelocity = Mathf.Lerp(yVelStart, 0, yProgress);
-
-            m_velocity = new Vector3(wallRunVelocity.x, yVelocity, wallRunVelocity.z);
-
-
-            //m_velocity += (transform.right * m_wallFacingVector.y) * m_currentMovementSpeed;
-
-            //m_velocity.y = 0;
-
-            float progress = m_wallRunProperties.m_wallSpeedCurve.Evaluate(t / m_wallRunProperties.m_wallSpeedUpTime);
-            m_currentWallRunningSpeed = Mathf.Lerp(0f, m_wallRunProperties.m_maxWallRunSpeed, progress);
+            m_velocity = new Vector3(movementVelocity.x, m_velocity.y, movementVelocity.z);
 
             yield return new WaitForFixedUpdate();
         }
-
-        m_states.m_movementControllState = MovementControllState.MovementEnabled;
-        m_states.m_gravityControllState = GravityState.GravityEnabled;
-
-        m_currentWallRunningSpeed = 0;
-
-        m_tiltTarget = 0f;
-
-        m_events.m_onWallRunEndEvent.Invoke();
     }
 
-    #endregion
 
     #region Input Code
     public void SetMovementInput(Vector2 p_input)
@@ -1053,7 +674,6 @@ public class PlayerController : MonoBehaviour
     public void WallRideInputUp()
     {
         m_holdingWallRideStick = false;
-        OnWallRideRelease();
     }
     #endregion
 
@@ -1390,6 +1010,8 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator RunCrouchDown()
     {
+        StopWallRun();
+
         OnSlideStart();
 
         float t = 0;
@@ -1500,27 +1122,15 @@ public class PlayerController : MonoBehaviour
     #region Jump Code
     public void OnJumpInputDown()
     {
-        //m_holdingJumpInput = true;
+        m_holdingJumpInput = true;
 
-        //m_jumpedDuringClamber = true;
+        m_jumpedDuringClamber = true;
 
         m_jumpBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_jumpBufferTimer = (x), m_jumpingProperties.m_jumpBufferTime));
-
-        if (CheckBuffer(ref m_wallJumpBufferTimer, ref m_wallRunProperties.m_wallJumpBufferTime, m_wallJumpBufferCoroutine) && !m_isWallRunning)
-        {
-            //WallJump();
-            return;
-        }
 
         if (CheckBuffer(ref m_graceTimer, ref m_jumpingProperties.m_graceTime, m_graceBufferCoroutine) && !IsGrounded() && m_velocity.y <= 0f)
         {
             GroundJump();
-            return;
-        }
-
-        if (m_isWallClimbing)
-        {
-            //WallRunningJump();
             return;
         }
 
@@ -1555,33 +1165,10 @@ public class PlayerController : MonoBehaviour
         m_minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(m_gravity) * m_jumpingProperties.m_minJumpHeight);
     }
 
-    private void WallJump()
-    {
-        m_events.m_onWallJumpEvent.Invoke();
-
-        m_velocity.x = m_wallNormal.x * m_wallRunProperties.m_wallJumpVelocity.x;
-        m_velocity.y = m_wallRunProperties.m_wallJumpVelocity.y;
-        m_velocity.z = m_wallNormal.z * m_wallRunProperties.m_wallJumpVelocity.z;
-    }
-
     private void WallRunningJump()
     {
-        m_isWallRunning = false;
-
+        StopWallRun();
         StartCoroutine(InAirBoost(1f, 75f, transform.forward));
-    }
-
-    private void WallClimbingJump()
-    {
-        m_isWallClimbing = false;
-
-        m_events.m_onWallClimbJumpEvent.Invoke();
-
-        m_wallRunBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_wallRunBufferTimer = (x), m_wallRunProperties.m_wallRunBufferTime));
-
-        m_velocity.x = m_wallNormal.x * m_wallClimbProperties.m_wallClimbJumpVelocity.x;
-        m_velocity.y = m_wallClimbProperties.m_wallClimbJumpVelocity.y;
-        m_velocity.z = m_wallNormal.z * m_wallClimbProperties.m_wallClimbJumpVelocity.z;
     }
 
     private void GroundJump()
