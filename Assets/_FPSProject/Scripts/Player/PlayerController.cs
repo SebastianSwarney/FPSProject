@@ -309,6 +309,13 @@ public class PlayerController : MonoBehaviour
 
     public AnimationCurve m_wallRunSpeedUpCurve;
 
+    private bool m_isLongJumping;
+
+    private Vector3 m_wallRunJumpVelocity;
+
+    public float m_wallRunJumpGroundVelocityDecayTime;
+    public AnimationCurve m_wallRunJumpGroundVelocityDecayAnimationCurve;
+
     private void Start()
     {
         m_characterController = GetComponent<CharacterController>();
@@ -344,7 +351,9 @@ public class PlayerController : MonoBehaviour
 
         CheckWallConnection();
 
-        m_characterController.Move(m_velocity * Time.deltaTime);
+        //m_characterController.Move(m_velocity * Time.deltaTime);
+
+        CaculateTotalVelocity();
 
         SlopePhysics();
 
@@ -356,13 +365,24 @@ public class PlayerController : MonoBehaviour
         TiltLerp();
     }
 
-    private void CheckWallConnection()
+    private void CaculateTotalVelocity()
+    {
+        Vector3 velocity = Vector3.zero;
+
+        velocity += m_velocity;
+
+        velocity += m_wallRunJumpVelocity;
+
+        m_characterController.Move(velocity * Time.deltaTime);
+    }
+
+	#region Wall Code
+	private void CheckWallConnection()
     {
         bool anyRayHit = false;
 
         if (HitSide())
         {
-            #region Clamber and Climb
             bool collidedTop = false;
             bool collidedBottom = false;
 
@@ -384,9 +404,14 @@ public class PlayerController : MonoBehaviour
 
             if (collidedBottom && !collidedTop)
             {
+                //StartLongJump();
+                //return;
+            }
+
+            if (collidedBottom && !collidedTop)
+            {
                 StartWallClamber();
             }
-            #endregion
 
             #region Wall run
             float m_angleBetweenRays = 360f / 2;
@@ -431,6 +456,41 @@ public class PlayerController : MonoBehaviour
             }
         }
 	}
+
+    private void StartLongJump()
+    {
+        if (m_velocity.y > 0)
+        {
+            if (!m_isClambering)
+            {
+                if (!m_isLongJumping)
+                {
+                    StartCoroutine(RunLongJump());
+                }
+            }
+        }
+    }
+
+    private IEnumerator RunLongJump()
+    {
+        JumpMaxMultiplied(0.5f);
+
+        Vector3 movementDir = transform.forward;
+
+        float t = 0;
+
+        while (t < 1f)
+        {
+            t += Time.fixedDeltaTime;
+
+            Vector3 movementVelocity = movementDir * 30f;
+
+            m_velocity = new Vector3(movementVelocity.x, m_velocity.y, movementVelocity.z);
+
+            yield return new WaitForFixedUpdate();
+        }
+    }
+	#endregion
 
 	#region Wall Run Code
 	private void StartWallRun(Vector3 p_dirToWallStart, float p_wallRunMovementDir)
@@ -648,10 +708,34 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 movementVelocity = p_movementDirection * p_forwardSpeed;
 
-            m_velocity = new Vector3(movementVelocity.x, m_velocity.y, movementVelocity.z);
+            m_wallRunJumpVelocity = new Vector3(movementVelocity.x, 0, movementVelocity.z);
 
             yield return new WaitForFixedUpdate();
         }
+
+        StartCoroutine(OnGroundBoost(p_forwardSpeed, p_movementDirection));
+
+        m_wallRunJumpVelocity = Vector3.zero;
+    }
+
+    private IEnumerator OnGroundBoost(float p_forwardSpeed, Vector3 p_movementDirection)
+    {
+        float t = 0;
+
+        while (t < m_wallRunJumpGroundVelocityDecayTime)
+        {
+            t += Time.fixedDeltaTime;
+
+            float speedProgress = m_wallRunJumpGroundVelocityDecayAnimationCurve.Evaluate(t / m_wallRunJumpGroundVelocityDecayTime);
+            float currentSpeed = Mathf.Lerp(p_forwardSpeed, 0, speedProgress);
+
+            Vector3 movementVelocity = p_movementDirection * currentSpeed;
+            m_wallRunJumpVelocity = movementVelocity;
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        m_wallRunJumpVelocity = Vector3.zero;
     }
 
 
