@@ -67,6 +67,7 @@ public class RespawnObject_Player : RespawnObject
 
         }
     }
+
     [PunRPC]
     private void RPC_Respawn()
     {
@@ -77,11 +78,19 @@ public class RespawnObject_Player : RespawnObject
             Debug.DrawLine(m_respawnPoint.position, transform.position, Color.yellow, 2);
             transform.position = m_respawnPoint.position;
             transform.rotation = m_respawnPoint.rotation;
-            m_controller.enabled = true;
-            m_playerInput.enabled = true;
+
+            StartCoroutine(DelayControllerStart());
         }
 
         m_visual.SetActive(true);
         m_respawned.Invoke();
+    }
+
+    IEnumerator DelayControllerStart()
+    {
+        yield return new WaitForSeconds(.1f);
+        m_controller.enabled = true;
+        m_playerInput.enabled = true;
+        
     }
 }

@@ -61,7 +61,7 @@ public class Health : MonoBehaviour
 
     public virtual void TakeDamage(float p_takenDamage)
     {
-        m_photonView.RPC("RPC_TakeDamage", RpcTarget.AllBuffered, p_takenDamage);
+        m_photonView.RPC("RPC_TakeDamage", RpcTarget.All, p_takenDamage);
     }
     [PunRPC]
     public void RPC_TakeDamage(float p_takenDamage)
