@@ -108,7 +108,7 @@ MonoBehaviour:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
       type: 3}
     m_bulletDamage: 10
-    m_bulletSpeed: 50
+    m_bulletSpeed: 150
     m_gunFireDelay: 0.5
   m_canFire: 1
   m_aimAssist:
