@@ -31,27 +31,39 @@ public class TeamManager : MonoBehaviour
     
     public void AddPlayerToTeam(TeamLabel p_playerTeamLabel)
     {
-        if (!m_photonView.IsMine) return;
-        //Might want to change this to a json rpc call later, may depend on how efficient this is
-        m_photonView.RPC("RPC_AddPlayerToTeam", RpcTarget.AllBufferedViaServer, p_playerTeamLabel.GetPhotonViewID());
-        
-
-    }
-    [PunRPC]
-    private void RPC_AddPlayerToTeam(int p_playerPhotonID)
-    {
-        TeamLabel playerLabel = PhotonView.Find(p_playerPhotonID).GetComponent<TeamLabel>();
-
-        switch (playerLabel.m_myTeam)
+        switch (p_playerTeamLabel.m_myTeam)
         {
             case TeamTypes.TeamType.Red:
-                m_redTeam.Add(playerLabel);
+                m_redTeam.Add(p_playerTeamLabel);
                 return;
             case TeamTypes.TeamType.Blue:
-                m_blueTeam.Add(playerLabel);
+                m_blueTeam.Add(p_playerTeamLabel);
                 return;
         }
     }
+
+    public void RemovePlayerFromTeam(TeamLabel p_playerTeamLabel)
+    {
+        switch (p_playerTeamLabel.m_myTeam)
+        {
+            case TeamTypes.TeamType.Red:
+                if (m_redTeam.Contains(p_playerTeamLabel))
+                {
+                    m_redTeam.Remove(p_playerTeamLabel);
+                }
+                return;
+            case TeamTypes.TeamType.Blue:
+                if (m_blueTeam.Contains(p_playerTeamLabel))
+                {
+                    m_blueTeam.Remove(p_playerTeamLabel);
+                }
+                return;
+        }
+    }
+
+
+
+
 
     public void SwapPlayerTeam(TeamLabel p_playerTeamLabel)
     {

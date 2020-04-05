@@ -15,8 +15,9 @@ public class TeamLabel_Player : TeamLabel
         Transform newSpawn = MatchSpawningManager.Instance.SpawnPlayer(m_myTeam);
         transform.position = newSpawn.position;
         transform.rotation = newSpawn.rotation;
-        TeamManager.Instance.AddPlayerToTeam(this);
+        
     }
+
     public override void SetTeamType(TeamTypes.TeamType p_newTeamType)
     {
         base.SetTeamType(p_newTeamType);
@@ -42,10 +43,17 @@ public class TeamLabel_Player : TeamLabel
         {
             m_myTeam = TeamTypes.TeamType.Red;
             m_renderer.material = m_redMaterial;
+            
         }else if(p_color == 2)
         {
             m_myTeam = TeamTypes.TeamType.Blue;
             m_renderer.material = m_blueMaterial;
         }
+        TeamManager.Instance.AddPlayerToTeam(this);
+    }
+
+    private void OnDestroy()
+    {
+        TeamManager.Instance.RemovePlayerFromTeam(this);
     }
 }

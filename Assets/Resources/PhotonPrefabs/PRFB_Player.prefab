@@ -1316,6 +1316,7 @@ GameObject:
   - component: {fileID: 2457597724535009560}
   - component: {fileID: 4982525409973326340}
   - component: {fileID: 3040379365549537033}
+  - component: {fileID: 1637526538014559819}
   m_Layer: 8
   m_Name: PRFB_Player
   m_TagString: Untagged
@@ -1827,6 +1828,19 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1637526538014559819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5072337888313550595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed03439192d4d144cadfe689d4f825e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_leaveKeycode: 109
 --- !u!1 &5072337888603227785
 GameObject:
   m_ObjectHideFlags: 0

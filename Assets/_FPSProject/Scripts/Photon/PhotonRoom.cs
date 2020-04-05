@@ -12,24 +12,23 @@ public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
     public static PhotonRoom Instance;
     private PhotonView m_photonView;
 
-    public int m_multiplayerScene;
+    public int m_menuScene, m_multiplayerScene;
     private int m_currentScene;
     public GameObject m_photonPlayerPrefab;
     void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
         else
         {
-            if(Instance != null)
-            {
-                Destroy(Instance.gameObject);
-                Instance = this;
-            }
+
+            Destroy(gameObject);
+
         }
-        DontDestroyOnLoad(this.gameObject);
+
     }
 
     public override void OnEnable()
@@ -83,5 +82,27 @@ public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
     private void CreatePlayer()
     {
         PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", m_photonPlayerPrefab.name), transform.position, Quaternion.identity, 0);
+    }
+
+    public override void OnLeftRoom()
+    {
+        base.OnLeftRoom();
+        Debug.Log("Room Left");
+        
+        Instance = null;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Destroy(gameObject);
+        PhotonNetwork.Disconnect();
+        if (m_applicationQuitting) return;
+        SceneManager.LoadScene(m_menuScene);
+        //PhotonNetwork.LoadLevel(m_menuScene);
+    }
+
+    private bool m_applicationQuitting;
+
+    private void OnApplicationQuit()
+    {
+        m_applicationQuitting = true;
     }
 }
