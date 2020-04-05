@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Photon.Pun;
 
 [System.Serializable]
 public class HealthActivationEvent : UnityEvent { }
@@ -38,12 +39,15 @@ public class Health : MonoBehaviour
     [HideInInspector]
     public TeamLabel m_teamLabel;
 
+    [HideInInspector]
+    public PhotonView m_photonView;
 
     private void Start()
     {
         m_teamLabel = GetComponent<TeamLabel>();
         m_pooler = ObjectPooler.instance;
         m_shieldRegenDelayTimer = new WaitForSeconds(m_shieldRegenDelay);
+        m_photonView = GetComponent<PhotonView>();
         Respawn();
     }
 
@@ -55,7 +59,12 @@ public class Health : MonoBehaviour
         if (m_useShields) m_currentShieldStrength = m_maxShieldStrength;
     }
 
-    public void TakeDamage(float m_takenDamage)
+    public virtual void TakeDamage(float p_takenDamage)
+    {
+        m_photonView.RPC("RPC_TakeDamage", RpcTarget.AllBuffered, p_takenDamage);
+    }
+    [PunRPC]
+    public void RPC_TakeDamage(float p_takenDamage)
     {
         if (!m_canLoseHealth) return;
         if (!m_isDead)
@@ -64,7 +73,7 @@ public class Health : MonoBehaviour
 
             if (m_useShields && m_currentShieldStrength > 0)
             {
-                m_currentShieldStrength -= m_takenDamage * m_shieldDamageMultiplier;
+                m_currentShieldStrength -= p_takenDamage * m_shieldDamageMultiplier;
                 if (m_currentShieldStrength < 0)
                 {
                     m_currentHealth -= (Mathf.Abs(m_currentShieldStrength * ((1f - m_shieldDamageMultiplier) + 1f)));
@@ -83,7 +92,7 @@ public class Health : MonoBehaviour
 
             else
             {
-                m_currentHealth -= m_takenDamage;
+                m_currentHealth -= p_takenDamage;
                 if (m_currentHealth > 0)
                 {
                     if (m_useShields)
@@ -98,7 +107,6 @@ public class Health : MonoBehaviour
                 }
             }
         }
-
     }
 
     public void RetoggleHealth()

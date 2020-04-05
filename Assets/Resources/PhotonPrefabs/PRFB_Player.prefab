@@ -1305,6 +1305,8 @@ GameObject:
   - component: {fileID: 67761994113558998}
   - component: {fileID: 4417498496041725324}
   - component: {fileID: 2457597724535009560}
+  - component: {fileID: 4982525409973326340}
+  - component: {fileID: 3040379365549537033}
   m_Layer: 8
   m_Name: PRFB_Player
   m_TagString: Untagged
@@ -1750,7 +1752,72 @@ MonoBehaviour:
   m_respawnTime: 3
   m_visual: {fileID: 5072337888254200824}
   m_camera: {fileID: 5072337886895319283}
+  m_respawned:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4982525409973326340}
+        m_MethodName: Respawn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_isDebugging: 0
+--- !u!114 &4982525409973326340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5072337888313550595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9940767ae22e0c14aa67e9a7174984af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_maxHealth: 100
+  m_currentHealth: 0
+  m_isDead: 0
+  m_onDied:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2457597724535009560}
+        m_MethodName: PlayerWasKilled
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_useShields: 0
+  m_shieldDamageMultiplier: 0.75
+  m_maxShieldStrength: 0
+  m_shieldRegeneration: 0
+  m_shieldRegenDelay: 0
+  m_shieldRegenTimeToFull: 0
+  m_teamLabel: {fileID: 0}
+  m_photonView: {fileID: 0}
+--- !u!136 &3040379365549537033
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5072337888313550595}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5072337888603227785
 GameObject:
   m_ObjectHideFlags: 0
@@ -2273,7 +2340,7 @@ MonoBehaviour:
   m_bulletProperties:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
       type: 3}
-    m_bulletDamage: 5
+    m_bulletDamage: 10
     m_bulletSpeed: 50
     m_gunFireDelay: 0.5
   m_aimAssist:

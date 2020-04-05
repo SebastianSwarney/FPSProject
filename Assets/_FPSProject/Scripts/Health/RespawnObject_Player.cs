@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+[System.Serializable]
+public class RespawnObjectEvent : UnityEngine.Events.UnityEvent { }
 public class RespawnObject_Player : RespawnObject
 {
     public GameObject m_visual;
@@ -11,11 +13,16 @@ public class RespawnObject_Player : RespawnObject
     private TeamLabel m_myTeam;
     private PlayerController m_controller;
     private PlayerInput m_playerInput;
+    private PhotonTransformView m_transformView;
     private PhotonView m_photonView;
 
 
+
+    public RespawnObjectEvent m_respawned;
     [Header("Debugging")]
     public bool m_isDebugging;
+
+    
     public override void Start()
     {
         m_matchSpawning = MatchSpawningManager.Instance;
@@ -23,10 +30,10 @@ public class RespawnObject_Player : RespawnObject
         m_controller = GetComponent<PlayerController>();
         m_playerInput = GetComponent<PlayerInput>();
         m_photonView = GetComponent<PhotonView>();
-        
         if (!m_isDebugging)
         {
-            PlayerWasKilled();
+            
+            DisablePlayerControl();
             StartCoroutine(RespawnCoroutine());
             if (!m_photonView.IsMine)
             {
@@ -35,33 +42,46 @@ public class RespawnObject_Player : RespawnObject
         }
     }
 
-    public void PlayerWasKilled()
+    private void DisablePlayerControl()
     {
-        
         m_controller.enabled = false;
         m_playerInput.enabled = false;
+    }
+    public void PlayerWasKilled()
+    {
+        DisablePlayerControl();
+        m_visual.SetActive(false);
+
         if (m_photonView.IsMine)
         {
-            m_visual.SetActive(false);
+            StartCoroutine(RespawnCoroutine());
         }
     }
 
-    
+
     public override void RespawnMe()
     {
         if (m_photonView.IsMine)
         {
-            RPC_Respawn();
-            m_controller.enabled = true;
-            m_playerInput.enabled = true;
+            m_photonView.RPC("RPC_Respawn", RpcTarget.All);
+
         }
     }
     [PunRPC]
     private void RPC_Respawn()
     {
-        m_respawnPoint = m_matchSpawning.SpawnPlayer(m_myTeam.m_myTeam);
-        transform.position = m_respawnPoint.position;
-        transform.rotation = m_respawnPoint.rotation;
+        if (m_photonView.IsMine)
+        {
+
+            m_respawnPoint = m_matchSpawning.SpawnPlayer(m_myTeam.m_myTeam);
+            Debug.DrawLine(m_respawnPoint.position, transform.position, Color.yellow, 2);
+            transform.position = m_respawnPoint.position;
+            transform.rotation = m_respawnPoint.rotation;
+            m_controller.enabled = true;
+            m_playerInput.enabled = true;
+        }
+
         m_visual.SetActive(true);
+        m_respawned.Invoke();
     }
 }

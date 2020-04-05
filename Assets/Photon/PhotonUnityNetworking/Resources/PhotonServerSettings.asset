@@ -39,6 +39,9 @@ MonoBehaviour:
   - RPC_SetType
   - RPC_SetTeam
   - RPC_Respawn
+  - RPC_FireInputDown
+  - RPC_InputUp
+  - RPC_TakeDamage
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

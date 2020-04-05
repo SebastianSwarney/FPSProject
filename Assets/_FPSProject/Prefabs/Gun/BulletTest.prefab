@@ -90,6 +90,7 @@ GameObject:
   - component: {fileID: 3900400124138448051}
   - component: {fileID: 5544036182967518219}
   - component: {fileID: 3900400124138448050}
+  - component: {fileID: 6495588663871986190}
   m_Layer: 0
   m_Name: BulletTest
   m_TagString: Untagged
@@ -128,7 +129,7 @@ MonoBehaviour:
   m_swappedTeams:
     m_PersistentCalls:
       m_Calls: []
-  m_disableSwappingTeam: 0
+  m_photonView: {fileID: 0}
 --- !u!114 &3900400124138448050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,7 +149,7 @@ MonoBehaviour:
   m_collisionRadius: 0.2
   m_collisionDetectionMask:
     serializedVersion: 2
-    m_Bits: 513
+    m_Bits: 769
   m_boundsLayer:
     serializedVersion: 2
     m_Bits: 513
@@ -164,3 +165,15 @@ MonoBehaviour:
   m_debugGizmos: 1
   m_gizmosColor1: {r: 1, g: 0.95084643, b: 0, a: 1}
   m_gizmosColor2: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &6495588663871986190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3900400124138448053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3096f7297e9c9c7478435aea5711236c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

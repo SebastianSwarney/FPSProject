@@ -26,9 +26,14 @@ public class RespawnObject : MonoBehaviour
         RespawnMe();
     }
 
+    public void ObjectDied()
+    {
+        StartCoroutine(RespawnCoroutine());
+    }
+
     public virtual void RespawnMe()
     {
-        transform.position = m_respawnPosition;
-        transform.rotation = m_respawnRotation;
+        //transform.position = m_respawnPosition;
+        //transform.rotation = m_respawnRotation;
     }
 }
