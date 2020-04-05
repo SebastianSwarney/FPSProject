@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class MatchSpawningManager : MonoBehaviour
 {
-    
-    public TeamTypes.TeamType m_zoneOwnership;
     public static MatchSpawningManager Instance;
 
-    public List<SpawnZoneTypes> m_spawnZoneType;
+    public SpawnZoneTypes[] m_spawnZoneType;
     [System.Serializable]
     public struct SpawnZoneTypes
     {
@@ -16,13 +14,18 @@ public class MatchSpawningManager : MonoBehaviour
         public List<MatchSpawn_Zone> m_teamSpawnZones;
     }
     private TeamLabel m_checkingLabel;
-    public Transform SpawnPlayer(GameObject p_spawnedPlayer)
+
+    private void Awake()
     {
-        m_checkingLabel = p_spawnedPlayer.GetComponent<TeamLabel>();
+        Instance = this;
+    }
+    public Transform SpawnPlayer(TeamTypes.TeamType p_spawnedPlayerTeam)
+    {
+        
 
         foreach(SpawnZoneTypes spawnZone in m_spawnZoneType)
         {
-            if(spawnZone.m_zoneType == m_checkingLabel.m_myTeam)
+            if(spawnZone.m_zoneType == p_spawnedPlayerTeam)
             {
                 return GetMostRelevantSpawn(spawnZone);
             }
@@ -36,6 +39,7 @@ public class MatchSpawningManager : MonoBehaviour
         MatchSpawn_Zone checkingSpawn = null;
         foreach(MatchSpawn_Zone check in p_checkingSpawn.m_teamSpawnZones)
         {
+            if (!check.CanSpawnIn()) continue;
             if (checkingSpawn == null)
             {
                 checkingSpawn = check;

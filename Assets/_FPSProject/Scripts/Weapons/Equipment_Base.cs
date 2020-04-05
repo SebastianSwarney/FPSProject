@@ -23,9 +23,17 @@ public abstract class Equipment_Base : MonoBehaviour
         public EquipmentEvent m_equipmentStopUse;
     }
 
+    private void Start()
+    {
+        
+    }
 
     public virtual void SetUpEquipment(TeamTypes.TeamType p_currentTeam)
     {
+        if (m_teamLabel == null)
+        {
+            m_teamLabel = GetComponent<TeamLabel>();
+        }
         m_teamLabel.SetTeamType(p_currentTeam);
         m_canUse = true;
     }

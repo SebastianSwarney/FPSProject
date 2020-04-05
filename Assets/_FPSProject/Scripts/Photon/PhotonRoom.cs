@@ -14,6 +14,7 @@ public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
 
     public int m_multiplayerScene;
     private int m_currentScene;
+    public GameObject m_photonPlayerPrefab;
     void Awake()
     {
         if(Instance == null)
@@ -81,6 +82,6 @@ public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
 
     private void CreatePlayer()
     {
-        PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PhotonNetworkPlayer"), transform.position, Quaternion.identity, 0);
+        PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", m_photonPlayerPrefab.name), transform.position, Quaternion.identity, 0);
     }
 }

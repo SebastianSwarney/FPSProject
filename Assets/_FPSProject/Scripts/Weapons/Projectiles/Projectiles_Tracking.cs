@@ -14,7 +14,7 @@ public class Projectiles_Tracking : Projectiles_Base
     private WaitForSeconds m_lifeDelay;
     private Coroutine m_lifeCoroutine;
 
-    public override void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, Transform p_target = null, float p_projectileDamage = 0)
+    public override void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, GameObject p_target = null, float p_projectileDamage = 0)
     {
         m_teamLabel.SetTeamType(p_myNewTeam);
         if(m_lifeDelay == null)
@@ -22,7 +22,10 @@ public class Projectiles_Tracking : Projectiles_Base
             m_lifeDelay = new WaitForSeconds(m_lifespan);
         }
         m_missileSpeed = p_newVelocity.magnitude;
-        m_targetUnit = p_target;
+        if (p_target != null)
+        {
+            m_targetUnit = p_target.transform;
+        }
         m_projectileDamage = p_projectileDamage;
         m_lifeCoroutine = StartCoroutine(LifeTime());
 

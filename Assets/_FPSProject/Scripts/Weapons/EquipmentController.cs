@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EquipmentController : MonoBehaviour
 {
-    public TeamLabel m_teamLabel;
+    private TeamLabel m_teamLabel;
 	private Coroutine m_aimCoroutine;
 	public Equipment_Base m_weapon;
     public Equipment_Base m_holsteredWeapon;
@@ -12,8 +12,9 @@ public class EquipmentController : MonoBehaviour
 
     private void Start()
     {
+        m_teamLabel = GetComponent<TeamLabel>();
         m_weapon.SetUpEquipment(m_teamLabel.m_myTeam);
-        if (m_holsteredWeapon == null)
+        if (m_holsteredWeapon != null)
         {
             m_holsteredWeapon.PutEquipmentAway();
         }

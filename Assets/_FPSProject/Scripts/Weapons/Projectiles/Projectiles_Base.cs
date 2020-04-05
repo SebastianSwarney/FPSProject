@@ -40,14 +40,16 @@ public class Projectiles_Base : MonoBehaviour
     private void Awake()
     {
         m_projectileCollisionScripts = GetComponents<IProjectile_Collision>();
+        m_teamLabel = GetComponent<TeamLabel>();
     }
     private void Start()
     {
         m_pooler = ObjectPooler.instance;
-        m_teamLabel = GetComponent<TeamLabel>();
+        
     }
-    public virtual void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, Transform p_target = null, float p_projectileDamage = 0)
+    public virtual void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, GameObject p_target = null, float p_projectileDamage = 0)
     {
+
         m_teamLabel.SetTeamType(p_myNewTeam);
         m_velocity = p_newVelocity;
         m_bulletSpawnedEvent.Invoke();

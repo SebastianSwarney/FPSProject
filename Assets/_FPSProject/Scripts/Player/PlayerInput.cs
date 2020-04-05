@@ -2,93 +2,96 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
+using Photon.Pun;
 
 public class PlayerInput : MonoBehaviour
 {
-	public int m_playerId;
+    public int m_playerId;
 
-	private PlayerController m_playerController;
-	private Player m_playerInputController;
+    private PlayerController m_playerController;
+    private Player m_playerInputController;
 
-	private bool m_lockLooking;
+    private bool m_lockLooking;
 
-    public EquipmentController m_equipmentController;
+    private EquipmentController m_equipmentController;
 
-	private void Start()
-	{
-		m_playerController = GetComponent<PlayerController>();
-		m_playerInputController = ReInput.players.GetPlayer(m_playerId);
-	}
 
-	private void Update()
-	{
-		GetInput();
-	}
+    private void Start()
+    {
+        m_equipmentController = GetComponent<EquipmentController>();
+        m_playerController = GetComponent<PlayerController>();
+        m_playerInputController = ReInput.players.GetPlayer(m_playerId);
+    }
 
-	public void GetInput()
-	{
-		Vector2 movementInput = new Vector2(m_playerInputController.GetAxis("MoveHorizontal"), m_playerInputController.GetAxis("MoveVertical"));
-		m_playerController.SetMovementInput(movementInput);
+    private void Update()
+    {
+        GetInput();
+    }
 
-		if (Input.GetKeyDown(KeyCode.P))
-		{
-			m_lockLooking = !m_lockLooking;
-		}
+    public void GetInput()
+    {
+        Vector2 movementInput = new Vector2(m_playerInputController.GetAxis("MoveHorizontal"), m_playerInputController.GetAxis("MoveVertical"));
+        m_playerController.SetMovementInput(movementInput);
 
-		if (!m_lockLooking)
-		{
-			Vector2 lookInput = new Vector2(m_playerInputController.GetAxis("LookHorizontal"), m_playerInputController.GetAxis("LookVertical"));
-			m_playerController.SetLookInput(lookInput);
-		}
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            m_lockLooking = !m_lockLooking;
+        }
 
-		if (m_playerInputController.GetButtonDown("Jump"))
-		{
-			m_playerController.OnJumpInputDown();
-		}
-		if (m_playerInputController.GetButtonUp("Jump"))
-		{
-			m_playerController.OnJumpInputUp();
-		}
+        if (!m_lockLooking)
+        {
+            Vector2 lookInput = new Vector2(m_playerInputController.GetAxis("LookHorizontal"), m_playerInputController.GetAxis("LookVertical"));
+            m_playerController.SetLookInput(lookInput);
+        }
 
-		if (m_playerInputController.GetButtonDown("WallRide"))
-		{
-			m_playerController.WallRideInputDown();
-		}
+        if (m_playerInputController.GetButtonDown("Jump"))
+        {
+            m_playerController.OnJumpInputDown();
+        }
+        if (m_playerInputController.GetButtonUp("Jump"))
+        {
+            m_playerController.OnJumpInputUp();
+        }
 
-		if (m_playerInputController.GetButtonUp("WallRide"))
-		{
-			m_playerController.WallRideInputUp();
-		}
+        if (m_playerInputController.GetButtonDown("WallRide"))
+        {
+            m_playerController.WallRideInputDown();
+        }
 
-		if (m_playerInputController.GetButtonDown("Crouch"))
-		{
-			m_playerController.OnCrouchInputDown();
-		}
-		if (m_playerInputController.GetButtonUp("Crouch"))
-		{
-			//m_playerController.OnCrouchInputUp();
-		}
+        if (m_playerInputController.GetButtonUp("WallRide"))
+        {
+            m_playerController.WallRideInputUp();
+        }
 
-		if (m_playerInputController.GetButtonDown("Grapple"))
-		{
-			//m_playerController.OnGrappleInputDown();
-		}
+        if (m_playerInputController.GetButtonDown("Crouch"))
+        {
+            m_playerController.OnCrouchInputDown();
+        }
+        if (m_playerInputController.GetButtonUp("Crouch"))
+        {
+            //m_playerController.OnCrouchInputUp();
+        }
 
-		if (m_playerInputController.GetButtonUp("Grapple"))
-		{
-			//m_playerController.OnGrappleInputUp();
-		}
+        if (m_playerInputController.GetButtonDown("Grapple"))
+        {
+            //m_playerController.OnGrappleInputDown();
+        }
 
-		if (m_playerInputController.GetButtonDown("Aim"))
-		{
-            
+        if (m_playerInputController.GetButtonUp("Grapple"))
+        {
+            //m_playerController.OnGrappleInputUp();
+        }
+
+        if (m_playerInputController.GetButtonDown("Aim"))
+        {
+
             m_equipmentController.OnShootInputDown();
 
         }
 
-		if (m_playerInputController.GetButtonUp("Aim"))
-		{
+        if (m_playerInputController.GetButtonUp("Aim"))
+        {
             m_equipmentController.OnShootInputUp();
         }
-	}
+    }
 }

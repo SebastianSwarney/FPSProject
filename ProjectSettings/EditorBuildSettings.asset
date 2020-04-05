@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/_FPSProject/Scenes/Test Network Setup/Photon MatchMaking.unity
+    guid: ff9b480891d8ef34384b38f2128447ba
+  - enabled: 1
+    path: Assets/_FPSProject/Scenes/Test Network Setup/PhotonTestScene.unity
+    guid: a2a145aeb30a4054dabd53a0324a1f98
   m_configObjects: {}

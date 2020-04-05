@@ -64,7 +64,7 @@ public class Equipment_Gun : Equipment_Base
 
     private void CreateBullet(GameObject p_hitObj)
     {
-        m_pooler.NewObject(m_bulletProperties.m_bulletPrefab, m_fireSpot.position, m_fireSpot.rotation).GetComponent<Projectiles_Base>().SetVariables(m_teamLabel.m_myTeam, m_fireSpot.forward * m_bulletProperties.m_bulletSpeed, p_hitObj.transform,m_bulletProperties.m_bulletDamage);
+        m_pooler.NewObject(m_bulletProperties.m_bulletPrefab, m_fireSpot.position, m_fireSpot.rotation).GetComponent<Projectiles_Base>().SetVariables(m_teamLabel.m_myTeam, m_fireSpot.forward * m_bulletProperties.m_bulletSpeed, p_hitObj,m_bulletProperties.m_bulletDamage);
     }
 
     private void PerformAimAssist(Transform p_playerCam, out GameObject p_hitPlayer)

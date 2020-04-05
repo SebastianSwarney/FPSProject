@@ -18,16 +18,10 @@ public class PhotonPlayer : MonoBehaviour
 
     private void RandomSpawn()
     {
+
         if (m_photonView.IsMine)
         {
             m_myAvatar = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", m_myAvatar.name), Vector3.zero, Quaternion.identity, 0);
-            Transform newSpawn = MatchSpawningManager.Instance.SpawnPlayer(m_myAvatar);
-            m_myAvatar.transform.position = newSpawn.position;
-            m_myAvatar.transform.rotation = newSpawn.rotation;
         }
-
-        
-        
-
     }
 }

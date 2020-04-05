@@ -56,6 +56,11 @@ public class MatchSpawn_Zone : MonoBehaviour, ITeam
         return (Physics.SphereCast(new Ray(p_newPoint.position, Vector3.forward), m_spawnRadiusCheck, 0, m_playerMask));
     }
 
+    public bool CanSpawnIn()
+    {
+        return m_currentZoneStatus == ZoneOccupancy.Controlled;
+    }
+
     public TeamTypes.TeamType GetTeamType()
     {
         return m_zoneTeam;
