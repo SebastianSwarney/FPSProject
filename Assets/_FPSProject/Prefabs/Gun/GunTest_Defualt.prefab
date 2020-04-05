@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 6692425339295825544}
   - component: {fileID: 1987952813398951558}
   m_Layer: 0
-  m_Name: GunTest
+  m_Name: GunTest_Defualt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103,14 +103,14 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   m_fireSpot: {fileID: 1334400645664398639}
-  m_camera: {fileID: 0}
-  m_fireBehaviour: {fileID: 11400000, guid: 2769c1223f55fff4eb26c671ae56eec4, type: 2}
+  m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
   m_bulletProperties:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
       type: 3}
     m_bulletDamage: 10
     m_bulletSpeed: 50
     m_gunFireDelay: 0.5
+  m_canFire: 1
   m_aimAssist:
     m_hitDetectLayer:
       serializedVersion: 2
