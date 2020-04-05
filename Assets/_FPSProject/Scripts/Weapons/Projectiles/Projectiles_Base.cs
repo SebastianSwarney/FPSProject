@@ -47,7 +47,7 @@ public class Projectiles_Base : MonoBehaviour
         m_pooler = ObjectPooler.instance;
         
     }
-    public virtual void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, GameObject p_target = null, float p_projectileDamage = 0)
+    public virtual void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, Transform p_target = null, float p_projectileDamage = 0)
     {
 
         m_teamLabel.SetTeamType(p_myNewTeam);

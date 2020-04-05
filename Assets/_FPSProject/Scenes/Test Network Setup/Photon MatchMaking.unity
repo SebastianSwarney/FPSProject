@@ -1230,6 +1230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d509d60ee1971b408d3856783548dcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_menuScene: 0
   m_multiplayerScene: 1
   m_photonPlayerPrefab: {fileID: 2380600404209478212, guid: b73a4e2cc6a57064fb4c4cef12dce054,
     type: 3}

@@ -4,25 +4,29 @@ using UnityEngine;
 
 public class Equipment_Gun : Equipment_Base
 {
-    
+    #region Gun Vairables
     [Header("Gun Variables")]
     public Transform m_fireSpot;
+    public FireBehaviour_Base m_fireBehaviour;
     public BulletProperties m_bulletProperties;
+
     [System.Serializable]
     public struct BulletProperties
     {
         public GameObject m_bulletPrefab;
+
         public float m_bulletDamage;
         public float m_bulletSpeed;
         public float m_gunFireDelay;
     }
 
-
-    private bool m_canFire = true;
-    private IEnumerator m_cor_fireDelay;
+    [HideInInspector]
+    public bool m_canFire = true;
+    private Coroutine m_cor_fireDelay;
     private float m_currentFireRateDelay = 0;
+    #endregion
 
-
+    #region Aim Assist
     [Header("Aim Assist")]
     public AimAssist m_aimAssist;
     [System.Serializable]
@@ -32,42 +36,52 @@ public class Equipment_Gun : Equipment_Base
         public LayerMask m_playerLayer;
         public float m_minAssistDistance, m_maxAssistDistance;
     }
+    #endregion
 
+
+    #region Optimization
     [Header("Optimization")]
     public float m_coroutineLifeTime;
-    private ObjectPooler m_pooler;
+    #endregion
 
+    #region Debugging
     [Header("Debugging")]
     public bool m_debugGizmos;
     public Color m_gizmosColor1, m_gizmosColor2;
-    private void Start()
-    {
-        m_pooler = ObjectPooler.instance;
-    }
+    #endregion
+
 
     public override void OnShootInputDown(Transform p_playerCam)
     {
         base.OnShootInputDown(p_playerCam);
+        ShootInputDown(p_playerCam);
+    }
+    public virtual void ShootInputDown(Transform p_playerCam)
+    {
         if (m_canFire)
         {
             GameObject hitPlayerObject;
             PerformAimAssist(p_playerCam, out hitPlayerObject);
-            CreateBullet(hitPlayerObject);
+            FireBullet(p_playerCam);
             StartFireDelay();
         }
+    }
+    public void FireBullet(Transform p_playerCam)
+    {
+        m_fireBehaviour.FireBullet(m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, p_playerCam);
     }
 
     public override void OnShootInputUp(Transform p_playerCam)
     {
         base.OnShootInputUp(p_playerCam);
+        ShootInputUp(p_playerCam);
     }
 
-    private void CreateBullet(GameObject p_hitObj)
+    public virtual void ShootInputUp(Transform p_playerCam)
     {
-        m_pooler.NewObject(m_bulletProperties.m_bulletPrefab, m_fireSpot.position, m_fireSpot.rotation).GetComponent<Projectiles_Base>().SetVariables(m_teamLabel.m_myTeam, m_fireSpot.forward * m_bulletProperties.m_bulletSpeed, p_hitObj,m_bulletProperties.m_bulletDamage);
     }
 
-    private void PerformAimAssist(Transform p_playerCam, out GameObject p_hitPlayer)
+    public void PerformAimAssist(Transform p_playerCam, out GameObject p_hitPlayer)
     {
         RaycastHit hit;
         if (Physics.Raycast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_hitDetectLayer))
@@ -84,15 +98,17 @@ public class Equipment_Gun : Equipment_Base
         p_hitPlayer = null;
     }
 
-    private void StartFireDelay()
+    public void StartFireDelay()
     {
-        m_canFire = false;
         m_currentFireRateDelay = 0;
+        m_canFire = false;
         if (m_cor_fireDelay == null)
         {
-            StartCoroutine(FireRateDelay());
+
+            m_cor_fireDelay = StartCoroutine(FireRateDelay());
         }
     }
+
     private IEnumerator FireRateDelay()
     {
         float corLifetime = 0;
@@ -101,6 +117,7 @@ public class Equipment_Gun : Equipment_Base
             while (m_currentFireRateDelay < m_bulletProperties.m_gunFireDelay)
             {
                 corLifetime = 0;
+
                 m_currentFireRateDelay += Time.deltaTime;
                 yield return null;
             }
@@ -108,14 +125,15 @@ public class Equipment_Gun : Equipment_Base
             m_canFire = true;
             yield return null;
         }
+        
         m_cor_fireDelay = null;
     }
 
-    public Transform m_camera;
+
     private void OnDrawGizmos()
     {
         if (!m_debugGizmos) return;
         Gizmos.color = m_gizmosColor1;
-        Gizmos.DrawLine(m_camera.position + (m_camera.forward * m_aimAssist.m_minAssistDistance), m_camera.position + m_camera.forward * m_aimAssist.m_maxAssistDistance);
+        Gizmos.DrawLine(transform.position + (transform.forward * m_aimAssist.m_minAssistDistance), transform.position + transform.forward * m_aimAssist.m_maxAssistDistance);
     }
 }

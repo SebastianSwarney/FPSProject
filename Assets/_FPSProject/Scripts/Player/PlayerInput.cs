@@ -72,26 +72,26 @@ public class PlayerInput : MonoBehaviour
             //m_playerController.OnCrouchInputUp();
         }
 
-        if (m_playerInputController.GetButtonDown("Grapple"))
+        if (m_playerInputController.GetButton("Fire"))
         {
-            //m_playerController.OnGrappleInputDown();
+            m_equipmentController.OnShootInputDown();
         }
 
-        if (m_playerInputController.GetButtonUp("Grapple"))
+        if (m_playerInputController.GetButtonUp("Fire"))
         {
-            //m_playerController.OnGrappleInputUp();
+            m_equipmentController.OnShootInputUp();
         }
 
         if (m_playerInputController.GetButtonDown("Aim"))
         {
 
-            m_equipmentController.OnShootInputDown();
+            
 
         }
 
         if (m_playerInputController.GetButtonUp("Aim"))
         {
-            m_equipmentController.OnShootInputUp();
+            
         }
     }
 }

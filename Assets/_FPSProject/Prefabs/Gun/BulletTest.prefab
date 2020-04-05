@@ -91,7 +91,6 @@ GameObject:
   - component: {fileID: 5544036182967518219}
   - component: {fileID: 3900400124138448050}
   - component: {fileID: 6495588663871986190}
-  - component: {fileID: 9178387036393851067}
   m_Layer: 0
   m_Name: BulletTest
   m_TagString: Untagged
@@ -178,17 +177,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3096f7297e9c9c7478435aea5711236c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &9178387036393851067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3900400124138448053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01469a8ca5af4514683af5b439b4c5dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_spawnedObject: {fileID: 1201588605853739785, guid: eaf4aa48387ac0c4084dee29e8af96b9,
-    type: 3}

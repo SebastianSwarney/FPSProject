@@ -103,6 +103,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   m_fireSpot: {fileID: 1334400645664398639}
+  m_camera: {fileID: 0}
+  m_fireBehaviour: {fileID: 11400000, guid: 2769c1223f55fff4eb26c671ae56eec4, type: 2}
   m_bulletProperties:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
       type: 3}
@@ -122,7 +124,6 @@ MonoBehaviour:
   m_debugGizmos: 1
   m_gizmosColor1: {r: 1, g: 0.25, b: 0.25, a: 1}
   m_gizmosColor2: {r: 0, g: 0, b: 0, a: 0}
-  m_camera: {fileID: 0}
 --- !u!1 &8182774619386924938
 GameObject:
   m_ObjectHideFlags: 0
