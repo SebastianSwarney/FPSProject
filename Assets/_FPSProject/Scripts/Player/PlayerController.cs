@@ -785,17 +785,23 @@ public class PlayerController : MonoBehaviour
         //Rotate the player on the y axis (left and right)
         transform.Rotate(Vector3.up, cameraInput.y * (m_cameraProperties.m_mouseSensitivity));
 
+        RotateCameraX(cameraInput.x * m_cameraProperties.m_mouseSensitivity);
+
+    }
+
+    public void RotateCameraX(float p_xRotateAmount)
+    {
         float cameraXAng = m_cameraProperties.m_cameraMain.transform.eulerAngles.x;
 
         //Stops the camera from rotating, if it hits the resrictions
-        if (cameraInput.x < 0 && cameraXAng > 360 - m_cameraProperties.m_maxCameraAng || cameraInput.x < 0 && cameraXAng < m_cameraProperties.m_maxCameraAng + 10)
+        if (p_xRotateAmount < 0 && cameraXAng > 360 - m_cameraProperties.m_maxCameraAng || p_xRotateAmount < 0 && cameraXAng < m_cameraProperties.m_maxCameraAng + 10)
         {
-            m_cameraProperties.m_cameraMain.transform.Rotate(Vector3.right, cameraInput.x * (m_cameraProperties.m_mouseSensitivity));
+            m_cameraProperties.m_cameraMain.transform.Rotate(Vector3.right, p_xRotateAmount );
 
         }
-        else if (cameraInput.x > 0 && cameraXAng > 360 - m_cameraProperties.m_maxCameraAng - 10 || cameraInput.x > 0 && cameraXAng < m_cameraProperties.m_maxCameraAng)
+        else if (p_xRotateAmount > 0 && cameraXAng > 360 - m_cameraProperties.m_maxCameraAng - 10 || p_xRotateAmount > 0 && cameraXAng < m_cameraProperties.m_maxCameraAng)
         {
-            m_cameraProperties.m_cameraMain.transform.Rotate(Vector3.right, cameraInput.x * (m_cameraProperties.m_mouseSensitivity));
+            m_cameraProperties.m_cameraMain.transform.Rotate(Vector3.right, p_xRotateAmount );
 
         }
 
