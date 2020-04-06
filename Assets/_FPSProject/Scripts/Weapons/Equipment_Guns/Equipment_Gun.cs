@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class Equipment_Gun : Equipment_Base
 {
@@ -8,6 +9,7 @@ public class Equipment_Gun : Equipment_Base
     [Header("Gun Variables")]
     public Transform m_fireSpot;
     public FireBehaviour_Base m_fireBehaviour;
+    public float m_recoilAmount;
     public BulletProperties m_bulletProperties;
 
     [System.Serializable]
@@ -24,6 +26,7 @@ public class Equipment_Gun : Equipment_Base
     public bool m_canFire = true;
     private Coroutine m_cor_fireDelay;
     private float m_currentFireRateDelay = 0;
+    private PhotonView m_myPhotonView;
     #endregion
 
     #region Aim Assist
@@ -34,6 +37,7 @@ public class Equipment_Gun : Equipment_Base
     {
         public LayerMask m_hitDetectLayer;
         public LayerMask m_playerLayer;
+        public float m_aimAssistRadius;
         public float m_minAssistDistance, m_maxAssistDistance;
     }
     #endregion
@@ -50,7 +54,10 @@ public class Equipment_Gun : Equipment_Base
     public Color m_gizmosColor1, m_gizmosColor2;
     #endregion
 
-
+    private void Start()
+    {
+        m_myPhotonView = GetComponent<PhotonView>();
+    }
     public override void OnShootInputDown(Transform p_playerCam)
     {
         base.OnShootInputDown(p_playerCam);
@@ -60,15 +67,17 @@ public class Equipment_Gun : Equipment_Base
     {
         if (m_canFire)
         {
-            GameObject hitPlayerObject;
+            Transform hitPlayerObject;
             PerformAimAssist(p_playerCam, out hitPlayerObject);
-            FireBullet(p_playerCam);
+            FireBullet(p_playerCam, hitPlayerObject);
             StartFireDelay();
         }
     }
-    public void FireBullet(Transform p_playerCam)
+    public void FireBullet(Transform p_playerCam, Transform p_targetObject)
     {
-        m_fireBehaviour.FireBullet(m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, p_playerCam);
+        
+        m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, p_targetObject);
+        m_equipController.ApplyRecoilCameraRotation(-m_recoilAmount);
     }
 
     public override void OnShootInputUp(Transform p_playerCam)
@@ -81,21 +90,43 @@ public class Equipment_Gun : Equipment_Base
     {
     }
 
-    public void PerformAimAssist(Transform p_playerCam, out GameObject p_hitPlayer)
+
+    public void PerformAimAssist(Transform p_playerCam, out Transform p_hitPlayer)
     {
         RaycastHit hit;
         if (Physics.Raycast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_hitDetectLayer))
         {
             m_fireSpot.LookAt(hit.point);
-            p_hitPlayer = null;
-            if (Physics.Raycast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer))
+            Debug.DrawLine(transform.position, hit.point, Color.blue,1f);
+
+            if (Physics.SphereCast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius, p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer))
             {
-                p_hitPlayer = hit.transform.gameObject;
+                p_hitPlayer = hit.transform;
+                m_fireSpot.LookAt(hit.point);
+                Debug.DrawLine(transform.position, hit.point, Color.green, 1f);
+                return;
             }
+            p_hitPlayer = null;
             return;
         }
-        m_fireSpot.localRotation = Quaternion.identity;
-        p_hitPlayer = null;
+        else
+        {
+            if (Physics.SphereCast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius, p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer))
+            {
+                p_hitPlayer = hit.transform;
+                m_fireSpot.LookAt(hit.point);
+                Debug.DrawLine(transform.position, hit.point, Color.green, 1f);
+                return;
+            }
+            else
+            {
+                m_fireSpot.localRotation = Quaternion.identity;
+                p_hitPlayer = null;
+                return;
+            }
+        }
+
+
     }
 
     public void StartFireDelay()
@@ -130,10 +161,41 @@ public class Equipment_Gun : Equipment_Base
     }
 
 
+
+    /// <summary>
+    /// Called from the scriptable Object, creates syncronized bullets over the network
+    /// </summary>
+    /// <param name="p_bulletData"></param>
+    [PunRPC]
+    public virtual void RPC_FireBullet(string p_bulletData)
+    {
+        DeserializeBulletData(p_bulletData);
+    }
+
+    public void DeserializeBulletData(string p_bulletData)
+    {
+        BulletData newBullet = JsonUtility.FromJson<BulletData>(p_bulletData);
+        GameObject newBulletObject = ObjectPooler.instance.NewObject(Resources.Load("Bullets/" + newBullet.m_bulletPrefabName) as GameObject, new Vector3(newBullet.m_bulletStartX, newBullet.m_bulletStartY, newBullet.m_bulletStartZ), Quaternion.identity);
+        Transform target = null;
+        if (newBullet.m_targetPlayer)
+        {
+            PhotonView checkPhoton = PhotonView.Find(newBullet.m_targetPlayerPhotonID);
+            if (checkPhoton != null)
+            {
+                target = checkPhoton.transform;
+            }
+        }
+        newBulletObject.GetComponent<Projectiles_Base>().SetVariables(TeamTypes.GetTeamFromInt(newBullet.m_bulletTeam), new Vector3(newBullet.m_bulletDirX, newBullet.m_bulletDirY, newBullet.m_bulletDirZ) * newBullet.m_bulletSpeed, target, newBullet.m_bulletDamage);
+    }
+
+
+
     private void OnDrawGizmos()
     {
         if (!m_debugGizmos) return;
         Gizmos.color = m_gizmosColor1;
+        Gizmos.DrawWireSphere(transform.position + (transform.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius);
         Gizmos.DrawLine(transform.position + (transform.forward * m_aimAssist.m_minAssistDistance), transform.position + transform.forward * m_aimAssist.m_maxAssistDistance);
+        Gizmos.DrawWireSphere(transform.position + transform.forward * m_aimAssist.m_maxAssistDistance, m_aimAssist.m_aimAssistRadius);
     }
 }

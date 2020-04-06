@@ -53,7 +53,9 @@ public class Equipment_BurstGun : Equipment_Gun
             while (m_currentBurstAmount < m_burstAmount)
             {
                 p_startedDelay = false;
-                FireBullet(p_playerCam);
+                Transform targetHit;
+                PerformAimAssist(p_playerCam, out targetHit);
+                FireBullet(p_playerCam, targetHit);
                 m_currentTimeBetweenBullets = 0;
                 while (m_currentTimeBetweenBullets < m_timeBetweenBullets)
                 {

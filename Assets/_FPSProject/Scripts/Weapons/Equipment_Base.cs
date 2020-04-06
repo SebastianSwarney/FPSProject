@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Photon.Pun;
 
 [System.Serializable]
 public class EquipmentEvent : UnityEngine.Events.UnityEvent { };
@@ -13,6 +13,12 @@ public abstract class Equipment_Base : MonoBehaviour
     [HideInInspector]
     public bool m_canUse = false;
 
+    [HideInInspector]
+    public EquipmentController m_equipController;
+
+    [HideInInspector]
+    public PhotonView m_currentPhotonView { get; private set; }
+
     [Header("Equipment Events")]
     [Tooltip("The events that are fired when the player presses the fire button, or stops pressing the fire button.")]
     public EquipmentEvents m_equipmentEvents;
@@ -23,12 +29,8 @@ public abstract class Equipment_Base : MonoBehaviour
         public EquipmentEvent m_equipmentStopUse;
     }
 
-    private void Start()
-    {
-        
-    }
 
-    public virtual void SetUpEquipment(TeamTypes.TeamType p_currentTeam)
+    public virtual void SetUpEquipment(TeamTypes.TeamType p_currentTeam, EquipmentController p_equipController, PhotonView p_currentPhotonView)
     {
         if (m_teamLabel == null)
         {
@@ -36,6 +38,8 @@ public abstract class Equipment_Base : MonoBehaviour
         }
         m_teamLabel.SetTeamType(p_currentTeam);
         m_canUse = true;
+        m_equipController = p_equipController;
+        m_currentPhotonView = p_currentPhotonView;
     }
     public virtual void PutEquipmentAway()
     {

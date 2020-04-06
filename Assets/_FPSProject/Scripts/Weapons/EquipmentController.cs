@@ -12,11 +12,16 @@ public class EquipmentController : MonoBehaviour
     public Transform m_playerCamera;
 
     private PhotonView m_photonView;
+
+    private PlayerController m_playerController;
     private void Start()
     {
         m_teamLabel = GetComponent<TeamLabel>();
-        m_weapon.SetUpEquipment(m_teamLabel.m_myTeam);
+        m_playerController = GetComponent<PlayerController>();
         m_photonView = GetComponent<PhotonView>();
+
+        m_weapon.SetUpEquipment(m_teamLabel.m_myTeam, this, m_photonView);
+        
         if (m_holsteredWeapon != null)
         {
             m_holsteredWeapon.PutEquipmentAway();
@@ -25,23 +30,22 @@ public class EquipmentController : MonoBehaviour
     public void OnShootInputDown()
 	{
         if (!m_photonView.IsMine) return;
-        m_photonView.RPC("RPC_FireInputDown", RpcTarget.All);
-	}
-    [PunRPC]
-    private void RPC_FireInputDown()
-    {
         m_weapon.OnShootInputDown(m_playerCamera);
     }
+
 
 	public void OnShootInputUp()
 	{
         if (!m_photonView.IsMine) return;
-        m_photonView.RPC("RPC_InputUp", RpcTarget.All);
+        m_weapon.OnShootInputUp(m_playerCamera);
+        
     }
 
-    [PunRPC]
-    private void RPC_InputUp()
+
+
+
+    public void ApplyRecoilCameraRotation(float p_recoilAmount)
     {
-        m_weapon.OnShootInputUp(m_playerCamera);
+        m_playerController.RotateCameraX(p_recoilAmount);
     }
 }
