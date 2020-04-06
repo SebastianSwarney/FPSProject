@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
+[System.Serializable]
+public class TeamLabelPlayerEvent : UnityEngine.Events.UnityEvent { }
 public class TeamLabel_Player : TeamLabel
 {
     public MeshRenderer m_renderer;
     public Material m_redMaterial, m_blueMaterial;
+    public TeamLabelPlayerEvent m_teamSetup;
+
 
     private void Start()
     {
+
         if (!m_photonView.IsMine) return;
         SetTeamType(TeamManager.Instance.AssignTeamType());
         Transform newSpawn = MatchSpawningManager.Instance.SpawnPlayer(m_myTeam);
         transform.position = newSpawn.position;
         transform.rotation = newSpawn.rotation;
-        
+        m_teamSetup.Invoke();
+
+
     }
 
     public override void SetTeamType(TeamTypes.TeamType p_newTeamType)

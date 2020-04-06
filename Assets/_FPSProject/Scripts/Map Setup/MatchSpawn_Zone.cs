@@ -20,7 +20,7 @@ public class MatchSpawn_Zone : MonoBehaviour, ITeam
     public float m_spawnRadiusCheck;
     
 
-    private void Start()
+    private void Awake()
     {
         m_randomSpawnPoint = new List<Transform>(m_spawnPoints);
     }

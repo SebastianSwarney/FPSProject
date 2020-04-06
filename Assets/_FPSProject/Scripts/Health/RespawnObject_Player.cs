@@ -25,6 +25,7 @@ public class RespawnObject_Player : RespawnObject
     
     public override void Start()
     {
+
         m_matchSpawning = MatchSpawningManager.Instance;
         m_myTeam = GetComponent<TeamLabel>();
         m_controller = GetComponent<PlayerController>();

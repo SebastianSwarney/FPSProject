@@ -12,16 +12,19 @@ public class EquipmentController : MonoBehaviour
     public Transform m_playerCamera;
 
     private PhotonView m_photonView;
-
     private PlayerController m_playerController;
-    private void Start()
+
+    private void Awake()
     {
         m_teamLabel = GetComponent<TeamLabel>();
         m_playerController = GetComponent<PlayerController>();
         m_photonView = GetComponent<PhotonView>();
+    }
 
+    public void SetupEquipment()
+    {
         m_weapon.SetUpEquipment(m_teamLabel.m_myTeam, this, m_photonView);
-        
+
         if (m_holsteredWeapon != null)
         {
             m_holsteredWeapon.PutEquipmentAway();
