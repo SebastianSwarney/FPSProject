@@ -14,7 +14,7 @@ public class FireBehaviour_Scatter : FireBehaviour_Base
         for (int i = 0; i < m_bulletAmount; i++)
         {
             Vector3 newDir = Quaternion.AngleAxis(Random.Range(-m_bulletSpreadAngle, m_bulletSpreadAngle), p_fireSpot.up) * Quaternion.AngleAxis(Random.Range(-m_bulletSpreadAngle, m_bulletSpreadAngle),p_fireSpot.right) *p_fireSpot.forward;
-            string newBullet = SerializeBulletData(p_teamLabel.m_myTeam, p_bullet.name, p_fireSpot.position, newDir, p_bulletSpeed, p_bulletDamage, p_target);
+            string newBullet = SerializeBulletData(p_teamLabel.m_myTeam, p_bullet.name, p_fireSpot.position, newDir, p_bulletSpeed, damagePerBullet, p_target);
             p_firedPhotonView.RPC("RPC_FireBullet", RpcTarget.All, newBullet);
         }
     }
