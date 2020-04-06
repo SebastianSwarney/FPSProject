@@ -19,8 +19,6 @@ public class PhotonOfflineToggle : MonoBehaviourPunCallbacks
             int randomRoomNum = Random.Range(0, 1000);
             RoomOptions newRoomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = 10 };
             PhotonNetwork.CreateRoom("Room" + randomRoomNum, newRoomOps);
-
-            print("Oi");
             PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", m_playerPrefab.name), m_playerSpawn.position, m_playerSpawn.rotation, 0);
         }
     }
