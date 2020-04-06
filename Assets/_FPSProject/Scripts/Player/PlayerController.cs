@@ -311,6 +311,7 @@ public class PlayerController : MonoBehaviour
 
     private bool m_isLongJumping;
 
+    public Vector2 m_wallRunJumpForce;
     private Vector3 m_wallRunJumpVelocity;
 
     public float m_wallRunJumpGroundVelocityDecayTime;
@@ -724,7 +725,10 @@ public class PlayerController : MonoBehaviour
 
         while (t < m_wallRunJumpGroundVelocityDecayTime)
         {
-            t += Time.fixedDeltaTime;
+            if (IsGrounded())
+            {
+                t += Time.fixedDeltaTime;
+            }
 
             float speedProgress = m_wallRunJumpGroundVelocityDecayAnimationCurve.Evaluate(t / m_wallRunJumpGroundVelocityDecayTime);
             float currentSpeed = Mathf.Lerp(p_forwardSpeed, 0, speedProgress);
@@ -1252,7 +1256,7 @@ public class PlayerController : MonoBehaviour
     private void WallRunningJump()
     {
         StopWallRun();
-        StartCoroutine(InAirBoost(1f, 75f, transform.forward));
+        StartCoroutine(InAirBoost(m_wallRunJumpForce.y, m_wallRunJumpForce.x, transform.forward));
     }
 
     private void GroundJump()
