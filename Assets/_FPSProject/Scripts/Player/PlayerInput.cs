@@ -55,12 +55,12 @@ public class PlayerInput : MonoBehaviour
 
         if (m_playerInputController.GetButtonDown("WallRide"))
         {
-            m_playerController.WallRideInputDown();
+
         }
 
         if (m_playerInputController.GetButtonUp("WallRide"))
         {
-            m_playerController.WallRideInputUp();
+
         }
 
         if (m_playerInputController.GetButtonDown("Crouch"))

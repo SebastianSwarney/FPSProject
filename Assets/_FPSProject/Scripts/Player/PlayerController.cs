@@ -125,48 +125,34 @@ public class PlayerController : MonoBehaviour
     [System.Serializable]
     public struct WallRunProperties
     {
-        public LayerMask m_wallMask;
+        [Header("Basic Wall Run Properties")]
+        public float m_wallRunTolerenceMax;
+        public float m_wallRunTolerenceMin;
 
-        public AnimationCurve m_wallSpeedCurve;
-        public float m_wallSpeedUpTime;
-        public float m_maxWallRunSpeed;
+        public float m_wallRunSpeed;
+        public float m_wallRunSpeedUpTime;
+        public AnimationCurve m_wallRunSpeedUpCurve;
 
+        public float m_wallRunYVelocityStopTime;
+
+        [Header("Wall Run Jump Properties")]
+        public Vector2 m_wallRunJumpForce;
+        public float m_wallRunJumpGroundVelocityDecayTime;
+        public AnimationCurve m_wallRunJumpGroundVelocityDecayAnimationCurve;
+
+        [Header("Camera Tilt Properties")]
         public float m_tiltSpeed;
         public float m_wallRunCameraMaxTilt;
-
-        public int m_wallRidingRayCount;
-        public float m_wallRaySpacing;
-        public float m_wallRunRayLength;
-        public float m_wallRunBufferTime;
-        public Vector3 m_wallRunJumpVelocity;
-
-        public float m_wallJumpBufferTime;
-        public Vector3 m_wallJumpVelocity;
     }
 
     [Header("Wall Run Properties")]
     public WallRunProperties m_wallRunProperties;
-
-    private float m_currentWallRunningSpeed;
-
-    private float m_wallRunBufferTimer;
-    private float m_wallJumpBufferTimer;
+    public LayerMask m_wallConnectMask;
 
     private float m_tiltTarget;
-    private float m_tiltSmoothingVelocity;
-
     private bool m_isWallRunning;
-    private bool m_connectedWithWall;
-    [HideInInspector]
-    public bool m_holdingWallRideStick;
 
-    private Vector3 m_wallNormal;
-    private Vector3 m_wallVector;
-    private Vector3 m_wallFacingVector;
-    private Vector3 m_modelWallRunPos;
-
-    private Coroutine m_wallJumpBufferCoroutine;
-    private Coroutine m_wallRunBufferCoroutine;
+    private Vector3 m_wallRunJumpVelocity;
     #endregion
 
     #region Wall Climb Properties
@@ -229,6 +215,7 @@ public class PlayerController : MonoBehaviour
 
     private bool m_isSliding;
     private float m_slideTimer;
+    private Vector3 m_slideVelocity;
 
     #endregion
 
@@ -295,27 +282,11 @@ public class PlayerController : MonoBehaviour
 
     private bool m_holdingJumpInput;
 
-    [Space]
-
-    public LayerMask m_wallConnectMask;
-
-    public float m_wallRunTolerenceMax;
-    public float m_wallRunTolerenceMin;
-
-    public float m_wallRunSpeed;
-    public float m_wallRunSpeedUpTime;
-
-    public float m_wallRunYVelocityStopTime;
-
-    public AnimationCurve m_wallRunSpeedUpCurve;
-
     private bool m_isLongJumping;
 
-    public Vector2 m_wallRunJumpForce;
-    private Vector3 m_wallRunJumpVelocity;
+    private bool m_maintainSpeed;
 
-    public float m_wallRunJumpGroundVelocityDecayTime;
-    public AnimationCurve m_wallRunJumpGroundVelocityDecayAnimationCurve;
+    public Vector2 m_slideJumpForce;
 
     private void Start()
     {
@@ -326,11 +297,6 @@ public class PlayerController : MonoBehaviour
 
         m_currentMovementSpeed = m_baseMovementProperties.m_baseMovementSpeed;
         m_jumpBufferTimer = m_jumpingProperties.m_jumpBufferTime;
-
-        m_wallJumpBufferTimer = m_wallRunProperties.m_wallJumpBufferTime;
-        m_wallRunBufferTimer = m_wallRunProperties.m_wallRunBufferTime;
-
-
     }
 
     private void OnValidate()
@@ -371,8 +337,8 @@ public class PlayerController : MonoBehaviour
         Vector3 velocity = Vector3.zero;
 
         velocity += m_velocity;
-
         velocity += m_wallRunJumpVelocity;
+        velocity += m_slideVelocity;
 
         m_characterController.Move(velocity * Time.deltaTime);
     }
@@ -437,9 +403,9 @@ public class PlayerController : MonoBehaviour
 
                             Debug.DrawLine(m_characterController.transform.position, hit.point);
 
-                            if (wallFacingVector.y < (m_wallRunTolerenceMin * -1))
+                            if (wallFacingVector.y < (m_wallRunProperties.m_wallRunTolerenceMin * -1))
                             {
-                                if (wallFacingVector.y > (m_wallRunTolerenceMax * -1))
+                                if (wallFacingVector.y > (m_wallRunProperties.m_wallRunTolerenceMax * -1))
                                 {
                                     StartWallRun(-hit.normal, moveDir);
                                 }
@@ -524,10 +490,10 @@ public class PlayerController : MonoBehaviour
         {
             t += Time.fixedDeltaTime;
 
-            float speedProgress = m_wallRunSpeedUpCurve.Evaluate(t / m_wallRunSpeedUpTime);
-            float currentWallRunSpeed = Mathf.Lerp(speedStart, m_wallRunSpeed, speedProgress);
+            float speedProgress = m_wallRunProperties.m_wallRunSpeedUpCurve.Evaluate(t / m_wallRunProperties.m_wallRunSpeedUpTime);
+            float currentWallRunSpeed = Mathf.Lerp(speedStart, m_wallRunProperties.m_wallRunSpeed, speedProgress);
 
-            float yProgress = t / m_wallRunYVelocityStopTime;
+            float yProgress = t / m_wallRunProperties.m_wallRunYVelocityStopTime;
             float yVelocity = Mathf.Lerp(yVelStart, 0, yProgress);
 
             float tiltResult = Mathf.Lerp(-m_wallRunProperties.m_wallRunCameraMaxTilt, m_wallRunProperties.m_wallRunCameraMaxTilt, -p_wallRunMovementDir);
@@ -696,6 +662,7 @@ public class PlayerController : MonoBehaviour
     }
 	#endregion
 
+	#region Misc Wall Code
 	private void TiltLerp()
     {
         m_cameraProperties.m_cameraTilt.localRotation = Quaternion.Slerp(m_cameraProperties.m_cameraTilt.localRotation, Quaternion.Euler(0, 0, m_tiltTarget), m_wallRunProperties.m_tiltSpeed);
@@ -723,14 +690,14 @@ public class PlayerController : MonoBehaviour
     {
         float t = 0;
 
-        while (t < m_wallRunJumpGroundVelocityDecayTime)
+        while (t < m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime)
         {
-            if (IsGrounded())
+            if (IsGrounded() && !m_maintainSpeed)
             {
                 t += Time.fixedDeltaTime;
             }
 
-            float speedProgress = m_wallRunJumpGroundVelocityDecayAnimationCurve.Evaluate(t / m_wallRunJumpGroundVelocityDecayTime);
+            float speedProgress = m_wallRunProperties.m_wallRunJumpGroundVelocityDecayAnimationCurve.Evaluate(t / m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime);
             float currentSpeed = Mathf.Lerp(p_forwardSpeed, 0, speedProgress);
 
             Vector3 movementVelocity = p_movementDirection * currentSpeed;
@@ -741,10 +708,10 @@ public class PlayerController : MonoBehaviour
 
         m_wallRunJumpVelocity = Vector3.zero;
     }
+	#endregion
 
-
-    #region Input Code
-    public void SetMovementInput(Vector2 p_input)
+	#region Input Code
+	public void SetMovementInput(Vector2 p_input)
     {
         m_movementInput = p_input;
     }
@@ -752,16 +719,6 @@ public class PlayerController : MonoBehaviour
     public void SetLookInput(Vector2 p_input)
     {
         m_lookInput = p_input;
-    }
-
-    public void WallRideInputDown()
-    {
-        m_holdingWallRideStick = true;
-    }
-
-    public void WallRideInputUp()
-    {
-        m_holdingWallRideStick = false;
     }
     #endregion
 
@@ -873,7 +830,6 @@ public class PlayerController : MonoBehaviour
     {
         float speed = m_baseMovementProperties.m_baseMovementSpeed;
 
-        speed += m_currentWallRunningSpeed;
         speed += m_currentWallClimbSpeed;
         speed += m_currentPostClamberSpeedBoost;
         speed += m_currentPostGrappleSpeedBoost;
@@ -1029,7 +985,6 @@ public class PlayerController : MonoBehaviour
         m_states.m_movementControllState = MovementControllState.MovementDisabled;
         m_isSliding = true;
 
-
         Vector3 slideDir = transform.forward;
         m_slideTimer = 0;
 
@@ -1037,6 +992,10 @@ public class PlayerController : MonoBehaviour
 
         Vector3 slideSideShiftVelocity = Vector3.zero;
         Vector3 slideSideShiftVelocitySmoothing = Vector3.zero;
+
+        m_maintainSpeed = true;
+
+        m_velocity = Vector3.zero;
 
         while (m_slideTimer < m_slideProperties.m_slideTime)
         {
@@ -1076,12 +1035,16 @@ public class PlayerController : MonoBehaviour
             }
             else if (!hasBeenOnSlope)
             {
-                Vector3 slideVelocity = slideDir * currentSlideSpeed;
-                m_velocity = new Vector3(slideVelocity.x, m_velocity.y, slideVelocity.z);
+                Vector3 calculatedSlideVelocity = slideDir * currentSlideSpeed;
+                m_slideVelocity = new Vector3(calculatedSlideVelocity.x, 0, calculatedSlideVelocity.z);
             }
 
             yield return new WaitForFixedUpdate();
         }
+
+        m_slideVelocity = Vector3.zero;
+
+        m_maintainSpeed = false;
 
         m_isSliding = false;
 
@@ -1222,6 +1185,11 @@ public class PlayerController : MonoBehaviour
 
         m_jumpBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_jumpBufferTimer = (x), m_jumpingProperties.m_jumpBufferTime));
 
+        if (m_isSliding)
+        {
+            SlideJump();
+        }
+
         if (CheckBuffer(ref m_graceTimer, ref m_jumpingProperties.m_graceTime, m_graceBufferCoroutine) && !IsGrounded() && m_velocity.y <= 0f)
         {
             GroundJump();
@@ -1259,10 +1227,19 @@ public class PlayerController : MonoBehaviour
         m_minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(m_gravity) * m_jumpingProperties.m_minJumpHeight);
     }
 
+    private void SlideJump()
+    {
+        StartCoroutine(InAirBoost(m_slideJumpForce.y, m_slideJumpForce.x, transform.forward));
+
+        StartCoroutine(RunCrouchUp());
+
+        m_hasJumped = true;
+    }
+
     private void WallRunningJump()
     {
         StopWallRun();
-        StartCoroutine(InAirBoost(m_wallRunJumpForce.y, m_wallRunJumpForce.x, transform.forward));
+        StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x, transform.forward));
     }
 
     private void GroundJump()
