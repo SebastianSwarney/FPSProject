@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2634700380662688762}
   - component: {fileID: 1610995332969876750}
   m_Layer: 0
-  m_Name: HitMark_Cube
+  m_Name: HitMark_CubeRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d0980726ed7db0645a535da6f3d1e715, type: 2}
+  - {fileID: 2100000, guid: ac20d5b493666d34a802baa0e6883f06, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -7,13 +7,16 @@ public class SpawnObjectAtCollision : MonoBehaviour, IProjectile_Collision
 
     private ObjectPooler m_pooler;
     public GameObject m_spawnedObject;
+    public GameObject m_spawnedObject2;
+    private TeamLabel m_teamLabel;
     private void Start()
     {
+        m_teamLabel = GetComponent<TeamLabel>();
         m_pooler = ObjectPooler.instance;
     }
     public void ActivateCollision(GameObject p_collidedObject, Vector3 p_hitPosition)
     {
-        m_pooler.NewObject(m_spawnedObject, p_hitPosition, Quaternion.identity);
+        m_pooler.NewObject((m_teamLabel.m_myTeam == TeamTypes.TeamType.Blue)? m_spawnedObject:m_spawnedObject2, p_hitPosition, Quaternion.identity);
     }
 
 }

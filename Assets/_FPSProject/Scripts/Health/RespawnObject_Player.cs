@@ -8,6 +8,7 @@ public class RespawnObject_Player : RespawnObject
 {
     public GameObject m_visual;
     public GameObject m_camera;
+    public GameObject m_playerUI;
     private MatchSpawningManager m_matchSpawning;
     private Transform m_respawnPoint;
     private TeamLabel m_myTeam;
@@ -39,6 +40,7 @@ public class RespawnObject_Player : RespawnObject
             if (!m_photonView.IsMine)
             {
                 m_camera.SetActive(false);
+                m_playerUI.SetActive(false);
             }
         }
     }

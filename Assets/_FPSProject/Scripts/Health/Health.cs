@@ -77,7 +77,7 @@ public class Health : MonoBehaviour
                 if (m_currentShieldStrength < 0)
                 {
                     m_currentHealth -= (Mathf.Abs(m_currentShieldStrength * ((1f - m_shieldDamageMultiplier) + 1f)));
-                    if (m_currentHealth <= 0)
+                    if ((Mathf.Round(m_currentHealth)) <= 0)
                     {
                         m_isDead = true;
                         m_onDied.Invoke();
