@@ -46,6 +46,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_myAvatar: {fileID: 5072337888313550595, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
     type: 3}
+  m_randomNames:
+  - Charlie
+  - Foxtrot
+  - Absol
+  - Pikachu
+  - Raptor
+  - Lily
+  - Latias
+  - K.K. Slider
+  - Apple
+  - Bomb
+  - Oof
+  - Sponge
+  - Porous
+  - Kirito
+  - Bitch
+  - DumbFuck
+  - Lonk
+  - Double Oof
+  - Ratty
+  - Stupid Shit
 --- !u!114 &1987443647471120134
 MonoBehaviour:
   m_ObjectHideFlags: 0
