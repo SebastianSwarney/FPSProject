@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01469a8ca5af4514683af5b439b4c5dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnedObject: {fileID: 1201588605853739785, guid: eaf4aa48387ac0c4084dee29e8af96b9,
+  m_spawnedObject: {fileID: 8156700078027560969, guid: e6ff1855612410b4fa83488b12664678,
     type: 3}
-  m_spawnedObject2: {fileID: 1201588605853739785, guid: fc5c39fa863a5f348835afdf7e344a38,
+  m_spawnedObject2: {fileID: 8156700078027560969, guid: e6ff1855612410b4fa83488b12664678,
     type: 3}
