@@ -9,7 +9,7 @@ public class Equipment_Gun : Equipment_Base
     [Header("Gun Variables")]
     public Transform m_fireSpot;
     public FireBehaviour_Base m_fireBehaviour;
-    public float m_recoilAmount;
+    public float m_recoilAmountY;
     public BulletProperties m_bulletProperties;
 
     [System.Serializable]
@@ -26,7 +26,8 @@ public class Equipment_Gun : Equipment_Base
     public bool m_canFire = true;
     private Coroutine m_cor_fireDelay;
     private float m_currentFireRateDelay = 0;
-    private PhotonView m_myPhotonView;
+    [HideInInspector]
+    public PhotonView m_myPhotonView;
     #endregion
 
     #region Aim Assist
@@ -77,7 +78,7 @@ public class Equipment_Gun : Equipment_Base
     {
         
         m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, p_targetObject);
-        m_equipController.ApplyRecoilCameraRotation(-m_recoilAmount);
+        m_equipController.ApplyRecoilCameraRotation(-m_recoilAmountY);
     }
 
     public override void OnShootInputUp(Transform p_playerCam)

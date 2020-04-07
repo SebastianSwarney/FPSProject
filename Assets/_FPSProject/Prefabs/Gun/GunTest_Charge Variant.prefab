@@ -1,15 +1,15 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &5153138044214453368
+--- !u!114 &2154977892267777843
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2139936840613683470}
+  m_GameObject: {fileID: 3534113252068842577}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8426c3592908a904997ddd5865bbcd19, type: 3}
+  m_Script: {fileID: 11500000, guid: b2dd5013253a94a4aa90835d1b27a31c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_teamLabel: {fileID: 0}
@@ -22,16 +22,16 @@ MonoBehaviour:
     m_equipmentStopUse:
       m_PersistentCalls:
         m_Calls: []
-  m_fireSpot: {fileID: 5843177934933683077}
-  m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
-  m_recoilAmountY: 1
+  m_fireSpot: {fileID: 9056183800475932378}
+  m_fireBehaviour: {fileID: 0}
+  m_recoilAmountY: 0
   m_bulletProperties:
-    m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
-      type: 3}
-    m_bulletDamage: 10
-    m_bulletSpeed: 300
-    m_gunFireDelay: 0.3
+    m_bulletPrefab: {fileID: 0}
+    m_bulletDamage: 0
+    m_bulletSpeed: 0
+    m_gunFireDelay: 2
   m_canFire: 1
+  m_myPhotonView: {fileID: 0}
   m_aimAssist:
     m_hitDetectLayer:
       serializedVersion: 2
@@ -39,17 +39,33 @@ MonoBehaviour:
     m_playerLayer:
       serializedVersion: 2
       m_Bits: 256
-    m_aimAssistRadius: 1
-    m_minAssistDistance: 1
-    m_maxAssistDistance: 30
-  m_coroutineLifeTime: 5
-  m_debugGizmos: 1
-  m_gizmosColor1: {r: 1, g: 0, b: 0, a: 1}
+    m_aimAssistRadius: 0
+    m_minAssistDistance: 0
+    m_maxAssistDistance: 0
+  m_coroutineLifeTime: 15
+  m_debugGizmos: 0
+  m_gizmosColor1: {r: 0, g: 0, b: 0, a: 0}
   m_gizmosColor2: {r: 0, g: 0, b: 0, a: 0}
-  m_isAutomatic: 0
-  m_burstAmount: 3
-  m_timeBetweenBullets: 0.05
---- !u!1001 &4869408308458403498
+  m_maxHoldTime: 3
+  m_chargeStages:
+  - m_shootProjectile: 1
+    m_projectileSpeed: 150
+    m_projectileDamage: 10
+    m_projectileRecoilY: 1
+    m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
+      type: 3}
+    m_endChargeTime: 1.5
+    m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
+  - m_shootProjectile: 1
+    m_projectileSpeed: 300
+    m_projectileDamage: 101
+    m_projectileRecoilY: 5
+    m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
+      type: 3}
+    m_endChargeTime: 3
+    m_fireBehaviour: {fileID: 11400000, guid: 2769c1223f55fff4eb26c671ae56eec4, type: 2}
+  m_isAutiomatic: 0
+--- !u!1001 &8010418839808576501
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -64,7 +80,7 @@ PrefabInstance:
     - target: {fileID: 6782711556069349284, guid: 99fb11da5e730de4998fe35e7b1850c3,
         type: 3}
       propertyPath: m_Name
-      value: GunTest_Burst Variant
+      value: GunTest_Charge Variant
       objectReference: {fileID: 0}
     - target: {fileID: 8444377419081478050, guid: 99fb11da5e730de4998fe35e7b1850c3,
         type: 3}
@@ -124,15 +140,15 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 99fb11da5e730de4998fe35e7b1850c3, type: 3}
---- !u!1 &2139936840613683470 stripped
+--- !u!1 &3534113252068842577 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6782711556069349284, guid: 99fb11da5e730de4998fe35e7b1850c3,
     type: 3}
-  m_PrefabInstance: {fileID: 4869408308458403498}
+  m_PrefabInstance: {fileID: 8010418839808576501}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &5843177934933683077 stripped
+--- !u!4 &9056183800475932378 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1334400645664398639, guid: 99fb11da5e730de4998fe35e7b1850c3,
     type: 3}
-  m_PrefabInstance: {fileID: 4869408308458403498}
+  m_PrefabInstance: {fileID: 8010418839808576501}
   m_PrefabAsset: {fileID: 0}
