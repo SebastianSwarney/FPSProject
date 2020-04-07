@@ -288,6 +288,12 @@ public class PlayerController : MonoBehaviour
 
     public Vector2 m_slideJumpForce;
 
+    private Vector3 m_explosionVelocity;
+
+    public float m_explosionForce;
+    public float m_explosionDecayTime;
+    public AnimationCurve m_explosionDecayCurve;
+
     private void Start()
     {
         m_characterController = GetComponent<CharacterController>();
@@ -306,8 +312,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-
-
         PerformController();
     }
 
@@ -339,8 +343,29 @@ public class PlayerController : MonoBehaviour
         velocity += m_velocity;
         velocity += m_wallRunJumpVelocity;
         velocity += m_slideVelocity;
+        velocity += m_explosionVelocity;
 
         m_characterController.Move(velocity * Time.deltaTime);
+    }
+
+    private IEnumerator RunExplosion(Vector3 p_explosionDir, float p_explosionForce, float p_explosionDecayTime)
+    {
+        float t = 0;
+
+        while (t < p_explosionDecayTime)
+        {
+            t += Time.fixedDeltaTime;
+
+            float decayProgress = m_explosionDecayCurve.Evaluate(t / p_explosionDecayTime);
+            float currentExplosionForce = Mathf.Lerp(p_explosionForce, 0, decayProgress);
+
+            Vector3 currentExplosionVelocity = p_explosionDir * currentExplosionForce;
+            m_explosionVelocity = new Vector3(currentExplosionVelocity.x, currentExplosionVelocity.y, currentExplosionVelocity.z);
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        m_explosionVelocity = Vector3.zero;
     }
 
 	#region Wall Code

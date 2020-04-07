@@ -11536,8 +11536,53 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
         type: 3}
+      propertyPath: m_explosionDecayCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
+        type: 3}
       propertyPath: m_wallRunTolerence
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
+        type: 3}
+      propertyPath: m_explosionDecayCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
+        type: 3}
+      propertyPath: m_explosionDecayCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
+        type: 3}
+      propertyPath: m_explosionDecayCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
+        type: 3}
+      propertyPath: m_explosionDecayCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
+        type: 3}
+      propertyPath: m_explosionDecayCurve.m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
+        type: 3}
+      propertyPath: m_explosionDecayCurve.m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
+        type: 3}
+      propertyPath: m_explosionForce
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072337888313550592, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
+        type: 3}
+      propertyPath: m_explosionDecayTime
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5072337888313550595, guid: ec36aeb7920e02c4e92990ec8f1b8dc9,
         type: 3}
