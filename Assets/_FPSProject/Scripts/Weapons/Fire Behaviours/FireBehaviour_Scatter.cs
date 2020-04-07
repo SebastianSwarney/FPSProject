@@ -8,7 +8,7 @@ public class FireBehaviour_Scatter : FireBehaviour_Base
 {
     public float m_bulletSpreadAngle;
     public int m_bulletAmount;
-    public override void FireBullet(PhotonView p_firedPhotonView, TeamLabel p_teamLabel, GameObject p_bullet, Transform p_fireSpot, float p_bulletSpeed, float p_bulletDamage, Transform p_target)
+    public override void FireBullet(PhotonView p_firedPhotonView, TeamLabel p_teamLabel, GameObject p_bullet, Transform p_fireSpot, float p_bulletSpeed, float p_bulletDamage, Vector2 p_bulletSpread, Transform p_target)
     {
         float damagePerBullet = p_bulletDamage / m_bulletAmount;
         for (int i = 0; i < m_bulletAmount; i++)

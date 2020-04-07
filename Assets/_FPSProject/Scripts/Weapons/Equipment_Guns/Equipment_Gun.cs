@@ -9,7 +9,11 @@ public class Equipment_Gun : Equipment_Base
     [Header("Gun Variables")]
     public Transform m_fireSpot;
     public FireBehaviour_Base m_fireBehaviour;
+
     public float m_recoilAmountY;
+
+    public Vector2 m_bulletSpread;
+
     public BulletProperties m_bulletProperties;
 
     [System.Serializable]
@@ -77,8 +81,13 @@ public class Equipment_Gun : Equipment_Base
     public void FireBullet(Transform p_playerCam, Transform p_targetObject)
     {
         
-        m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, p_targetObject);
-        m_equipController.ApplyRecoilCameraRotation(-m_recoilAmountY);
+        m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
+        ApplyRecoil(m_recoilAmountY);
+    }
+
+    public virtual void ApplyRecoil(float p_yAmount)
+    {
+        m_equipController.ApplyRecoilCameraRotation(-p_yAmount);
     }
 
     public override void OnShootInputUp(Transform p_playerCam)
@@ -198,5 +207,12 @@ public class Equipment_Gun : Equipment_Base
         Gizmos.DrawWireSphere(transform.position + (transform.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius);
         Gizmos.DrawLine(transform.position + (transform.forward * m_aimAssist.m_minAssistDistance), transform.position + transform.forward * m_aimAssist.m_maxAssistDistance);
         Gizmos.DrawWireSphere(transform.position + transform.forward * m_aimAssist.m_maxAssistDistance, m_aimAssist.m_aimAssistRadius);
+
+
+        Gizmos.color = m_gizmosColor2;
+        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position+ Quaternion.AngleAxis(m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
+        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position+ Quaternion.AngleAxis(-m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
+        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position+ Quaternion.AngleAxis(m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
+        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position+ Quaternion.AngleAxis(-m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
     }
 }

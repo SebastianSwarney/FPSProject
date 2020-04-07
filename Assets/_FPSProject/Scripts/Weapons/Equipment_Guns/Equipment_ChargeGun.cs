@@ -22,6 +22,7 @@ public class Equipment_ChargeGun : Equipment_Gun
         public float m_projectileSpeed;
         public float m_projectileDamage;
         public float m_projectileRecoilY;
+        public Vector2 m_bulletSpread;
         public GameObject m_bulletPrefab;
         public float m_endChargeTime;
         public FireBehaviour_Base m_fireBehaviour;
@@ -73,7 +74,7 @@ public class Equipment_ChargeGun : Equipment_Gun
             m_charging = false;
             Transform aimedTarget;
             PerformAimAssist(p_playerCam, out aimedTarget);
-            m_chargeStages[chargeState].m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_chargeStages[chargeState].m_bulletPrefab, m_fireSpot, m_chargeStages[chargeState].m_projectileSpeed, m_chargeStages[chargeState].m_projectileDamage, aimedTarget);
+            m_chargeStages[chargeState].m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_chargeStages[chargeState].m_bulletPrefab, m_fireSpot, m_chargeStages[chargeState].m_projectileSpeed, m_chargeStages[chargeState].m_projectileDamage, m_chargeStages[chargeState].m_bulletSpread, aimedTarget);
             m_currentHeldDownTime = 0;
             StartFireDelay();
         }
