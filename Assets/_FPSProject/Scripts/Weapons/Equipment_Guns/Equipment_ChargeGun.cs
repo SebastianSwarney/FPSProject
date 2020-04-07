@@ -18,6 +18,7 @@ public class Equipment_ChargeGun : Equipment_Gun
     [System.Serializable]
     public struct ChargeStages
     {
+        public GameObject m_stateVisual;
         public bool m_shootProjectile;
         public float m_projectileSpeed;
         public float m_projectileDamage;
@@ -36,15 +37,37 @@ public class Equipment_ChargeGun : Equipment_Gun
         }
         m_playerLetGo = false;
         m_charging = true;
-        print("Hold");
         m_currentHeldDownTime += Time.deltaTime;
+        DisplayVisual(m_currentHeldDownTime, true);
         if (m_currentHeldDownTime >= m_maxHoldTime)
         {
-            print("Fire Here");
-
             m_fired = true;
             FireGun(p_playerCam);
             m_currentHeldDownTime = 0;
+        }
+    }
+
+    private void DisplayVisual(float p_chargeTime, bool p_display)
+    {
+        
+        foreach(ChargeStages charge in m_chargeStages)
+        {
+            if (p_display)
+            {
+                if (p_chargeTime < charge.m_endChargeTime)
+                {
+                    charge.m_stateVisual.SetActive(true);
+                    return;
+                }
+                else
+                {
+                    charge.m_stateVisual.SetActive(false);
+                }
+            }
+            else
+            {
+                charge.m_stateVisual.SetActive(false);
+            }
 
         }
     }
@@ -78,6 +101,7 @@ public class Equipment_ChargeGun : Equipment_Gun
             m_currentHeldDownTime = 0;
             StartFireDelay();
         }
+        DisplayVisual(m_currentHeldDownTime, false);
     }
 
     private int CheckChargeState(float p_chargeTime)

@@ -59,6 +59,12 @@ public class Equipment_Gun : Equipment_Base
     public Color m_gizmosColor1, m_gizmosColor2;
     #endregion
 
+    private void OnEnable()
+    {
+        m_canFire = true;
+        m_currentFireRateDelay = 0;
+        m_cor_fireDelay = null;
+    }
     private void Start()
     {
         m_myPhotonView = GetComponent<PhotonView>();
@@ -107,13 +113,11 @@ public class Equipment_Gun : Equipment_Base
         if (Physics.Raycast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_hitDetectLayer))
         {
             m_fireSpot.LookAt(hit.point);
-            Debug.DrawLine(transform.position, hit.point, Color.blue,1f);
 
             if (Physics.SphereCast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius, p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer))
             {
                 p_hitPlayer = hit.transform;
                 m_fireSpot.LookAt(hit.point);
-                Debug.DrawLine(transform.position, hit.point, Color.green, 1f);
                 return;
             }
             p_hitPlayer = null;
@@ -125,7 +129,6 @@ public class Equipment_Gun : Equipment_Base
             {
                 p_hitPlayer = hit.transform;
                 m_fireSpot.LookAt(hit.point);
-                Debug.DrawLine(transform.position, hit.point, Color.green, 1f);
                 return;
             }
             else

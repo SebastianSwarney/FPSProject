@@ -14,13 +14,33 @@ public class EquipmentController : MonoBehaviour
     private PhotonView m_photonView;
     private PlayerController m_playerController;
 
+    public KeyCode m_swapKey;
+
+
     private void Awake()
     {
         m_teamLabel = GetComponent<TeamLabel>();
         m_playerController = GetComponent<PlayerController>();
         m_photonView = GetComponent<PhotonView>();
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(m_swapKey))
+        {
+            SwapWeapons();
+        }
+    }
 
+    private void SwapWeapons()
+    {
+        Equipment_Base temp = m_weapon;
+        m_weapon.gameObject.SetActive(false);
+        m_weapon.PutEquipmentAway();
+        m_weapon = m_holsteredWeapon;
+        m_weapon.gameObject.SetActive(true);
+        m_weapon.SetUpEquipment(m_teamLabel.m_myTeam, this, m_photonView);
+        m_holsteredWeapon = temp;
+    }
     public void SetupEquipment()
     {
         m_weapon.SetUpEquipment(m_teamLabel.m_myTeam, this, m_photonView);
@@ -43,9 +63,6 @@ public class EquipmentController : MonoBehaviour
         m_weapon.OnShootInputUp(m_playerCamera);
         
     }
-
-
-
 
     public void ApplyRecoilCameraRotation(float p_recoilAmount)
     {
