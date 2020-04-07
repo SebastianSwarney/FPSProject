@@ -2025,6 +2025,14 @@ MonoBehaviour:
   m_postClamberSpeedBoostTime: 0.5
   m_movementInput: {x: 0, y: 0}
   m_slideJumpForce: {x: 20, y: 1}
+  m_explosionForce: 0
+  m_explosionDecayTime: 0
+  m_explosionDecayCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &2848933224995770463
 MonoBehaviour:
   m_ObjectHideFlags: 0
