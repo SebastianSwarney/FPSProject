@@ -135,6 +135,8 @@ public class PlayerController : MonoBehaviour
 
         public float m_wallRunYVelocityStopTime;
 
+        public float m_wallRunBufferTime;
+
         [Header("Wall Run Jump Properties")]
         public Vector2 m_wallRunJumpForce;
         public float m_wallRunJumpGroundVelocityDecayTime;
@@ -153,6 +155,9 @@ public class PlayerController : MonoBehaviour
     private bool m_isWallRunning;
 
     private Vector3 m_wallRunJumpVelocity;
+    private Coroutine m_wallRunBufferCoroutine;
+    private float m_wallRunBufferTimer;
+    private float m_wallJumpOffFactor;
     #endregion
 
     #region Wall Climb Properties
@@ -303,6 +308,8 @@ public class PlayerController : MonoBehaviour
 
         m_currentMovementSpeed = m_baseMovementProperties.m_baseMovementSpeed;
         m_jumpBufferTimer = m_jumpingProperties.m_jumpBufferTime;
+
+        m_wallRunBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_wallRunBufferTimer = (x), m_wallRunProperties.m_wallRunBufferTime));
     }
 
     private void OnValidate()
@@ -403,6 +410,13 @@ public class PlayerController : MonoBehaviour
             if (collidedBottom && !collidedTop)
             {
                 StartWallClamber();
+                return;
+            }
+
+            if (collidedBottom && collidedTop)
+            {
+                StartWallClimb();
+                return;
             }
 
             #region Wall run
@@ -440,12 +454,6 @@ public class PlayerController : MonoBehaviour
                 }
             }
             #endregion
-
-            if (collidedBottom && collidedTop)
-            {
-                StartWallClimb();
-                return;
-            }
         }
 	}
 
@@ -489,7 +497,13 @@ public class PlayerController : MonoBehaviour
     {
         if (!m_isWallRunning)
         {
-            StartCoroutine(RunWallRun(p_dirToWallStart, p_wallRunMovementDir));
+            if (!IsGrounded())
+            {
+                if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
+                {
+                    StartCoroutine(RunWallRun(p_dirToWallStart, p_wallRunMovementDir));
+                }
+            }
         }
     }
 
@@ -537,6 +551,9 @@ public class PlayerController : MonoBehaviour
 
                     Vector3 wallRunVelocity = (wallVector * p_wallRunMovementDir) * currentWallRunSpeed;
                     m_velocity = new Vector3(wallRunVelocity.x, wallRunVelocity.y, wallRunVelocity.z);
+
+                    Vector3 wallFacingVector = Vector3.Cross(wallVector, m_cameraProperties.m_camera.transform.forward);
+                    m_wallJumpOffFactor = wallFacingVector.y;
                 }
                 else
                 {
@@ -555,6 +572,8 @@ public class PlayerController : MonoBehaviour
 
         m_states.m_movementControllState = MovementControllState.MovementEnabled;
         m_states.m_gravityControllState = GravityState.GravityEnabled;
+
+        m_wallRunBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_wallRunBufferTimer = (x), m_wallRunProperties.m_wallRunBufferTime));
 
         m_isWallRunning = false;
     }
@@ -706,7 +725,10 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        StartCoroutine(OnGroundBoost(p_forwardSpeed, p_movementDirection));
+        if (IsGrounded() && !m_isWallRunning)
+        {
+            StartCoroutine(OnGroundBoost(p_forwardSpeed, p_movementDirection));
+        }
 
         m_wallRunJumpVelocity = Vector3.zero;
     }
@@ -1263,8 +1285,11 @@ public class PlayerController : MonoBehaviour
 
     private void WallRunningJump()
     {
-        StopWallRun();
-        StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x, transform.forward));
+        if (m_wallJumpOffFactor > 0.1f)
+        {
+            StopWallRun();
+            StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x, transform.forward));
+        }
     }
 
     private void GroundJump()

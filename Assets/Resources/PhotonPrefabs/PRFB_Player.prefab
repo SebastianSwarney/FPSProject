@@ -1810,6 +1810,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     m_wallRunYVelocityStopTime: 0
+    m_wallRunBufferTime: 0.5
     m_wallRunJumpForce: {x: 25, y: 1}
     m_wallRunJumpGroundVelocityDecayTime: 0.5
     m_wallRunJumpGroundVelocityDecayAnimationCurve:
