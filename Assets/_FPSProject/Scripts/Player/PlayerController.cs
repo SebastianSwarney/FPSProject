@@ -310,9 +310,15 @@ public class PlayerController : MonoBehaviour
     public Transform m_recoilTargetX;
     public Transform m_recoilRecoverX;
 
+    public Transform m_shootingContainer;
+
     public float m_recoilLimit;
 
     private bool m_isShooting;
+
+    private Quaternion m_endRotation;
+
+    private bool m_recoilReset;
 
     private void Start()
     {
@@ -809,12 +815,24 @@ public class PlayerController : MonoBehaviour
     {
         if (!m_isShooting)
         {
+            if (!m_recoilReset)
+            {
+                //m_cameraProperties.m_cameraMain.localRotation = m_endRotation;
+                //m_recoilReset = true;
+
+                //return;
+            }
+
             p_recoilTarget.rotation = p_recoilRest.rotation;
             p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilRest.rotation, m_recoilRecoverSpeed * Time.fixedDeltaTime);
         }
         else
         {
+            m_recoilReset = false;
+
             p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilTarget.rotation, m_recoilMovementSpeed * Time.fixedDeltaTime);
+
+            //m_cameraProperties.m_cameraMain.rotation = p_recoilMovement.rotation;
         }
     }
 
@@ -837,12 +855,27 @@ public class PlayerController : MonoBehaviour
         //Rotate the player on the y axis (left and right)
         transform.Rotate(Vector3.up, cameraInput.y * (m_cameraProperties.m_mouseSensitivity));
 
-        //RotateCameraX(cameraInput.x * m_cameraProperties.m_mouseSensitivity);
-
         float xRotateAmount = cameraInput.x * m_cameraProperties.m_mouseSensitivity;
+        
 
-        RotateCameraAxisX(xRotateAmount, m_cameraProperties.m_cameraMain, m_cameraProperties.m_maxCameraAng);
+        if (m_isShooting)
+        {
+            RotateCameraAxisX(xRotateAmount, m_recoilTargetX, m_cameraProperties.m_maxCameraAng);
+            RotateCameraAxisX(xRotateAmount, m_shootingContainer, m_cameraProperties.m_maxCameraAng);
+        }
+        else
+        {
+            if (!m_recoilReset)
+            {
+                //Debug.Log(m_shootingContainer.rotation);
 
+                //m_cameraProperties.m_cameraMain.rotation = m_shootingContainer.rotation;
+                //m_recoilReset = true;
+            }
+
+            RotateCameraAxisX(xRotateAmount, m_cameraProperties.m_cameraMain, m_cameraProperties.m_maxCameraAng);
+            RotateCameraAxisX(xRotateAmount, m_shootingContainer, m_cameraProperties.m_maxCameraAng);
+        }
     }
 
     public void RotateCameraAxisY(float p_rotateAmount, Transform p_targetTransform, float p_maxAngleOnAxis)
