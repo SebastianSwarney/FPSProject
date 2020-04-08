@@ -135,7 +135,58 @@ MonoBehaviour:
       type: 3}
     m_bulletDamage: 10
     m_bulletSpeed: 150
-    m_gunFireDelay: 0.1
+    m_gunFireDelay: 0.01
+  m_bulletsToCompletePattern: 25
+  m_yRecoil: 0
+  m_yRecoilPattern:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_xRecoil: 10
+  m_xRecoilPattern:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 41.462265
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0
+      outWeight: 0.025028441
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.10060698
+      outSlope: 0.10060698
+      tangentMode: 0
+      weightedMode: 1
+      inWeight: 0.77360636
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   m_canFire: 1
   m_myPhotonView: {fileID: 0}
   m_aimAssist:

@@ -24,7 +24,7 @@ MonoBehaviour:
         m_Calls: []
   m_fireSpot: {fileID: 5843177934933683077}
   m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
-  m_recoilAmountY: 1
+  m_recoilAmountY: 5
   m_bulletSpread: {x: 3, y: 3}
   m_bulletProperties:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
