@@ -54,4 +54,8 @@ public abstract class Equipment_Base : MonoBehaviour
 	public virtual void OnShootInputUp(Transform p_playerCam)
     {
     }
+
+    public virtual void OnReloadDown()
+    {
+    }
 }

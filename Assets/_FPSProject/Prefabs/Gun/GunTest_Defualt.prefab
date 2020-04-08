@@ -133,6 +133,8 @@ MonoBehaviour:
   m_bulletProperties:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
       type: 3}
+    m_clipSize: 10
+    m_currentClipSize: 0
     m_bulletDamage: 10
     m_bulletSpeed: 150
     m_gunFireDelay: 0.01
@@ -188,7 +190,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   m_canFire: 1
+  m_isReloading: 0
   m_myPhotonView: {fileID: 0}
+  m_reloadTime: 2
+  m_inShootingPattern: 0
   m_aimAssist:
     m_hitDetectLayer:
       serializedVersion: 2

@@ -32,8 +32,7 @@ public class Equipment_Gun : Equipment_Base
         public GameObject m_bulletPrefab;
 
         public int m_clipSize;
-        [HideInInspector]
-        public int m_currentClipSize;
+
 
 
 
@@ -41,7 +40,8 @@ public class Equipment_Gun : Equipment_Base
         public float m_bulletSpeed;
         public float m_gunFireDelay;
     }
-
+    //[HideInInspector]
+    public int m_currentClipSize;
     [HideInInspector]
     public bool m_canFire = true;
     [HideInInspector]
@@ -99,6 +99,7 @@ public class Equipment_Gun : Equipment_Base
     private void Start()
     {
         m_myPhotonView = GetComponent<PhotonView>();
+        m_currentClipSize = m_bulletProperties.m_clipSize;
     }
     public override void OnShootInputDown(Transform p_playerCam)
     {
@@ -118,6 +119,30 @@ public class Equipment_Gun : Equipment_Base
         }
     }
 
+
+    public override void OnShootInputUp(Transform p_playerCam)
+    {
+        base.OnShootInputUp(p_playerCam);
+        ShootInputUp(p_playerCam);
+    }
+
+    public virtual void ShootInputUp(Transform p_playerCam)
+    {
+        m_amountOfBulletsShot = 0;
+        m_inShootingPattern = false;
+    }
+
+    public override void OnReloadDown()
+    {
+        ReloadDown();
+    }
+    public virtual void ReloadDown()
+    {
+        m_inShootingPattern = false;
+        StartReloading();
+        
+    }
+
     public bool InShootingPattern()
     {
         return m_inShootingPattern;
@@ -128,13 +153,14 @@ public class Equipment_Gun : Equipment_Base
         m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
         m_amountOfBulletsShot++;
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompletePattern, 0, 1));
-        m_bulletProperties.m_currentClipSize--;
-        if (m_bulletProperties.m_currentClipSize == 0)
+        m_currentClipSize--;
+        if (m_currentClipSize == 0)
         {
             m_inShootingPattern = false;
             StopShooting();
+            StartReloading();
         }
-        StartReloading();
+
     }
 
     /// <summary>
@@ -142,7 +168,7 @@ public class Equipment_Gun : Equipment_Base
     /// </summary>
     public virtual void StopShooting()
     {
-
+        m_inShootingPattern = false;
     }
 
     private void StartReloading()
@@ -173,10 +199,12 @@ public class Equipment_Gun : Equipment_Base
             {
                 reloaded = true;
                 m_isReloading = false;
+                m_currentClipSize = m_bulletProperties.m_clipSize;
             }
             m_currentReloadCoroutineLife += Time.deltaTime;
             yield return null;
         }
+
         m_reloadingCoroutine = null;
     }
 
@@ -189,18 +217,6 @@ public class Equipment_Gun : Equipment_Base
         float currentXRecoil = Mathf.Lerp(-m_xRecoil, 0, xPatternProgress);
 
         m_equipController.ApplyRecoilCameraRotation(currentXRecoil, currentYRecoil);
-    }
-
-    public override void OnShootInputUp(Transform p_playerCam)
-    {
-        base.OnShootInputUp(p_playerCam);
-        ShootInputUp(p_playerCam);
-    }
-
-    public virtual void ShootInputUp(Transform p_playerCam)
-    {
-        m_amountOfBulletsShot = 0;
-        m_inShootingPattern = false;
     }
 
 
