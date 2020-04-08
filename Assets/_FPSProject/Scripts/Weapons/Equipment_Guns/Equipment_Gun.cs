@@ -138,8 +138,6 @@ public class Equipment_Gun : Equipment_Base
                 return;
             }
         }
-
-
     }
 
     public void StartFireDelay()
