@@ -18,14 +18,17 @@ public class Equipment_BurstGun : Equipment_Gun
 
     public override void ShootInputDown(Transform p_playerCam)
     {
+        if (m_isReloading) return;
         if (!m_isAutomatic)
         {
+            
             if (!m_playerLetGo) return;
         }
         if (m_canFire)
         {
             if (m_canFireBurst)
             {
+                m_inShootingPattern = true;
                 m_playerLetGo = false;
                 m_canFire = false;
                 m_canFireBurst = false;
@@ -43,6 +46,15 @@ public class Equipment_BurstGun : Equipment_Gun
     public override void ShootInputUp(Transform p_playerCam)
     {
         m_playerLetGo = true;
+    }
+
+
+    public override void StopShooting()
+    {
+        if(m_burstFireCoroutine != null)
+        {
+            m_currentBurstAmount = m_burstAmount;
+        }
     }
 
     private IEnumerator FireBurst(Transform p_playerCam)
@@ -66,6 +78,10 @@ public class Equipment_BurstGun : Equipment_Gun
                 m_currentBurstAmount += 1;
                 yield return null;
             }
+
+
+            ///Out of burst behaviour
+            m_inShootingPattern = false;
             m_canFireBurst = true;
             m_burstCorLifeTimer += Time.deltaTime;
             if (!p_startedDelay)
