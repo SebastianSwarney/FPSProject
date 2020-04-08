@@ -4755,6 +4755,91 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &2154977892267777843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3534113252068842577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2dd5013253a94a4aa90835d1b27a31c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_teamLabel: {fileID: 0}
+  m_canUse: 0
+  m_equipController: {fileID: 0}
+  m_equipmentEvents:
+    m_equipmentUsed:
+      m_PersistentCalls:
+        m_Calls: []
+    m_equipmentStopUse:
+      m_PersistentCalls:
+        m_Calls: []
+  m_fireSpot: {fileID: 9056183800475932378}
+  m_fireBehaviour: {fileID: 0}
+  m_recoilAmountY: 0
+  m_bulletSpread: {x: 0, y: 0}
+  m_bulletProperties:
+    m_bulletPrefab: {fileID: 0}
+    m_bulletDamage: 0
+    m_bulletSpeed: 0
+    m_gunFireDelay: 2
+  m_bulletsToCompletePattern: 0
+  m_yRecoil: 0
+  m_yRecoilPattern:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_xRecoil: 0
+  m_xRecoilPattern:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_canFire: 1
+  m_myPhotonView: {fileID: 0}
+  m_aimAssist:
+    m_hitDetectLayer:
+      serializedVersion: 2
+      m_Bits: 768
+    m_playerLayer:
+      serializedVersion: 2
+      m_Bits: 256
+    m_aimAssistRadius: 0
+    m_minAssistDistance: 0
+    m_maxAssistDistance: 0
+  m_coroutineLifeTime: 15
+  m_debugGizmos: 0
+  m_gizmosColor1: {r: 0, g: 0, b: 0, a: 0}
+  m_gizmosColor2: {r: 0, g: 0, b: 0, a: 0}
+  m_maxHoldTime: 3
+  m_chargeStages:
+  - m_stateVisual: {fileID: 2642427322433855374}
+    m_shootProjectile: 1
+    m_projectileSpeed: 150
+    m_projectileDamage: 10
+    m_projectileRecoilY: 1
+    m_bulletSpread: {x: 0, y: 0}
+    m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
+      type: 3}
+    m_endChargeTime: 1.5
+    m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
+  - m_stateVisual: {fileID: 6372927938709582863}
+    m_shootProjectile: 1
+    m_projectileSpeed: 300
+    m_projectileDamage: 101
+    m_projectileRecoilY: 5
+    m_bulletSpread: {x: 0, y: 0}
+    m_bulletPrefab: {fileID: 3900400124138448053, guid: d81fe24ca1c8cb54fae71a67cdc57ddc,
+      type: 3}
+    m_endChargeTime: 3
+    m_fireBehaviour: {fileID: 11400000, guid: 2769c1223f55fff4eb26c671ae56eec4, type: 2}
+  m_isAutiomatic: 0
 --- !u!1 &5329510558800433091
 GameObject:
   m_ObjectHideFlags: 0
@@ -14282,76 +14367,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &2154977892267777843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3534113252068842577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2dd5013253a94a4aa90835d1b27a31c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_teamLabel: {fileID: 0}
-  m_canUse: 0
-  m_equipController: {fileID: 0}
-  m_equipmentEvents:
-    m_equipmentUsed:
-      m_PersistentCalls:
-        m_Calls: []
-    m_equipmentStopUse:
-      m_PersistentCalls:
-        m_Calls: []
-  m_fireSpot: {fileID: 9056183800475932378}
-  m_fireBehaviour: {fileID: 0}
-  m_recoilAmountY: 0
-  m_bulletSpread: {x: 0, y: 0}
-  m_bulletProperties:
-    m_bulletPrefab: {fileID: 0}
-    m_bulletDamage: 0
-    m_bulletSpeed: 0
-    m_gunFireDelay: 2
-  m_canFire: 1
-  m_myPhotonView: {fileID: 0}
-  m_aimAssist:
-    m_hitDetectLayer:
-      serializedVersion: 2
-      m_Bits: 768
-    m_playerLayer:
-      serializedVersion: 2
-      m_Bits: 256
-    m_aimAssistRadius: 0
-    m_minAssistDistance: 0
-    m_maxAssistDistance: 0
-  m_coroutineLifeTime: 15
-  m_debugGizmos: 0
-  m_gizmosColor1: {r: 0, g: 0, b: 0, a: 0}
-  m_gizmosColor2: {r: 0, g: 0, b: 0, a: 0}
-  m_maxHoldTime: 3
-  m_chargeStages:
-  - m_stateVisual: {fileID: 2642427322433855374}
-    m_shootProjectile: 1
-    m_projectileSpeed: 150
-    m_projectileDamage: 10
-    m_projectileRecoilY: 1
-    m_bulletSpread: {x: 0, y: 0}
-    m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
-      type: 3}
-    m_endChargeTime: 1.5
-    m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
-  - m_stateVisual: {fileID: 6372927938709582863}
-    m_shootProjectile: 1
-    m_projectileSpeed: 300
-    m_projectileDamage: 101
-    m_projectileRecoilY: 5
-    m_bulletSpread: {x: 0, y: 0}
-    m_bulletPrefab: {fileID: 3900400124138448053, guid: d81fe24ca1c8cb54fae71a67cdc57ddc,
-      type: 3}
-    m_endChargeTime: 3
-    m_fireBehaviour: {fileID: 11400000, guid: 2769c1223f55fff4eb26c671ae56eec4, type: 2}
-  m_isAutiomatic: 0
 --- !u!1 &8576439069374675198
 GameObject:
   m_ObjectHideFlags: 0
