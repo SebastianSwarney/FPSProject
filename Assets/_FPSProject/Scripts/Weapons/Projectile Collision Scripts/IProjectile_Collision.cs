@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IProjectile_Collision
 {
-    void ActivateCollision(GameObject p_collidedObject, Vector3 p_hitPosition);
+    void ActivateCollision(GameObject p_collidedObject, Vector3 p_hitPosition, int p_bulletOwnerPhotonID);
 }

@@ -15,14 +15,15 @@ public class Explode : MonoBehaviour, IProjectile_Collision
     public Color m_gizmoColor1;
 
     private TeamLabel m_myTeamLabel;
+    
     private void Start()
     {
         m_myTeamLabel = GetComponent<TeamLabel>();
     }
 
-    public void ActivateCollision(GameObject p_collidedObject, Vector3 p_hitPosition)
+    public void ActivateCollision(GameObject p_collidedObject, Vector3 p_hitPosition, int p_bulletOwnerPhotonID)
     {
-        ExplodeMe();
+        ExplodeMe(p_bulletOwnerPhotonID);
     }
 
     private void OnDrawGizmos()
@@ -32,14 +33,14 @@ public class Explode : MonoBehaviour, IProjectile_Collision
         Gizmos.DrawWireSphere(transform.position, m_explodeRadius);
     }
 
-    public void ExplodeMe()
+    public void ExplodeMe(int p_bulletOwner)
     {
         Collider[] cols = Physics.OverlapSphere(transform.position, m_explodeRadius, m_explosionHitLayer);
         foreach (Collider col in cols)
         {
             Health newHealth = col.GetComponent<Health>();
             if (newHealth.m_teamLabel.m_myTeam == m_myTeamLabel.m_myTeam) return;
-            newHealth.TakeDamage(m_explodeDamage);
+            newHealth.TakeDamage(m_explodeDamage, p_bulletOwner);
         }
     }
 

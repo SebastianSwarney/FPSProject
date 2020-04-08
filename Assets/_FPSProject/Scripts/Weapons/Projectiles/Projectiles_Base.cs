@@ -9,6 +9,8 @@ public class Projectiles_Base : MonoBehaviour
 {
     [HideInInspector]
     public TeamLabel m_teamLabel;
+    [HideInInspector]
+    public int m_bulletOwnerID;
     [Header("Bullet Physics")]
     public Vector3 m_velocity;
     public float m_gravity;
@@ -47,13 +49,14 @@ public class Projectiles_Base : MonoBehaviour
         m_pooler = ObjectPooler.instance;
         
     }
-    public virtual void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, Transform p_target = null, float p_projectileDamage = 0)
+    public virtual void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, int p_ownerID, Transform p_target = null, float p_projectileDamage = 0)
     {
 
         m_teamLabel.SetTeamType(p_myNewTeam);
         m_velocity = p_newVelocity;
         m_bulletSpawnedEvent.Invoke();
         m_projectileDamage = p_projectileDamage;
+        m_bulletOwnerID = p_ownerID;
     }
 
 
@@ -117,7 +120,7 @@ public class Projectiles_Base : MonoBehaviour
     {
         foreach(IProjectile_Collision newScript in m_projectileCollisionScripts)
         {
-            newScript.ActivateCollision(p_hitObject, p_hitPoint);
+            newScript.ActivateCollision(p_hitObject, p_hitPoint, m_bulletOwnerID);
         }
     }
 

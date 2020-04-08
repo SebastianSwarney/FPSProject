@@ -45,6 +45,8 @@ MonoBehaviour:
   - AddMeToTeamManager
   - RPC_RemovePlayerFromTeam
   - RPC_FireBullet
+  - RPC_PlayerHitSomeone
+  - RPC_PlayerKilledSomeone
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

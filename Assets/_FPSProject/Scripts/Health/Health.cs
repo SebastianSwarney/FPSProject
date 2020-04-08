@@ -6,6 +6,8 @@ using Photon.Pun;
 
 [System.Serializable]
 public class HealthActivationEvent : UnityEvent { }
+[System.Serializable]
+public class HealthActivationEventWithID : UnityEvent<int> { }
 
 [RequireComponent(typeof(TeamLabel))]
 public class Health : MonoBehaviour
@@ -16,6 +18,7 @@ public class Health : MonoBehaviour
     [HideInInspector]
     public bool m_isDead;
     public HealthActivationEvent m_onDied = new HealthActivationEvent();
+    public HealthActivationEventWithID m_onDiedWithID = new HealthActivationEventWithID();
     #endregion
 
     #region Shield Values
@@ -59,12 +62,13 @@ public class Health : MonoBehaviour
         if (m_useShields) m_currentShieldStrength = m_maxShieldStrength;
     }
 
-    public virtual void TakeDamage(float p_takenDamage)
+    public virtual void TakeDamage(float p_takenDamage, int p_attackerID)
     {
-        m_photonView.RPC("RPC_TakeDamage", RpcTarget.All, p_takenDamage);
+        m_photonView.RPC("RPC_TakeDamage", RpcTarget.All, p_takenDamage, p_attackerID);
     }
+
     [PunRPC]
-    public void RPC_TakeDamage(float p_takenDamage)
+    public void RPC_TakeDamage(float p_takenDamage, int p_attackerID)
     {
         if (!m_canLoseHealth) return;
         if (!m_isDead)
@@ -79,8 +83,7 @@ public class Health : MonoBehaviour
                     m_currentHealth -= (Mathf.Abs(m_currentShieldStrength * ((1f - m_shieldDamageMultiplier) + 1f)));
                     if ((Mathf.Round(m_currentHealth)) <= 0)
                     {
-                        m_isDead = true;
-                        m_onDied.Invoke();
+                        Died(p_attackerID);
                     }
                     m_currentShieldStrength = 0;
                 }
@@ -102,11 +105,19 @@ public class Health : MonoBehaviour
                 }
                 else
                 {
-                    m_isDead = true;
-                    m_onDied.Invoke();
+                    Died(p_attackerID);
                 }
             }
         }
+    }
+
+    private void Died(int p_attackerID)
+    {
+        m_isDead = true;
+        m_onDied.Invoke();
+        m_onDiedWithID.Invoke(p_attackerID);
+        PhotonView.Find(p_attackerID).GetComponent<PhotonView>().RPC("RPC_PlayerKilledSomeone", RpcTarget.All, m_photonView.ViewID);
+
     }
 
     public void RetoggleHealth()

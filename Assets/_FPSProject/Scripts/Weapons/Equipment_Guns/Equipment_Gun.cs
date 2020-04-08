@@ -40,7 +40,7 @@ public class Equipment_Gun : Equipment_Base
         public float m_bulletSpeed;
         public float m_gunFireDelay;
     }
-    //[HideInInspector]
+    [HideInInspector]
     public int m_currentClipSize;
     [HideInInspector]
     public bool m_canFire = true;
@@ -55,6 +55,7 @@ public class Equipment_Gun : Equipment_Base
     private float m_currentReloadingTime;
     private float m_currentReloadCoroutineLife;
     private Coroutine m_reloadingCoroutine;
+
 
     /// <summary>
     /// Used for bullet recoil
@@ -150,7 +151,7 @@ public class Equipment_Gun : Equipment_Base
     public void FireBullet(Transform p_playerCam, Transform p_targetObject)
     {
 
-        m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
+        m_fireBehaviour.FireBullet(m_myPhotonView, m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
         m_amountOfBulletsShot++;
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompletePattern, 0, 1));
         m_currentClipSize--;
@@ -310,7 +311,7 @@ public class Equipment_Gun : Equipment_Base
                 target = checkPhoton.transform;
             }
         }
-        newBulletObject.GetComponent<Projectiles_Base>().SetVariables(TeamTypes.GetTeamFromInt(newBullet.m_bulletTeam), new Vector3(newBullet.m_bulletDirX, newBullet.m_bulletDirY, newBullet.m_bulletDirZ) * newBullet.m_bulletSpeed, target, newBullet.m_bulletDamage);
+        newBulletObject.GetComponent<Projectiles_Base>().SetVariables(TeamTypes.GetTeamFromInt(newBullet.m_bulletTeam), new Vector3(newBullet.m_bulletDirX, newBullet.m_bulletDirY, newBullet.m_bulletDirZ) * newBullet.m_bulletSpeed, newBullet.m_bulletOwnerID, target, newBullet.m_bulletDamage);
     }
 
 

@@ -101,7 +101,7 @@ public class Equipment_ChargeGun : Equipment_Gun
             m_charging = false;
             Transform aimedTarget;
             PerformAimAssist(p_playerCam, out aimedTarget);
-            m_chargeStages[m_currentFiredState].m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_chargeStages[m_currentFiredState].m_bulletPrefab, m_fireSpot, m_chargeStages[m_currentFiredState].m_projectileSpeed, m_chargeStages[m_currentFiredState].m_projectileDamage, m_chargeStages[m_currentFiredState].m_bulletSpread, aimedTarget);
+            m_chargeStages[m_currentFiredState].m_fireBehaviour.FireBullet(m_myPhotonView, m_ownerID, m_teamLabel, m_chargeStages[m_currentFiredState].m_bulletPrefab, m_fireSpot, m_chargeStages[m_currentFiredState].m_projectileSpeed, m_chargeStages[m_currentFiredState].m_projectileDamage, m_chargeStages[m_currentFiredState].m_bulletSpread, aimedTarget);
             m_currentHeldDownTime = 0;
             StartFireDelay();
             m_inShootingPattern = true;

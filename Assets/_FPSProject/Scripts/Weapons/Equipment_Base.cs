@@ -19,6 +19,9 @@ public abstract class Equipment_Base : MonoBehaviour
     [HideInInspector]
     public PhotonView m_currentPhotonView { get; private set; }
 
+    [HideInInspector]
+    public int m_ownerID;
+
     [Header("Equipment Events")]
     [Tooltip("The events that are fired when the player presses the fire button, or stops pressing the fire button.")]
     public EquipmentEvents m_equipmentEvents;
@@ -40,6 +43,7 @@ public abstract class Equipment_Base : MonoBehaviour
         m_canUse = true;
         m_equipController = p_equipController;
         m_currentPhotonView = p_currentPhotonView;
+        m_ownerID = p_currentPhotonView.ViewID;
     }
     public virtual void PutEquipmentAway()
     {

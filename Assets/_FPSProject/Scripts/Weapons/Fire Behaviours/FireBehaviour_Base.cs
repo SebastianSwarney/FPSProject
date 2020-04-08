@@ -5,19 +5,20 @@ using Photon.Pun;
 
 public class FireBehaviour_Base : ScriptableObject
 {
-    public virtual void FireBullet(PhotonView p_gunPhotonView, TeamLabel p_teamLabel, GameObject p_bullet, Transform p_fireSpot, float p_bulletSpeed, float p_bulletDamage, Vector2 p_bulletSpread, Transform p_target)
+    public virtual void FireBullet(PhotonView p_gunPhotonView,int p_bulletOwner, TeamLabel p_teamLabel, GameObject p_bullet, Transform p_fireSpot, float p_bulletSpeed, float p_bulletDamage, Vector2 p_bulletSpread, Transform p_target)
     {
         Vector3 dir = Quaternion.AngleAxis(Random.Range(-p_bulletSpread.x, p_bulletSpread.x),p_fireSpot.up)* Quaternion.AngleAxis(Random.Range(-p_bulletSpread.y, p_bulletSpread.y),p_fireSpot.right) * p_fireSpot.forward;
-        string newBullet = SerializeBulletData(p_teamLabel.m_myTeam, p_bullet.name, p_fireSpot.position, dir, p_bulletSpeed, p_bulletDamage, p_target);
+        string newBullet = SerializeBulletData(p_teamLabel.m_myTeam, p_bullet.name, p_fireSpot.position, dir, p_bulletSpeed, p_bulletOwner, p_bulletDamage, p_target);
         p_gunPhotonView.RPC("RPC_FireBullet", RpcTarget.All, newBullet);
     }
 
 
 
-    public string SerializeBulletData(TeamTypes.TeamType p_teamType, string p_bulletPrefabName, Vector3 p_fireSpot, Vector3 p_fireDir, float p_bulletSpeed, float p_bulletDamage, Transform p_target)
+    public string SerializeBulletData(TeamTypes.TeamType p_teamType, string p_bulletPrefabName, Vector3 p_fireSpot, Vector3 p_fireDir, float p_bulletSpeed, int p_bulletOwner,float p_bulletDamage, Transform p_target)
     {
         BulletData bulletData = new BulletData();
         bulletData.m_bulletPrefabName = p_bulletPrefabName;
+        bulletData.m_bulletOwnerID = p_bulletOwner;
 
         bulletData.m_bulletStartX = p_fireSpot.x;
         bulletData.m_bulletStartY = p_fireSpot.y;
@@ -52,6 +53,7 @@ public class BulletData
     [SerializeField] public string m_bulletPrefabName;
     [SerializeField] public bool m_targetPlayer;
     [SerializeField] public int m_bulletTeam;
+    [SerializeField] public int m_bulletOwnerID;
     [SerializeField] public int m_targetPlayerPhotonID;
     [SerializeField] public float m_bulletStartX, m_bulletStartY, m_bulletStartZ;
 
