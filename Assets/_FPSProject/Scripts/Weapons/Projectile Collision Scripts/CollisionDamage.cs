@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class CollisionDamage : MonoBehaviour, IProjectile_Collision
 {
-    private float m_collisionDamage =0;
+    private Projectiles_Base m_projectileDamage;
     private TeamLabel m_myTeamLabel;
     private void Start()
     {
         m_myTeamLabel = GetComponent<TeamLabel>();
+        m_projectileDamage = GetComponent<Projectiles_Base>();
     }
 
 
@@ -18,13 +19,7 @@ public class CollisionDamage : MonoBehaviour, IProjectile_Collision
         if (newHealth != null)
         {
             if (newHealth.m_teamLabel.m_myTeam == m_myTeamLabel.m_myTeam) return;
-
-            if (m_collisionDamage==0)
-            {
-                m_collisionDamage = GetComponent<Projectiles_Base>().m_projectileDamage;
-            }
-            
-            newHealth.TakeDamage(m_collisionDamage);
+            newHealth.TakeDamage(m_projectileDamage.m_projectileDamage);
         }
     }
 }

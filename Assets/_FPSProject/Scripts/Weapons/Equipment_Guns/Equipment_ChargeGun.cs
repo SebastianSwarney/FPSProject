@@ -15,6 +15,8 @@ public class Equipment_ChargeGun : Equipment_Gun
     private bool m_fired;
     private bool m_charging;
 
+    private int m_currentFiredState;
+
     [System.Serializable]
     public struct ChargeStages
     {
@@ -27,9 +29,11 @@ public class Equipment_ChargeGun : Equipment_Gun
         public GameObject m_bulletPrefab;
         public float m_endChargeTime;
         public FireBehaviour_Base m_fireBehaviour;
+        public float m_fireRecoilTime;
     }
     public override void ShootInputDown(Transform p_playerCam)
     {
+        if (m_isReloading) return;
         if (!m_canFire) return;
         if (!m_isAutiomatic)
         {
@@ -91,15 +95,17 @@ public class Equipment_ChargeGun : Equipment_Gun
 
     private void FireGun(Transform p_playerCam)
     {
-        int chargeState = CheckChargeState(m_currentHeldDownTime);
-        if (m_chargeStages[chargeState].m_shootProjectile)
+        m_currentFiredState = CheckChargeState(m_currentHeldDownTime);
+        if (m_chargeStages[m_currentFiredState].m_shootProjectile)
         {
             m_charging = false;
             Transform aimedTarget;
             PerformAimAssist(p_playerCam, out aimedTarget);
-            m_chargeStages[chargeState].m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_chargeStages[chargeState].m_bulletPrefab, m_fireSpot, m_chargeStages[chargeState].m_projectileSpeed, m_chargeStages[chargeState].m_projectileDamage, m_chargeStages[chargeState].m_bulletSpread, aimedTarget);
+            m_chargeStages[m_currentFiredState].m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_chargeStages[m_currentFiredState].m_bulletPrefab, m_fireSpot, m_chargeStages[m_currentFiredState].m_projectileSpeed, m_chargeStages[m_currentFiredState].m_projectileDamage, m_chargeStages[m_currentFiredState].m_bulletSpread, aimedTarget);
             m_currentHeldDownTime = 0;
             StartFireDelay();
+            m_inShootingPattern = true;
+            StartCoroutine(RecoilDisplay());
         }
         DisplayVisual(m_currentHeldDownTime, false);
     }
@@ -125,5 +131,12 @@ public class Equipment_ChargeGun : Equipment_Gun
             }
         }
         return p_number;
+    }
+
+
+    private IEnumerator RecoilDisplay()
+    {
+        yield return new WaitForSeconds(m_chargeStages[m_currentChargeState].m_fireRecoilTime);
+        m_inShootingPattern = false;
     }
 }

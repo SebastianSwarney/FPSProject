@@ -17,6 +17,7 @@ public class Equipment_Gun : Equipment_Base
     public BulletProperties m_bulletProperties;
 
 
+
     //Variables for the recoil system
     public float m_bulletsToCompletePattern;
     public float m_yRecoil;
@@ -30,6 +31,12 @@ public class Equipment_Gun : Equipment_Base
     {
         public GameObject m_bulletPrefab;
 
+        public int m_clipSize;
+        [HideInInspector]
+        public int m_currentClipSize;
+
+
+
         public float m_bulletDamage;
         public float m_bulletSpeed;
         public float m_gunFireDelay;
@@ -37,10 +44,24 @@ public class Equipment_Gun : Equipment_Base
 
     [HideInInspector]
     public bool m_canFire = true;
+    [HideInInspector]
+    public bool m_isReloading = false;
     private Coroutine m_cor_fireDelay;
     private float m_currentFireRateDelay = 0;
     [HideInInspector]
     public PhotonView m_myPhotonView;
+
+    public float m_reloadTime;
+    private float m_currentReloadingTime;
+    private float m_currentReloadCoroutineLife;
+    private Coroutine m_reloadingCoroutine;
+
+    /// <summary>
+    /// Used for bullet recoil
+    /// </summary>
+    [HideInInspector]
+    public bool m_inShootingPattern;
+
     #endregion
 
     #region Aim Assist
@@ -73,7 +94,6 @@ public class Equipment_Gun : Equipment_Base
         m_canFire = true;
         m_currentFireRateDelay = 0;
         m_cor_fireDelay = null;
-
         m_amountOfBulletsShot = 0;
     }
     private void Start()
@@ -87,6 +107,8 @@ public class Equipment_Gun : Equipment_Base
     }
     public virtual void ShootInputDown(Transform p_playerCam)
     {
+        if (m_isReloading) return;
+        m_inShootingPattern = true;
         if (m_canFire)
         {
             Transform hitPlayerObject;
@@ -95,16 +117,67 @@ public class Equipment_Gun : Equipment_Base
             StartFireDelay();
         }
     }
+
+    public bool InShootingPattern()
+    {
+        return m_inShootingPattern;
+    }
     public void FireBullet(Transform p_playerCam, Transform p_targetObject)
     {
-        
+
         m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
-
         m_amountOfBulletsShot++;
-
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompletePattern, 0, 1));
+        m_bulletProperties.m_currentClipSize--;
+        if (m_bulletProperties.m_currentClipSize == 0)
+        {
+            m_inShootingPattern = false;
+            StopShooting();
+        }
+        StartReloading();
+    }
 
-        //Debug.Log(m_amountOfBulletsShot / m_bulletsToCompletePattern);
+    /// <summary>
+    /// Used to stop any coroutines if the clip size becomes zero in the middle of the coroutine
+    /// </summary>
+    public virtual void StopShooting()
+    {
+
+    }
+
+    private void StartReloading()
+    {
+        m_isReloading = true;
+        m_currentReloadingTime = 0;
+        m_currentReloadCoroutineLife = 0;
+        if (m_reloadingCoroutine == null)
+        {
+            m_reloadingCoroutine = StartCoroutine(ReloadingCoroutine());
+        }
+
+    }
+
+    private IEnumerator ReloadingCoroutine()
+    {
+        bool reloaded = false;
+        while (m_currentReloadCoroutineLife < m_coroutineLifeTime)
+        {
+
+            while (m_currentReloadingTime < m_reloadTime)
+            {
+                reloaded = false;
+                m_currentReloadingTime += Time.deltaTime;
+                yield return null;
+            }
+            if (!reloaded)
+            {
+                reloaded = true;
+                m_isReloading = false;
+            }
+            m_currentReloadCoroutineLife += Time.deltaTime;
+            yield return null;
+        }
+        m_reloadingCoroutine = null;
     }
 
     public virtual void ApplyRecoil(float p_patternProgress)
@@ -127,7 +200,9 @@ public class Equipment_Gun : Equipment_Base
     public virtual void ShootInputUp(Transform p_playerCam)
     {
         m_amountOfBulletsShot = 0;
+        m_inShootingPattern = false;
     }
+
 
 
     public void PerformAimAssist(Transform p_playerCam, out Transform p_hitPlayer)
@@ -192,7 +267,7 @@ public class Equipment_Gun : Equipment_Base
             m_canFire = true;
             yield return null;
         }
-        
+
         m_cor_fireDelay = null;
     }
 
@@ -236,9 +311,9 @@ public class Equipment_Gun : Equipment_Base
 
 
         Gizmos.color = m_gizmosColor2;
-        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position+ Quaternion.AngleAxis(m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
-        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position+ Quaternion.AngleAxis(-m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
-        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position+ Quaternion.AngleAxis(m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
-        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position+ Quaternion.AngleAxis(-m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
+        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
+        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(-m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
+        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
+        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(-m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
     }
 }
