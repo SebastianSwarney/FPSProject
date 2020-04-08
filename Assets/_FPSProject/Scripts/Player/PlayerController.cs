@@ -299,6 +299,21 @@ public class PlayerController : MonoBehaviour
     public float m_explosionDecayTime;
     public AnimationCurve m_explosionDecayCurve;
 
+    public float m_recoilRecoverSpeed;
+    public float m_recoilMovementSpeed;
+
+    public Transform m_recoilMovementY;
+    public Transform m_recoilTargetY;
+    public Transform m_recoilRecoverY;
+
+    public Transform m_recoilMovementX;
+    public Transform m_recoilTargetX;
+    public Transform m_recoilRecoverX;
+
+    public float m_recoilLimit;
+
+    private bool m_isShooting;
+
     private void Start()
     {
         m_characterController = GetComponent<CharacterController>();
@@ -331,6 +346,10 @@ public class PlayerController : MonoBehaviour
 
         //m_characterController.Move(m_velocity * Time.deltaTime);
 
+
+        RecoilLerp(m_recoilMovementX, m_recoilTargetX, m_recoilRecoverX);
+        RecoilLerp(m_recoilMovementY, m_recoilTargetY, m_recoilRecoverY);
+
         CaculateTotalVelocity();
 
         SlopePhysics();
@@ -352,7 +371,7 @@ public class PlayerController : MonoBehaviour
         velocity += m_slideVelocity;
         velocity += m_explosionVelocity;
 
-        m_characterController.Move(velocity * Time.deltaTime);
+        m_characterController.Move(velocity * Time.fixedDeltaTime);
     }
 
     private IEnumerator RunExplosion(Vector3 p_explosionDir, float p_explosionForce, float p_explosionDecayTime)
@@ -373,6 +392,16 @@ public class PlayerController : MonoBehaviour
         }
 
         m_explosionVelocity = Vector3.zero;
+    }
+
+    public void OnShootInputDown()
+    {
+        m_isShooting = true;
+    }
+
+    public void OnShootInputUp()
+    {
+        m_isShooting = false;
     }
 
 	#region Wall Code
@@ -770,6 +799,25 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Camera Code
+    public void AddRecoil(float p_recoilAmountX, float p_recoilAmountY)
+    {
+        RotateCameraAxisX(p_recoilAmountX, m_recoilTargetX, m_recoilLimit);
+        RotateCameraAxisY(p_recoilAmountY, m_recoilTargetY, m_recoilLimit);
+    }
+
+    private void RecoilLerp(Transform p_recoilMovement, Transform p_recoilTarget, Transform p_recoilRest)
+    {
+        if (!m_isShooting)
+        {
+            p_recoilTarget.rotation = p_recoilRest.rotation;
+            p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilRest.rotation, m_recoilRecoverSpeed * Time.fixedDeltaTime);
+        }
+        else
+        {
+            p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilTarget.rotation, m_recoilMovementSpeed * Time.fixedDeltaTime);
+        }
+    }
+
     private void LockCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -789,33 +837,61 @@ public class PlayerController : MonoBehaviour
         //Rotate the player on the y axis (left and right)
         transform.Rotate(Vector3.up, cameraInput.y * (m_cameraProperties.m_mouseSensitivity));
 
-        RotateCameraX(cameraInput.x * m_cameraProperties.m_mouseSensitivity);
+        //RotateCameraX(cameraInput.x * m_cameraProperties.m_mouseSensitivity);
+
+        float xRotateAmount = cameraInput.x * m_cameraProperties.m_mouseSensitivity;
+
+        RotateCameraAxisX(xRotateAmount, m_cameraProperties.m_cameraMain, m_cameraProperties.m_maxCameraAng);
 
     }
 
-    public void RotateCameraX(float p_xRotateAmount)
+    public void RotateCameraAxisY(float p_rotateAmount, Transform p_targetTransform, float p_maxAngleOnAxis)
     {
-        float cameraXAng = m_cameraProperties.m_cameraMain.transform.eulerAngles.x;
+        float cameraAngY = p_targetTransform.localEulerAngles.y;
 
         //Stops the camera from rotating, if it hits the resrictions
-        if (p_xRotateAmount < 0 && cameraXAng > 360 - m_cameraProperties.m_maxCameraAng || p_xRotateAmount < 0 && cameraXAng < m_cameraProperties.m_maxCameraAng + 10)
+        if (p_rotateAmount < 0 && cameraAngY > 360 - p_maxAngleOnAxis || p_rotateAmount < 0 && cameraAngY < p_maxAngleOnAxis + 10)
         {
-            m_cameraProperties.m_cameraMain.transform.Rotate(Vector3.right, p_xRotateAmount );
+            p_targetTransform.Rotate(Vector3.up, p_rotateAmount);
 
         }
-        else if (p_xRotateAmount > 0 && cameraXAng > 360 - m_cameraProperties.m_maxCameraAng - 10 || p_xRotateAmount > 0 && cameraXAng < m_cameraProperties.m_maxCameraAng)
+        else if (p_rotateAmount > 0 && cameraAngY > 360 - p_maxAngleOnAxis - 10 || p_rotateAmount > 0 && cameraAngY < p_maxAngleOnAxis)
         {
-            m_cameraProperties.m_cameraMain.transform.Rotate(Vector3.right, p_xRotateAmount );
-
+            p_targetTransform.Rotate(Vector3.up, p_rotateAmount);
         }
 
-        if (m_cameraProperties.m_cameraMain.transform.eulerAngles.x < 360 - m_cameraProperties.m_maxCameraAng && m_cameraProperties.m_cameraMain.transform.eulerAngles.x > 180)
+        if (p_targetTransform.localEulerAngles.y < 360 - p_maxAngleOnAxis && p_targetTransform.localEulerAngles.y > 180)
         {
-            m_cameraProperties.m_cameraMain.transform.localEulerAngles = new Vector3(360 - m_cameraProperties.m_maxCameraAng, 0f, 0f);
+            p_targetTransform.localEulerAngles = new Vector3(0f, 360 - p_maxAngleOnAxis, 0f);
         }
-        else if (m_cameraProperties.m_camera.transform.eulerAngles.x > m_cameraProperties.m_maxCameraAng && m_cameraProperties.m_cameraMain.transform.eulerAngles.x < 180)
+        else if (p_targetTransform.localEulerAngles.y > p_maxAngleOnAxis && p_targetTransform.localEulerAngles.y < 180)
         {
-            m_cameraProperties.m_cameraMain.transform.localEulerAngles = new Vector3(m_cameraProperties.m_maxCameraAng, 0f, 0f);
+            p_targetTransform.localEulerAngles = new Vector3(0f, p_maxAngleOnAxis, 0f);
+        }
+    }
+
+    public void RotateCameraAxisX(float p_rotateAmount, Transform p_targetTransform, float p_maxAngleOnAxis)
+    {
+        float cameraXAng = p_targetTransform.eulerAngles.x;
+
+        //Stops the camera from rotating, if it hits the resrictions
+        if (p_rotateAmount < 0 && cameraXAng > 360 - p_maxAngleOnAxis || p_rotateAmount < 0 && cameraXAng < p_maxAngleOnAxis + 10)
+        {
+            p_targetTransform.Rotate(Vector3.right, p_rotateAmount);
+
+        }
+        else if (p_rotateAmount > 0 && cameraXAng > 360 - p_maxAngleOnAxis - 10 || p_rotateAmount > 0 && cameraXAng < p_maxAngleOnAxis)
+        {
+            p_targetTransform.Rotate(Vector3.right, p_rotateAmount);
+        }
+
+        if (p_targetTransform.localEulerAngles.x < 360 - p_maxAngleOnAxis && p_targetTransform.localEulerAngles.x > 180)
+        {
+            p_targetTransform.localEulerAngles = new Vector3(360 - p_maxAngleOnAxis, 0f, 0f);
+        }
+        else if (p_targetTransform.localEulerAngles.x > p_maxAngleOnAxis && p_targetTransform.localEulerAngles.x < 180)
+        {
+            p_targetTransform.localEulerAngles = new Vector3(p_maxAngleOnAxis, 0f, 0f);
         }
     }
     #endregion

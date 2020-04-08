@@ -16,6 +16,15 @@ public class Equipment_Gun : Equipment_Base
 
     public BulletProperties m_bulletProperties;
 
+
+    //Variables for the recoil system
+    public float m_bulletsToCompletePattern;
+    public float m_yRecoil;
+    public AnimationCurve m_yRecoilPattern;
+    public float m_xRecoil;
+    public AnimationCurve m_xRecoilPattern;
+    private float m_amountOfBulletsShot;
+
     [System.Serializable]
     public struct BulletProperties
     {
@@ -64,6 +73,8 @@ public class Equipment_Gun : Equipment_Base
         m_canFire = true;
         m_currentFireRateDelay = 0;
         m_cor_fireDelay = null;
+
+        m_amountOfBulletsShot = 0;
     }
     private void Start()
     {
@@ -88,12 +99,23 @@ public class Equipment_Gun : Equipment_Base
     {
         
         m_fireBehaviour.FireBullet(m_myPhotonView, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
-        ApplyRecoil(m_recoilAmountY);
+
+        m_amountOfBulletsShot++;
+
+        ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompletePattern, 0, 1));
+
+        //Debug.Log(m_amountOfBulletsShot / m_bulletsToCompletePattern);
     }
 
-    public virtual void ApplyRecoil(float p_yAmount)
+    public virtual void ApplyRecoil(float p_patternProgress)
     {
-        m_equipController.ApplyRecoilCameraRotation(-p_yAmount);
+        float yPatternProgress = m_yRecoilPattern.Evaluate(p_patternProgress);
+        float currentYRecoil = Mathf.Lerp(-m_yRecoil, m_yRecoil, yPatternProgress);
+
+        float xPatternProgress = m_xRecoilPattern.Evaluate(p_patternProgress);
+        float currentXRecoil = Mathf.Lerp(-m_xRecoil, 0, xPatternProgress);
+
+        m_equipController.ApplyRecoilCameraRotation(currentXRecoil, currentYRecoil);
     }
 
     public override void OnShootInputUp(Transform p_playerCam)
@@ -104,6 +126,7 @@ public class Equipment_Gun : Equipment_Base
 
     public virtual void ShootInputUp(Transform p_playerCam)
     {
+        m_amountOfBulletsShot = 0;
     }
 
 
