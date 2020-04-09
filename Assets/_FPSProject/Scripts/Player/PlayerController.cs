@@ -320,6 +320,8 @@ public class PlayerController : MonoBehaviour
 
     private bool m_recoilReset;
 
+    public Transform m_finalPosContainer;
+
     private void Start()
     {
         m_characterController = GetComponent<CharacterController>();
@@ -354,7 +356,7 @@ public class PlayerController : MonoBehaviour
 
 
         RecoilLerp(m_recoilMovementX, m_recoilTargetX, m_recoilRecoverX);
-        RecoilLerp(m_recoilMovementY, m_recoilTargetY, m_recoilRecoverY);
+        //RecoilLerp(m_recoilMovementY, m_recoilTargetY, m_recoilRecoverY);
 
         CaculateTotalVelocity();
 
@@ -407,6 +409,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnShootInputUp()
     {
+        RecoilReset();
+
         m_isShooting = false;
     }
 
@@ -807,32 +811,20 @@ public class PlayerController : MonoBehaviour
     #region Camera Code
     public void AddRecoil(float p_recoilAmountX, float p_recoilAmountY)
     {
-        RotateCameraAxisX(p_recoilAmountX, m_recoilTargetX, m_recoilLimit);
-        RotateCameraAxisY(p_recoilAmountY, m_recoilTargetY, m_recoilLimit);
+        RotateCameraAxisX(p_recoilAmountX, m_recoilTargetX, m_cameraProperties.m_maxCameraAng);
+        RotateCameraAxisY(p_recoilAmountY, m_recoilTargetY, m_cameraProperties.m_maxCameraAng);
     }
 
     private void RecoilLerp(Transform p_recoilMovement, Transform p_recoilTarget, Transform p_recoilRest)
     {
         if (!m_isShooting)
         {
-            if (!m_recoilReset)
-            {
-                //m_cameraProperties.m_cameraMain.localRotation = m_endRotation;
-                //m_recoilReset = true;
-
-                //return;
-            }
-
-            p_recoilTarget.rotation = p_recoilRest.rotation;
+            //p_recoilTarget.rotation = p_recoilRest.rotation;
             p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilRest.rotation, m_recoilRecoverSpeed * Time.fixedDeltaTime);
         }
         else
         {
-            m_recoilReset = false;
-
             p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilTarget.rotation, m_recoilMovementSpeed * Time.fixedDeltaTime);
-
-            //m_cameraProperties.m_cameraMain.rotation = p_recoilMovement.rotation;
         }
     }
 
@@ -847,6 +839,22 @@ public class PlayerController : MonoBehaviour
         m_cameraProperties.m_cameraTilt.rotation = Quaternion.identity;
     }
 
+    private void RecoilReset()
+    {
+        m_cameraProperties.m_cameraMain.rotation = m_shootingContainer.rotation;
+        
+        if (m_recoilReset)
+        {
+            m_recoilMovementX.rotation = m_shootingContainer.rotation;
+        }
+        else
+        {
+            m_recoilMovementX.rotation = m_finalPosContainer.rotation;
+        }
+
+        //m_recoilTargetX.rotation = m_shootingContainer.rotation;
+    }
+
     private void CameraRotation()
     {
         //Get the inputs for the camera
@@ -856,25 +864,27 @@ public class PlayerController : MonoBehaviour
         transform.Rotate(Vector3.up, cameraInput.y * (m_cameraProperties.m_mouseSensitivity));
 
         float xRotateAmount = cameraInput.x * m_cameraProperties.m_mouseSensitivity;
-        
 
+        
         if (m_isShooting)
         {
             RotateCameraAxisX(xRotateAmount, m_recoilTargetX, m_cameraProperties.m_maxCameraAng);
-            RotateCameraAxisX(xRotateAmount, m_shootingContainer, m_cameraProperties.m_maxCameraAng);
+
+            if (xRotateAmount > 0)
+            {
+                m_recoilReset = true;
+                m_shootingContainer.rotation = Quaternion.LookRotation(m_cameraProperties.m_camera.transform.forward);
+            }
+            else
+            {
+                m_recoilReset = false;
+            }
+
+            m_finalPosContainer.rotation = m_recoilMovementX.rotation;
         }
         else
         {
-            if (!m_recoilReset)
-            {
-                //Debug.Log(m_shootingContainer.rotation);
-
-                //m_cameraProperties.m_cameraMain.rotation = m_shootingContainer.rotation;
-                //m_recoilReset = true;
-            }
-
             RotateCameraAxisX(xRotateAmount, m_cameraProperties.m_cameraMain, m_cameraProperties.m_maxCameraAng);
-            RotateCameraAxisX(xRotateAmount, m_shootingContainer, m_cameraProperties.m_maxCameraAng);
         }
     }
 

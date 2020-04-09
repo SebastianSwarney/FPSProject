@@ -439,6 +439,7 @@ MonoBehaviour:
   m_teamLabel: {fileID: 0}
   m_canUse: 0
   m_equipController: {fileID: 0}
+  m_ownerID: 0
   m_equipmentEvents:
     m_equipmentUsed:
       m_PersistentCalls:
@@ -2276,6 +2277,7 @@ MonoBehaviour:
   m_recoilRecoverX: {fileID: 1268514520759123603}
   m_shootingContainer: {fileID: 4798824334041572030}
   m_recoilLimit: 60
+  m_finalPosContainer: {fileID: 1270225782132151251}
 --- !u!114 &2848933224995770463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2434,6 +2436,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  m_onDiedWithID:
+    m_PersistentCalls:
+      m_Calls: []
   m_useShields: 0
   m_shieldDamageMultiplier: 0.75
   m_maxShieldStrength: 0
@@ -2802,6 +2807,36 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &6143833380513981167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1270225782132151251}
+  m_Layer: 8
+  m_Name: Final Rot Container
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1270225782132151251
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6143833380513981167}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.79999995, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2789618763680228180}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6180934261659806098
 GameObject:
   m_ObjectHideFlags: 0
@@ -2831,6 +2866,7 @@ Transform:
   m_Children:
   - {fileID: 5072337888155200248}
   - {fileID: 4798824334041572030}
+  - {fileID: 1270225782132151251}
   m_Father: {fileID: 3311448210555383127}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3075,12 +3111,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 99fb11da5e730de4998fe35e7b1850c3, type: 3}
---- !u!4 &6721275403048140766 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8444377419081478050, guid: 99fb11da5e730de4998fe35e7b1850c3,
-    type: 3}
-  m_PrefabInstance: {fileID: 2915712267606511740}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3738005656046491386 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
@@ -3093,6 +3123,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f661af9a88d67344c9d85b977af886e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &6721275403048140766 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8444377419081478050, guid: 99fb11da5e730de4998fe35e7b1850c3,
+    type: 3}
+  m_PrefabInstance: {fileID: 2915712267606511740}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4247473387671096659 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1334400645664398639, guid: 99fb11da5e730de4998fe35e7b1850c3,

@@ -119,6 +119,7 @@ MonoBehaviour:
   m_teamLabel: {fileID: 0}
   m_canUse: 0
   m_equipController: {fileID: 0}
+  m_ownerID: 0
   m_equipmentEvents:
     m_equipmentUsed:
       m_PersistentCalls:
@@ -163,7 +164,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_xRecoil: 2
+  m_xRecoil: 5
   m_xRecoilPattern:
     serializedVersion: 2
     m_Curve:
