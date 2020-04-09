@@ -32,6 +32,7 @@ public class RespawnObject_Player : RespawnObject
         m_controller = GetComponent<PlayerController>();
         m_playerInput = GetComponent<PlayerInput>();
         m_photonView = GetComponent<PhotonView>();
+        
         if (!m_isDebugging)
         {
             
@@ -41,6 +42,7 @@ public class RespawnObject_Player : RespawnObject
             {
                 m_camera.SetActive(false);
                 m_playerUI.SetActive(false);
+                GetComponent<CharacterController>().enabled = false;
             }
         }
     }
