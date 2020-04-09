@@ -327,9 +327,6 @@ public class PlayerController : MonoBehaviour
 
         CheckWallConnection();
 
-        //m_characterController.Move(m_velocity * Time.deltaTime);
-        //RecoilLerp(m_recoilMovementX, m_recoilTargetX, m_recoilRecoverX);
-
         CaculateTotalVelocity();
 
         SlopePhysics();
