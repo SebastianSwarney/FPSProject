@@ -291,26 +291,11 @@ public class PlayerController : MonoBehaviour
 
     private bool m_maintainSpeed;
 
+    public AnimationCurve m_explosionDecayCurve;
+
     public Vector2 m_slideJumpForce;
 
     private Vector3 m_explosionVelocity;
-
-    public float m_explosionForce;
-    public float m_explosionDecayTime;
-    public AnimationCurve m_explosionDecayCurve;
-
-    public float m_recoilRecoverSpeed;
-    public float m_recoilMovementSpeed;
-
-    public Transform m_recoilMovementX;
-    public Transform m_recoilTargetX;
-    public Transform m_recoilRecoverX;
-
-    public Transform m_shootingContainer;
-    public Transform m_finalPosContainer;
-
-    private bool m_isShooting;
-    private bool m_recoilReset;
 
     private void Start()
     {
@@ -357,27 +342,37 @@ public class PlayerController : MonoBehaviour
         TiltLerp();
     }
 
-    public void OnShootInputDown()
-    {
-        //m_isShooting = true;
-    }
-
-    public void OnShootInputUp()
-    {
-        //RecoilReset();
-
-        //m_isShooting = false;
-    }
-
-
     #region Camera Code
-    public void AddRecoil(float p_recoilAmountX, float p_recoilAmountY)
+    public void AddRecoil(float p_recoilAmountX, float p_recoilAmountY, float p_fireRate)
     {
-        //RotateCameraAxisX(p_recoilAmountX, m_recoilTargetX, m_cameraProperties.m_maxCameraAng);
-        StartCoroutine(RecoilKick(p_recoilAmountX, 0.09f));
+        StartCoroutine(RecoilKickX(p_recoilAmountX, p_fireRate));
+        StartCoroutine(RecoilKickY(p_recoilAmountY, p_fireRate));
     }
 
-    private IEnumerator RecoilKick(float p_recoilAmount, float p_fireRate)
+    private IEnumerator RecoilKickY(float p_recoilAmount, float p_fireRate)
+    {
+        float amountOfFixedUpdatesToBeRun = 50f * p_fireRate;
+        float deltaRcoil = p_recoilAmount / amountOfFixedUpdatesToBeRun;
+        float totalCount = 0;
+
+        float dir = Mathf.Sign(p_recoilAmount);
+        Vector3 rotDir = dir * Vector3.up;
+
+        if (dir < 0)
+        {
+            deltaRcoil *= -1f;
+            p_recoilAmount *= -1f;
+        }
+
+        while (totalCount < p_recoilAmount)
+        {
+            transform.Rotate(rotDir, deltaRcoil);
+            yield return new WaitForFixedUpdate();
+            totalCount += deltaRcoil;
+        }
+    }
+
+    private IEnumerator RecoilKickX(float p_recoilAmount, float p_fireRate)
     {
         float amountOfFixedUpdatesToBeRun = 50f * p_fireRate;
 
@@ -391,20 +386,6 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForFixedUpdate();
 
             totalCount += deltaRcoil;
-
-        }
-    }
-
-    private void RecoilLerp(Transform p_recoilMovement, Transform p_recoilTarget, Transform p_recoilRest)
-    {
-        if (!m_isShooting)
-        {
-            //p_recoilTarget.rotation = p_recoilRest.rotation;
-            p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilRest.rotation, m_recoilRecoverSpeed * Time.fixedDeltaTime);
-        }
-        else
-        {
-            p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilTarget.rotation, m_recoilMovementSpeed * Time.fixedDeltaTime);
         }
     }
 
@@ -417,24 +398,6 @@ public class PlayerController : MonoBehaviour
     {
         m_cameraProperties.m_cameraMain.rotation = Quaternion.identity;
         m_cameraProperties.m_cameraTilt.rotation = Quaternion.identity;
-    }
-
-    private void RecoilReset()
-    {
-        m_cameraProperties.m_cameraMain.rotation = m_shootingContainer.rotation;
-
-        if (m_recoilReset)
-        {
-            m_recoilMovementX.rotation = m_shootingContainer.rotation;
-        }
-        else
-        {
-            m_recoilMovementX.rotation = m_finalPosContainer.rotation;
-        }
-
-        m_recoilTargetX.rotation = m_recoilRecoverX.rotation;
-
-        //m_recoilTargetX.rotation = m_shootingContainer.rotation;
     }
 
     private void CameraRotation()

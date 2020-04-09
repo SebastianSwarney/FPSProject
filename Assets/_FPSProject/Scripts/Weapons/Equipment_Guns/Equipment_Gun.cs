@@ -10,8 +10,6 @@ public class Equipment_Gun : Equipment_Base
     public Transform m_fireSpot;
     public FireBehaviour_Base m_fireBehaviour;
 
-    public float m_recoilAmountY;
-
     public Vector2 m_bulletSpread;
 
     public BulletProperties m_bulletProperties;
@@ -19,11 +17,14 @@ public class Equipment_Gun : Equipment_Base
 
 
     //Variables for the recoil system
-    public float m_bulletsToCompletePattern;
-    public float m_yRecoil;
-    public AnimationCurve m_yRecoilPattern;
-    public float m_xRecoil;
-    public AnimationCurve m_xRecoilPattern;
+    [Header("Recoil Variables")]
+    public float m_bulletsToCompleteRecoilPattern;
+    public float m_horizontalRecoilAmount;
+    public AnimationCurve m_horizontalRecoilPattern;
+    public AnimationCurve m_horizontalRecoilDecayPattern;
+
+    public float m_verticalRecoilAmount;
+    public AnimationCurve m_verticalRecoilPattern;
     private float m_amountOfBulletsShot;
 
     [System.Serializable]
@@ -32,9 +33,6 @@ public class Equipment_Gun : Equipment_Base
         public GameObject m_bulletPrefab;
 
         public int m_clipSize;
-
-
-
 
         public float m_bulletDamage;
         public float m_bulletSpeed;
@@ -154,7 +152,7 @@ public class Equipment_Gun : Equipment_Base
         m_fireBehaviour.FireBullet(m_myPhotonView, m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
         
         m_amountOfBulletsShot++;
-        ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompletePattern, 0, 1));
+        ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompleteRecoilPattern, 0, 1));
         
         m_currentClipSize--;
         if (m_currentClipSize == 0)
@@ -215,13 +213,16 @@ public class Equipment_Gun : Equipment_Base
 
     public virtual void ApplyRecoil(float p_patternProgress)
     {
-        float yPatternProgress = m_yRecoilPattern.Evaluate(p_patternProgress);
-        float currentYRecoil = Mathf.Lerp(-m_yRecoil, m_yRecoil, yPatternProgress);
+        float yPatternProgress = m_horizontalRecoilPattern.Evaluate(p_patternProgress);
+        float currentYRecoil = Mathf.Lerp(m_horizontalRecoilAmount, -m_horizontalRecoilAmount, yPatternProgress);
 
-        float xPatternProgress = m_xRecoilPattern.Evaluate(p_patternProgress);
-        float currentXRecoil = Mathf.Lerp(m_xRecoil, 0, xPatternProgress);
+        float currentYDecayProgress = m_horizontalRecoilDecayPattern.Evaluate(p_patternProgress);
+        float currentYDecay = Mathf.Lerp(1, 0, currentYDecayProgress);
 
-        m_equipController.ApplyRecoilCameraRotation(currentXRecoil, currentYRecoil);
+        float xPatternProgress = m_verticalRecoilPattern.Evaluate(p_patternProgress);
+        float currentXRecoil = Mathf.Lerp(m_verticalRecoilAmount, 0, xPatternProgress);
+
+        m_equipController.ApplyRecoilCameraRotation(currentXRecoil, currentYRecoil * currentYDecay, m_bulletProperties.m_gunFireDelay);
     }
 
 

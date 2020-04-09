@@ -129,25 +129,24 @@ MonoBehaviour:
         m_Calls: []
   m_fireSpot: {fileID: 1334400645664398639}
   m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
-  m_recoilAmountY: 1
-  m_bulletSpread: {x: 0.5, y: 0.5}
+  m_bulletSpread: {x: 1, y: 1}
   m_bulletProperties:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
       type: 3}
     m_clipSize: 25
     m_bulletDamage: 10
     m_bulletSpeed: 150
-    m_gunFireDelay: 0.09
-  m_bulletsToCompletePattern: 25
-  m_yRecoil: 0
-  m_yRecoilPattern:
+    m_gunFireDelay: 0.05
+  m_bulletsToCompleteRecoilPattern: 25
+  m_horizontalRecoilAmount: 1
+  m_horizontalRecoilPattern:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
@@ -155,8 +154,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 1
+      outSlope: 1
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
@@ -164,8 +163,32 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_xRecoil: 10
-  m_xRecoilPattern:
+  m_horizontalRecoilDecayPattern:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_verticalRecoilAmount: 1
+  m_verticalRecoilPattern:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3

@@ -449,7 +449,6 @@ MonoBehaviour:
         m_Calls: []
   m_fireSpot: {fileID: 4247473387671096659}
   m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
-  m_recoilAmountY: 1
   m_bulletSpread: {x: 4, y: 4}
   m_bulletProperties:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 64da5114f6c09da48afbbfd22172d2ff,
@@ -458,63 +457,24 @@ MonoBehaviour:
     m_bulletDamage: 20
     m_bulletSpeed: 150
     m_gunFireDelay: 2
-  m_bulletsToCompletePattern: 25
-  m_yRecoil: 0
-  m_yRecoilPattern:
+  m_bulletsToCompleteRecoilPattern: 0
+  m_horizontalRecoilAmount: 0
+  m_horizontalRecoilPattern:
     serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+    m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_xRecoil: 10
-  m_xRecoilPattern:
+  m_horizontalRecoilDecayPattern:
     serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.26987505
-      value: 0.8370771
-      inSlope: 1.5220584
-      outSlope: 1.5220584
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.03823482
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_verticalRecoilAmount: 0
+  m_verticalRecoilPattern:
+    serializedVersion: 2
+    m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -2333,22 +2293,13 @@ MonoBehaviour:
   m_postClamberSpeedBoost: 50
   m_postClamberSpeedBoostTime: 0.5
   m_movementInput: {x: 0, y: 0}
-  m_slideJumpForce: {x: 20, y: 1}
-  m_explosionForce: 0
-  m_explosionDecayTime: 0
   m_explosionDecayCurve:
     serializedVersion: 2
     m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_recoilRecoverSpeed: 5
-  m_recoilMovementSpeed: 10
-  m_recoilMovementX: {fileID: 1479894985542187455}
-  m_recoilTargetX: {fileID: 4788025525070466778}
-  m_recoilRecoverX: {fileID: 707524473139789675}
-  m_shootingContainer: {fileID: 4798824334041572030}
-  m_finalPosContainer: {fileID: 1270225782132151251}
+  m_slideJumpForce: {x: 20, y: 1}
 --- !u!114 &2848933224995770463
 MonoBehaviour:
   m_ObjectHideFlags: 0

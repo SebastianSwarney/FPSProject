@@ -54,8 +54,6 @@ public class EquipmentController : MonoBehaviour
 	{
         if (!m_photonView.IsMine) return;
         m_weapon.OnShootInputDown(m_playerCamera);
-
-        m_playerController.OnShootInputDown();
     }
 
 
@@ -63,12 +61,10 @@ public class EquipmentController : MonoBehaviour
 	{
         if (!m_photonView.IsMine) return;
         m_weapon.OnShootInputUp(m_playerCamera);
-
-        m_playerController.OnShootInputUp();
     }
 
-    public void ApplyRecoilCameraRotation(float p_recoilAmountX, float p_recoilAmountY)
+    public void ApplyRecoilCameraRotation(float p_recoilAmountX, float p_recoilAmountY, float p_fireRate)
     {
-        m_playerController.AddRecoil(p_recoilAmountX, p_recoilAmountY);
+        m_playerController.AddRecoil(p_recoilAmountX, p_recoilAmountY, p_fireRate);
     }
 }
