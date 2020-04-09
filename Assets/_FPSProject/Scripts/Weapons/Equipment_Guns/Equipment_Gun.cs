@@ -129,8 +129,6 @@ public class Equipment_Gun : Equipment_Base
 
     public virtual void ShootInputUp(Transform p_playerCam)
     {
-        Debug.Log(m_amountOfBulletsShot);
-
         m_amountOfBulletsShot = 0;
         m_inShootingPattern = false;
     }
@@ -221,7 +219,7 @@ public class Equipment_Gun : Equipment_Base
         float currentYRecoil = Mathf.Lerp(-m_yRecoil, m_yRecoil, yPatternProgress);
 
         float xPatternProgress = m_xRecoilPattern.Evaluate(p_patternProgress);
-        float currentXRecoil = Mathf.Lerp(-m_xRecoil, 0, xPatternProgress);
+        float currentXRecoil = Mathf.Lerp(m_xRecoil, 0, xPatternProgress);
 
         m_equipController.ApplyRecoilCameraRotation(currentXRecoil, currentYRecoil);
     }

@@ -302,25 +302,15 @@ public class PlayerController : MonoBehaviour
     public float m_recoilRecoverSpeed;
     public float m_recoilMovementSpeed;
 
-    public Transform m_recoilMovementY;
-    public Transform m_recoilTargetY;
-    public Transform m_recoilRecoverY;
-
     public Transform m_recoilMovementX;
     public Transform m_recoilTargetX;
     public Transform m_recoilRecoverX;
 
     public Transform m_shootingContainer;
-
-    public float m_recoilLimit;
+    public Transform m_finalPosContainer;
 
     private bool m_isShooting;
-
-    private Quaternion m_endRotation;
-
     private bool m_recoilReset;
-
-    public Transform m_finalPosContainer;
 
     private void Start()
     {
@@ -353,10 +343,7 @@ public class PlayerController : MonoBehaviour
         CheckWallConnection();
 
         //m_characterController.Move(m_velocity * Time.deltaTime);
-
-
-        RecoilLerp(m_recoilMovementX, m_recoilTargetX, m_recoilRecoverX);
-        //RecoilLerp(m_recoilMovementY, m_recoilTargetY, m_recoilRecoverY);
+        //RecoilLerp(m_recoilMovementX, m_recoilTargetX, m_recoilRecoverX);
 
         CaculateTotalVelocity();
 
@@ -370,52 +357,156 @@ public class PlayerController : MonoBehaviour
         TiltLerp();
     }
 
-    private void CaculateTotalVelocity()
-    {
-        Vector3 velocity = Vector3.zero;
-
-        velocity += m_velocity;
-        velocity += m_wallRunJumpVelocity;
-        velocity += m_slideVelocity;
-        velocity += m_explosionVelocity;
-
-        m_characterController.Move(velocity * Time.fixedDeltaTime);
-    }
-
-    private IEnumerator RunExplosion(Vector3 p_explosionDir, float p_explosionForce, float p_explosionDecayTime)
-    {
-        float t = 0;
-
-        while (t < p_explosionDecayTime)
-        {
-            t += Time.fixedDeltaTime;
-
-            float decayProgress = m_explosionDecayCurve.Evaluate(t / p_explosionDecayTime);
-            float currentExplosionForce = Mathf.Lerp(p_explosionForce, 0, decayProgress);
-
-            Vector3 currentExplosionVelocity = p_explosionDir * currentExplosionForce;
-            m_explosionVelocity = new Vector3(currentExplosionVelocity.x, currentExplosionVelocity.y, currentExplosionVelocity.z);
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_explosionVelocity = Vector3.zero;
-    }
-
     public void OnShootInputDown()
     {
-        m_isShooting = true;
+        //m_isShooting = true;
     }
 
     public void OnShootInputUp()
     {
-        RecoilReset();
+        //RecoilReset();
 
-        m_isShooting = false;
+        //m_isShooting = false;
     }
 
-	#region Wall Code
-	private void CheckWallConnection()
+
+    #region Camera Code
+    public void AddRecoil(float p_recoilAmountX, float p_recoilAmountY)
+    {
+        //RotateCameraAxisX(p_recoilAmountX, m_recoilTargetX, m_cameraProperties.m_maxCameraAng);
+
+        Debug.Log(p_recoilAmountX);
+
+        StartCoroutine(RecoilKick(p_recoilAmountX, 0.09f));
+    }
+
+    private IEnumerator RecoilKick(float p_recoilAmount, float p_fireRate)
+    {
+        float amountOfFixedUpdatesToBeRun = 50f * p_fireRate;
+
+        float deltaRcoil = p_recoilAmount / amountOfFixedUpdatesToBeRun;
+
+        float totalCount = 0;
+
+        while (totalCount < p_recoilAmount)
+        {
+            RotateCameraAxisX(-deltaRcoil, m_cameraProperties.m_cameraMain, m_cameraProperties.m_maxCameraAng);
+            yield return new WaitForFixedUpdate();
+
+            totalCount += deltaRcoil;
+
+        }
+    }
+
+    private void RecoilLerp(Transform p_recoilMovement, Transform p_recoilTarget, Transform p_recoilRest)
+    {
+        if (!m_isShooting)
+        {
+            //p_recoilTarget.rotation = p_recoilRest.rotation;
+            p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilRest.rotation, m_recoilRecoverSpeed * Time.fixedDeltaTime);
+        }
+        else
+        {
+            p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilTarget.rotation, m_recoilMovementSpeed * Time.fixedDeltaTime);
+        }
+    }
+
+    private void LockCursor()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void ResetCamera()
+    {
+        m_cameraProperties.m_cameraMain.rotation = Quaternion.identity;
+        m_cameraProperties.m_cameraTilt.rotation = Quaternion.identity;
+    }
+
+    private void RecoilReset()
+    {
+        m_cameraProperties.m_cameraMain.rotation = m_shootingContainer.rotation;
+
+        if (m_recoilReset)
+        {
+            m_recoilMovementX.rotation = m_shootingContainer.rotation;
+        }
+        else
+        {
+            m_recoilMovementX.rotation = m_finalPosContainer.rotation;
+        }
+
+        m_recoilTargetX.rotation = m_recoilRecoverX.rotation;
+
+        //m_recoilTargetX.rotation = m_shootingContainer.rotation;
+    }
+
+    private void CameraRotation()
+    {
+        //Get the inputs for the camera
+        Vector2 cameraInput = new Vector2(m_lookInput.y * ((m_cameraProperties.m_inverted) ? -1 : 1), m_lookInput.x);
+
+        //Rotate the player on the y axis (left and right)
+        transform.Rotate(Vector3.up, cameraInput.y * (m_cameraProperties.m_mouseSensitivity));
+
+        float xRotateAmount = cameraInput.x * m_cameraProperties.m_mouseSensitivity;
+
+        RotateCameraAxisX(xRotateAmount, m_cameraProperties.m_cameraMain, m_cameraProperties.m_maxCameraAng);
+    }
+
+    public void RotateCameraAxisY(float p_rotateAmount, Transform p_targetTransform, float p_maxAngleOnAxis)
+    {
+        float cameraAngY = p_targetTransform.localEulerAngles.y;
+
+        //Stops the camera from rotating, if it hits the resrictions
+        if (p_rotateAmount < 0 && cameraAngY > 360 - p_maxAngleOnAxis || p_rotateAmount < 0 && cameraAngY < p_maxAngleOnAxis + 10)
+        {
+            p_targetTransform.Rotate(Vector3.up, p_rotateAmount);
+
+        }
+        else if (p_rotateAmount > 0 && cameraAngY > 360 - p_maxAngleOnAxis - 10 || p_rotateAmount > 0 && cameraAngY < p_maxAngleOnAxis)
+        {
+            p_targetTransform.Rotate(Vector3.up, p_rotateAmount);
+        }
+
+        if (p_targetTransform.localEulerAngles.y < 360 - p_maxAngleOnAxis && p_targetTransform.localEulerAngles.y > 180)
+        {
+            p_targetTransform.localEulerAngles = new Vector3(0f, 360 - p_maxAngleOnAxis, 0f);
+        }
+        else if (p_targetTransform.localEulerAngles.y > p_maxAngleOnAxis && p_targetTransform.localEulerAngles.y < 180)
+        {
+            p_targetTransform.localEulerAngles = new Vector3(0f, p_maxAngleOnAxis, 0f);
+        }
+    }
+
+    public void RotateCameraAxisX(float p_rotateAmount, Transform p_targetTransform, float p_maxAngleOnAxis)
+    {
+        float cameraXAng = p_targetTransform.eulerAngles.x;
+
+        //Stops the camera from rotating, if it hits the resrictions
+        if (p_rotateAmount < 0 && cameraXAng > 360 - p_maxAngleOnAxis || p_rotateAmount < 0 && cameraXAng < p_maxAngleOnAxis + 10)
+        {
+            p_targetTransform.Rotate(Vector3.right, p_rotateAmount);
+
+        }
+        else if (p_rotateAmount > 0 && cameraXAng > 360 - p_maxAngleOnAxis - 10 || p_rotateAmount > 0 && cameraXAng < p_maxAngleOnAxis)
+        {
+            p_targetTransform.Rotate(Vector3.right, p_rotateAmount);
+        }
+
+        if (p_targetTransform.localEulerAngles.x < 360 - p_maxAngleOnAxis && p_targetTransform.localEulerAngles.x > 180)
+        {
+            p_targetTransform.localEulerAngles = new Vector3(360 - p_maxAngleOnAxis, 0f, 0f);
+        }
+        else if (p_targetTransform.localEulerAngles.x > p_maxAngleOnAxis && p_targetTransform.localEulerAngles.x < 180)
+        {
+            p_targetTransform.localEulerAngles = new Vector3(p_maxAngleOnAxis, 0f, 0f);
+        }
+    }
+    #endregion
+
+
+    #region Wall Code
+    private void CheckWallConnection()
     {
         bool anyRayHit = false;
 
@@ -808,139 +899,6 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    #region Camera Code
-    public void AddRecoil(float p_recoilAmountX, float p_recoilAmountY)
-    {
-        RotateCameraAxisX(p_recoilAmountX, m_recoilTargetX, m_cameraProperties.m_maxCameraAng);
-        RotateCameraAxisY(p_recoilAmountY, m_recoilTargetY, m_cameraProperties.m_maxCameraAng);
-    }
-
-    private void RecoilLerp(Transform p_recoilMovement, Transform p_recoilTarget, Transform p_recoilRest)
-    {
-        if (!m_isShooting)
-        {
-            //p_recoilTarget.rotation = p_recoilRest.rotation;
-            p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilRest.rotation, m_recoilRecoverSpeed * Time.fixedDeltaTime);
-        }
-        else
-        {
-            p_recoilMovement.rotation = Quaternion.Slerp(p_recoilMovement.rotation, p_recoilTarget.rotation, m_recoilMovementSpeed * Time.fixedDeltaTime);
-        }
-    }
-
-    private void LockCursor()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-    }
-
-    public void ResetCamera()
-    {
-        m_cameraProperties.m_cameraMain.rotation = Quaternion.identity;
-        m_cameraProperties.m_cameraTilt.rotation = Quaternion.identity;
-    }
-
-    private void RecoilReset()
-    {
-        m_cameraProperties.m_cameraMain.rotation = m_shootingContainer.rotation;
-        
-        if (m_recoilReset)
-        {
-            m_recoilMovementX.rotation = m_shootingContainer.rotation;
-        }
-        else
-        {
-            m_recoilMovementX.rotation = m_finalPosContainer.rotation;
-        }
-
-        m_recoilTargetX.rotation = m_recoilRecoverX.rotation;
-
-        //m_recoilTargetX.rotation = m_shootingContainer.rotation;
-    }
-
-    private void CameraRotation()
-    {
-        //Get the inputs for the camera
-        Vector2 cameraInput = new Vector2(m_lookInput.y * ((m_cameraProperties.m_inverted) ? -1 : 1), m_lookInput.x);
-
-        //Rotate the player on the y axis (left and right)
-        transform.Rotate(Vector3.up, cameraInput.y * (m_cameraProperties.m_mouseSensitivity));
-
-        float xRotateAmount = cameraInput.x * m_cameraProperties.m_mouseSensitivity;
-
-
-        m_finalPosContainer.rotation = m_recoilMovementX.rotation;
-
-        if (m_isShooting)
-        {
-            RotateCameraAxisX(xRotateAmount, m_recoilTargetX, m_cameraProperties.m_maxCameraAng);
-
-            if (xRotateAmount > 0)
-            {
-                m_recoilReset = true;
-                m_shootingContainer.rotation = Quaternion.LookRotation(m_cameraProperties.m_camera.transform.forward);
-            }
-            else
-            {
-                m_recoilReset = false;
-            }
-        }
-        else
-        {
-            RotateCameraAxisX(xRotateAmount, m_cameraProperties.m_cameraMain, m_cameraProperties.m_maxCameraAng);
-        }
-    }
-
-    public void RotateCameraAxisY(float p_rotateAmount, Transform p_targetTransform, float p_maxAngleOnAxis)
-    {
-        float cameraAngY = p_targetTransform.localEulerAngles.y;
-
-        //Stops the camera from rotating, if it hits the resrictions
-        if (p_rotateAmount < 0 && cameraAngY > 360 - p_maxAngleOnAxis || p_rotateAmount < 0 && cameraAngY < p_maxAngleOnAxis + 10)
-        {
-            p_targetTransform.Rotate(Vector3.up, p_rotateAmount);
-
-        }
-        else if (p_rotateAmount > 0 && cameraAngY > 360 - p_maxAngleOnAxis - 10 || p_rotateAmount > 0 && cameraAngY < p_maxAngleOnAxis)
-        {
-            p_targetTransform.Rotate(Vector3.up, p_rotateAmount);
-        }
-
-        if (p_targetTransform.localEulerAngles.y < 360 - p_maxAngleOnAxis && p_targetTransform.localEulerAngles.y > 180)
-        {
-            p_targetTransform.localEulerAngles = new Vector3(0f, 360 - p_maxAngleOnAxis, 0f);
-        }
-        else if (p_targetTransform.localEulerAngles.y > p_maxAngleOnAxis && p_targetTransform.localEulerAngles.y < 180)
-        {
-            p_targetTransform.localEulerAngles = new Vector3(0f, p_maxAngleOnAxis, 0f);
-        }
-    }
-
-    public void RotateCameraAxisX(float p_rotateAmount, Transform p_targetTransform, float p_maxAngleOnAxis)
-    {
-        float cameraXAng = p_targetTransform.eulerAngles.x;
-
-        //Stops the camera from rotating, if it hits the resrictions
-        if (p_rotateAmount < 0 && cameraXAng > 360 - p_maxAngleOnAxis || p_rotateAmount < 0 && cameraXAng < p_maxAngleOnAxis + 10)
-        {
-            p_targetTransform.Rotate(Vector3.right, p_rotateAmount);
-
-        }
-        else if (p_rotateAmount > 0 && cameraXAng > 360 - p_maxAngleOnAxis - 10 || p_rotateAmount > 0 && cameraXAng < p_maxAngleOnAxis)
-        {
-            p_targetTransform.Rotate(Vector3.right, p_rotateAmount);
-        }
-
-        if (p_targetTransform.localEulerAngles.x < 360 - p_maxAngleOnAxis && p_targetTransform.localEulerAngles.x > 180)
-        {
-            p_targetTransform.localEulerAngles = new Vector3(360 - p_maxAngleOnAxis, 0f, 0f);
-        }
-        else if (p_targetTransform.localEulerAngles.x > p_maxAngleOnAxis && p_targetTransform.localEulerAngles.x < 180)
-        {
-            p_targetTransform.localEulerAngles = new Vector3(p_maxAngleOnAxis, 0f, 0f);
-        }
-    }
-    #endregion
-
     #region Input Buffering Code
 
     private bool CheckBuffer(ref float p_bufferTimer, ref float p_bufferTime, Coroutine p_bufferTimerRoutine)
@@ -993,6 +951,38 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Physics Calculation Code
+
+    private void CaculateTotalVelocity()
+    {
+        Vector3 velocity = Vector3.zero;
+
+        velocity += m_velocity;
+        velocity += m_wallRunJumpVelocity;
+        velocity += m_slideVelocity;
+        velocity += m_explosionVelocity;
+
+        m_characterController.Move(velocity * Time.fixedDeltaTime);
+    }
+
+    private IEnumerator RunExplosion(Vector3 p_explosionDir, float p_explosionForce, float p_explosionDecayTime)
+    {
+        float t = 0;
+
+        while (t < p_explosionDecayTime)
+        {
+            t += Time.fixedDeltaTime;
+
+            float decayProgress = m_explosionDecayCurve.Evaluate(t / p_explosionDecayTime);
+            float currentExplosionForce = Mathf.Lerp(p_explosionForce, 0, decayProgress);
+
+            Vector3 currentExplosionVelocity = p_explosionDir * currentExplosionForce;
+            m_explosionVelocity = new Vector3(currentExplosionVelocity.x, currentExplosionVelocity.y, currentExplosionVelocity.z);
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        m_explosionVelocity = Vector3.zero;
+    }
 
     private void CalculateCurrentSpeed()
     {
