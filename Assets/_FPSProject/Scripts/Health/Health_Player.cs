@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class Health_Player : Health
 {
@@ -17,5 +18,14 @@ public class Health_Player : Health
     {
         m_playerHealthBar.fillAmount = (m_currentHealth / m_maxHealth);
         m_healthNum.text = ((int)m_currentHealth).ToString() ;
+    }
+
+    public override void Died(int p_attackerID)
+    {
+        base.Died(p_attackerID);
+        if (m_photonView.IsMine)
+        {
+            PhotonView.Find(p_attackerID).GetComponent<PhotonView>().RPC("RPC_PlayerKilledSomeone", RpcTarget.All, m_photonView.ViewID);
+        }
     }
 }

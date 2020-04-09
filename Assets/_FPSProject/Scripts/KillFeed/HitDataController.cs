@@ -10,6 +10,8 @@ public class HitDataController : MonoBehaviour
     public float m_hitMarkerAppearTime;
     private float m_currentHitTime;
     public GameObject m_hitMarker;
+
+    private KillFeedManager m_killFeedManager;
     private void Start()
     {
         m_myPhotonView = GetComponent<PhotonView>();
@@ -17,6 +19,7 @@ public class HitDataController : MonoBehaviour
         {
             StartCoroutine(HitMarker());
         }
+        m_killFeedManager = KillFeedManager.Instance;
     }
     [PunRPC]
     public void RPC_PlayerHitSomeone(int p_hitObjectID)
@@ -31,13 +34,25 @@ public class HitDataController : MonoBehaviour
     public void RPC_PlayerKilledSomeone(int p_killedObjectID)
     {
         if (!m_myPhotonView.IsMine) return;
-        print("I Killed : " + PhotonView.Find(p_killedObjectID).GetComponent<PhotonView>().Owner.NickName);
-
+        PhotonView hitPhoton = PhotonView.Find(p_killedObjectID).GetComponent<PhotonView>();
+        m_killFeedManager.AddMessage("You Killed : " + hitPhoton.Owner.NickName);
+        hitPhoton.RPC("RPC_AddToEveryoneKillFeed", RpcTarget.All, m_myPhotonView.Owner.NickName, m_myPhotonView.ViewID);
     }
 
-    private void KilledPlayer(int p_hitID)
+    [PunRPC]
+    public void RPC_AddToEveryoneKillFeed(string p_message, int p_killerID)
     {
-
+        if (m_myPhotonView.IsMine)
+        {
+            m_killFeedManager.AddMessage(p_message + " killed you!");
+        }
+        else
+        {
+            if (!PhotonView.Find(p_killerID).GetComponent<PhotonView>().IsMine)
+            {
+                m_killFeedManager.AddMessage(p_message + " killed " + m_myPhotonView.Owner.NickName);
+            }
+        }
     }
 
     private IEnumerator HitMarker()

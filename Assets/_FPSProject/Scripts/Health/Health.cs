@@ -64,6 +64,7 @@ public class Health : MonoBehaviour
 
     public virtual void TakeDamage(float p_takenDamage, int p_attackerID)
     {
+        if (!m_photonView.IsMine) return;
         m_photonView.RPC("RPC_TakeDamage", RpcTarget.All, p_takenDamage, p_attackerID);
     }
 
@@ -106,17 +107,22 @@ public class Health : MonoBehaviour
                 else
                 {
                     Died(p_attackerID);
+
                 }
             }
         }
     }
 
-    private void Died(int p_attackerID)
+    public virtual void Died(int p_attackerID)
     {
-        m_isDead = true;
-        m_onDied.Invoke();
-        m_onDiedWithID.Invoke(p_attackerID);
-        PhotonView.Find(p_attackerID).GetComponent<PhotonView>().RPC("RPC_PlayerKilledSomeone", RpcTarget.All, m_photonView.ViewID);
+        if (!m_isDead)
+        {
+            m_isDead = true;
+            m_onDied.Invoke();
+            m_onDiedWithID.Invoke(p_attackerID);
+        }
+        
+        
 
     }
 
