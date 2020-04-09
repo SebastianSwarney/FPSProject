@@ -464,7 +464,6 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-
     #region Wall Code
     private void CheckWallConnection()
     {
@@ -519,7 +518,7 @@ public class PlayerController : MonoBehaviour
 
                 if (!anyRayHit)
                 {
-                    if (Physics.Raycast(m_characterController.transform.position, raySpaceQ * transform.forward, out hit, 10f, m_wallConnectMask))
+                    if (Physics.Raycast(m_characterController.transform.position, raySpaceQ * transform.forward, out hit, 2f, m_wallConnectMask))
                     {
                         if (Vector3.Dot(hit.normal, Vector3.up) == 0)
                         {
@@ -591,6 +590,11 @@ public class PlayerController : MonoBehaviour
             {
                 if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
                 {
+                    if (m_isClimbing)
+                    {
+                        StopWallClimb();
+                    }
+
                     StartCoroutine(RunWallRun(p_dirToWallStart, p_wallRunMovementDir));
                 }
             }
@@ -628,19 +632,22 @@ public class PlayerController : MonoBehaviour
             float tiltResult = Mathf.Lerp(-m_wallRunProperties.m_wallRunCameraMaxTilt, m_wallRunProperties.m_wallRunCameraMaxTilt, -p_wallRunMovementDir);
             m_tiltTarget = tiltResult;
 
-            RaycastHit hit;
+			#region Check if still connected to the wall
+			RaycastHit wallConnectionHit;
 
-            if (Physics.Raycast(m_characterController.transform.position, dirToWall, out hit, 10f, m_wallConnectMask))
+            Vector3 wallVector = Vector3.zero;
+
+            if (Physics.Raycast(m_characterController.transform.position, dirToWall, out wallConnectionHit, 2f, m_wallConnectMask))
             {
-                if (Vector3.Dot(hit.normal, Vector3.up) == 0)
+                if (Vector3.Dot(wallConnectionHit.normal, Vector3.up) == 0)
                 {
-                    transform.position = hit.point + hit.normal * m_characterController.radius;
+                    //transform.position = hit.point + hit.normal * m_characterController.radius;
 
-                    Vector3 wallVector = Vector3.Cross(hit.normal, Vector3.up);
-                    dirToWall = -hit.normal;
+                    wallVector = Vector3.Cross(wallConnectionHit.normal, Vector3.up);
+                    dirToWall = -wallConnectionHit.normal;
 
                     Vector3 wallRunVelocity = (wallVector * p_wallRunMovementDir) * currentWallRunSpeed;
-                    m_velocity = new Vector3(wallRunVelocity.x, wallRunVelocity.y, wallRunVelocity.z);
+                    m_velocity = new Vector3(wallRunVelocity.x, yVelocity, wallRunVelocity.z);
 
                     Vector3 wallFacingVector = Vector3.Cross(wallVector, m_cameraProperties.m_camera.transform.forward);
                     m_wallJumpOffFactor = wallFacingVector.y;
@@ -654,11 +661,23 @@ public class PlayerController : MonoBehaviour
             {
                 StopWallRun();
             }
+			#endregion
 
-            yield return new WaitForFixedUpdate();
+			#region Check to see if wall is in front of player
+			RaycastHit wallStopHit;
+
+            Debug.DrawRay(m_characterController.transform.position, wallVector * p_wallRunMovementDir, Color.red);
+
+            if (Physics.Raycast(m_characterController.transform.position, wallVector * p_wallRunMovementDir, out wallStopHit, 2f, m_wallConnectMask))
+            {
+                StopWallRun();
+            }
+			#endregion
+
+			yield return new WaitForFixedUpdate();
         }
 
-        m_tiltTarget = 0f;
+		m_tiltTarget = 0f;
 
         m_states.m_movementControllState = MovementControllState.MovementEnabled;
         m_states.m_gravityControllState = GravityState.GravityEnabled;
@@ -667,9 +686,53 @@ public class PlayerController : MonoBehaviour
 
         m_isWallRunning = false;
     }
-	#endregion
 
-	#region Wall Clamber Code
+    private IEnumerator InAirBoost(float p_yVelocity, float p_forwardSpeed, Vector3 p_movementDirection)
+    {
+        JumpMaxMultiplied(p_yVelocity);
+
+        while (!IsGrounded() && !m_isWallRunning)
+        {
+            Vector3 movementVelocity = p_movementDirection * p_forwardSpeed;
+
+            m_wallRunJumpVelocity = new Vector3(movementVelocity.x, 0, movementVelocity.z);
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        if (IsGrounded() && !m_isWallRunning)
+        {
+            StartCoroutine(OnGroundBoost(p_forwardSpeed, p_movementDirection));
+        }
+
+        m_wallRunJumpVelocity = Vector3.zero;
+    }
+
+    private IEnumerator OnGroundBoost(float p_forwardSpeed, Vector3 p_movementDirection)
+    {
+        float t = 0;
+
+        while (t < m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime)
+        {
+            if (IsGrounded() && !m_maintainSpeed)
+            {
+                t += Time.fixedDeltaTime;
+            }
+
+            float speedProgress = m_wallRunProperties.m_wallRunJumpGroundVelocityDecayAnimationCurve.Evaluate(t / m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime);
+            float currentSpeed = Mathf.Lerp(p_forwardSpeed, 0, speedProgress);
+
+            Vector3 movementVelocity = p_movementDirection * currentSpeed;
+            m_wallRunJumpVelocity = movementVelocity;
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        m_wallRunJumpVelocity = Vector3.zero;
+    }
+    #endregion
+
+    #region Wall Clamber Code
     private void StartWallClamber()
     {
         if (m_hasJumped)
@@ -788,7 +851,10 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        m_states.m_gravityControllState = GravityState.GravityEnabled;
+        if (!m_isWallRunning)
+        {
+            m_states.m_gravityControllState = GravityState.GravityEnabled;
+        }
 
         m_canWallClimb = false;
 
@@ -800,50 +866,6 @@ public class PlayerController : MonoBehaviour
 	private void TiltLerp()
     {
         m_cameraProperties.m_cameraTilt.localRotation = Quaternion.Slerp(m_cameraProperties.m_cameraTilt.localRotation, Quaternion.Euler(0, 0, m_tiltTarget), m_wallRunProperties.m_tiltSpeed);
-    }
-
-    private IEnumerator InAirBoost(float p_yVelocity, float p_forwardSpeed, Vector3 p_movementDirection)
-    {
-        JumpMaxMultiplied(p_yVelocity);
-
-        while (!IsGrounded() && !m_isWallRunning)
-        {
-            Vector3 movementVelocity = p_movementDirection * p_forwardSpeed;
-
-            m_wallRunJumpVelocity = new Vector3(movementVelocity.x, 0, movementVelocity.z);
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        if (IsGrounded() && !m_isWallRunning)
-        {
-            StartCoroutine(OnGroundBoost(p_forwardSpeed, p_movementDirection));
-        }
-
-        m_wallRunJumpVelocity = Vector3.zero;
-    }
-
-    private IEnumerator OnGroundBoost(float p_forwardSpeed, Vector3 p_movementDirection)
-    {
-        float t = 0;
-
-        while (t < m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime)
-        {
-            if (IsGrounded() && !m_maintainSpeed)
-            {
-                t += Time.fixedDeltaTime;
-            }
-
-            float speedProgress = m_wallRunProperties.m_wallRunJumpGroundVelocityDecayAnimationCurve.Evaluate(t / m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime);
-            float currentSpeed = Mathf.Lerp(p_forwardSpeed, 0, speedProgress);
-
-            Vector3 movementVelocity = p_movementDirection * currentSpeed;
-            m_wallRunJumpVelocity = movementVelocity;
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_wallRunJumpVelocity = Vector3.zero;
     }
 	#endregion
 
@@ -918,8 +940,8 @@ public class PlayerController : MonoBehaviour
 
         velocity += m_velocity;
         velocity += m_wallRunJumpVelocity;
-        velocity += m_slideVelocity;
-        velocity += m_explosionVelocity;
+        //velocity += m_slideVelocity;
+        //velocity += m_explosionVelocity;
 
         m_characterController.Move(velocity * Time.fixedDeltaTime);
     }

@@ -1954,7 +1954,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   m_cameraProperties:
-    m_mouseSensitivity: 0.4
+    m_mouseSensitivity: 5
     m_maxCameraAng: 60
     m_inverted: 1
     m_camera: {fileID: 5072337886895319182}
