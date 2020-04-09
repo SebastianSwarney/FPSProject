@@ -374,9 +374,6 @@ public class PlayerController : MonoBehaviour
     public void AddRecoil(float p_recoilAmountX, float p_recoilAmountY)
     {
         //RotateCameraAxisX(p_recoilAmountX, m_recoilTargetX, m_cameraProperties.m_maxCameraAng);
-
-        Debug.Log(p_recoilAmountX);
-
         StartCoroutine(RecoilKick(p_recoilAmountX, 0.09f));
     }
 

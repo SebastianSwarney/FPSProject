@@ -164,7 +164,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_xRecoil: 2
+  m_xRecoil: 10
   m_xRecoilPattern:
     serializedVersion: 2
     m_Curve:
