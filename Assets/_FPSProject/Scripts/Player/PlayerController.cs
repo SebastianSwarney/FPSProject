@@ -852,6 +852,8 @@ public class PlayerController : MonoBehaviour
             m_recoilMovementX.rotation = m_finalPosContainer.rotation;
         }
 
+        m_recoilTargetX.rotation = m_recoilRecoverX.rotation;
+
         //m_recoilTargetX.rotation = m_shootingContainer.rotation;
     }
 
@@ -865,7 +867,9 @@ public class PlayerController : MonoBehaviour
 
         float xRotateAmount = cameraInput.x * m_cameraProperties.m_mouseSensitivity;
 
-        
+
+        m_finalPosContainer.rotation = m_recoilMovementX.rotation;
+
         if (m_isShooting)
         {
             RotateCameraAxisX(xRotateAmount, m_recoilTargetX, m_cameraProperties.m_maxCameraAng);
@@ -879,8 +883,6 @@ public class PlayerController : MonoBehaviour
             {
                 m_recoilReset = false;
             }
-
-            m_finalPosContainer.rotation = m_recoilMovementX.rotation;
         }
         else
         {

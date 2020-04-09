@@ -129,6 +129,8 @@ public class Equipment_Gun : Equipment_Base
 
     public virtual void ShootInputUp(Transform p_playerCam)
     {
+        Debug.Log(m_amountOfBulletsShot);
+
         m_amountOfBulletsShot = 0;
         m_inShootingPattern = false;
     }
@@ -152,8 +154,10 @@ public class Equipment_Gun : Equipment_Base
     {
 
         m_fireBehaviour.FireBullet(m_myPhotonView, m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
+        
         m_amountOfBulletsShot++;
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompletePattern, 0, 1));
+        
         m_currentClipSize--;
         if (m_currentClipSize == 0)
         {
@@ -174,6 +178,8 @@ public class Equipment_Gun : Equipment_Base
 
     private void StartReloading()
     {
+        m_amountOfBulletsShot = 0;
+
         m_isReloading = true;
         m_currentReloadingTime = 0;
         m_currentReloadCoroutineLife = 0;
