@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnObjectAtCollision : MonoBehaviour, IProjectile_Collision
+public class Collision_Behaviour_SpawnObjectAtCollision : MonoBehaviour, IProjectile_Collision
 {
 
     private ObjectPooler m_pooler;

@@ -18,7 +18,7 @@ public class RespawnObject_Player : RespawnObject
     private PhotonView m_photonView;
 
 
-
+    public RespawnObjectEvent m_died;
     public RespawnObjectEvent m_respawned;
     [Header("Debugging")]
     public bool m_isDebugging;
@@ -56,7 +56,7 @@ public class RespawnObject_Player : RespawnObject
     {
         DisablePlayerControl();
         m_visual.SetActive(false);
-
+        m_died.Invoke();
         if (m_photonView.IsMine)
         {
             StartCoroutine(RespawnCoroutine());

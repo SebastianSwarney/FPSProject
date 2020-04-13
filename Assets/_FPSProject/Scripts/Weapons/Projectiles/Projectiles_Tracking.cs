@@ -5,17 +5,18 @@ using UnityEngine;
 public class Projectiles_Tracking : Projectiles_Base
 {
     [Header("Missile Properties")]
-    public bool m_isTypeTracking;
     public float m_rotateToTargetSpeed;
     public float m_lifespan;
 
     private float m_missileSpeed;
+    [HideInInspector]
     public Transform m_targetUnit;
     private WaitForSeconds m_lifeDelay;
     private Coroutine m_lifeCoroutine;
 
     public override void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity,int p_ownerID, Transform p_target = null, float p_projectileDamage = 0)
     {
+        m_targetUnit = null;
         m_teamLabel.SetTeamType(p_myNewTeam);
         if(m_lifeDelay == null)
         {
@@ -41,8 +42,6 @@ public class Projectiles_Tracking : Projectiles_Base
     public override void FixedUpdate()
     {
 
-        if (m_isTypeTracking)
-        {
             if (m_targetUnit!= null)
             {
                 
@@ -53,7 +52,7 @@ public class Projectiles_Tracking : Projectiles_Base
                 }
             }
             
-        }
+        
         Vector3 velocity = transform.forward * m_missileSpeed * Time.fixedDeltaTime;
         RaycastHit hit;
         if (Physics.SphereCast(transform.position, m_collisionRadius, velocity, out hit, velocity.magnitude, m_collisionDetectionMask))

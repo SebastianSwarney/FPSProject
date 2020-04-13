@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class CollisionDamage : MonoBehaviour, IProjectile_Collision
+public class Collision_Behaviour_CollisionDamage : MonoBehaviour, IProjectile_Collision
 {
     private Projectiles_Base m_projectileDamage;
     private TeamLabel m_myTeamLabel;

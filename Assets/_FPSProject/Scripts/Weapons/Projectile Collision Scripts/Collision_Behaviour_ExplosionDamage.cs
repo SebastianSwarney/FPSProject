@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Explode : MonoBehaviour, IProjectile_Collision
+public class Collision_Behaviour_ExplosionDamage : MonoBehaviour, IProjectile_Collision
 {
     [Header("Explosion Variables")]
 

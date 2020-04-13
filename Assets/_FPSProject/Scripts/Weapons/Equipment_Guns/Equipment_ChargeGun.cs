@@ -6,30 +6,31 @@ public class Equipment_ChargeGun : Equipment_Gun
 {
     [Header("Charge Gun")]
     public float m_maxHoldTime;
-    public ChargeStages[] m_chargeStages;
+    public bool m_isAutiomatic;
+    
     private float m_currentHeldDownTime;
     private int m_currentChargeState;
 
-    public bool m_isAutiomatic;
+
     private bool m_playerLetGo = true;
     private bool m_fired;
     private bool m_charging;
 
     private int m_currentFiredState;
-
+    public ChargeStages[] m_chargeStages;
     [System.Serializable]
     public struct ChargeStages
     {
-        public GameObject m_stateVisual;
+        [Tooltip("Determines whether this state actually fires a projectile")]
         public bool m_shootProjectile;
+        public GameObject m_bulletPrefab;
+        public float m_endChargeTime;        
+        public FireBehaviour_Base m_fireBehaviour;
         public float m_projectileSpeed;
         public float m_projectileDamage;
-        public float m_projectileRecoilY;
         public Vector2 m_bulletSpread;
-        public GameObject m_bulletPrefab;
-        public float m_endChargeTime;
-        public FireBehaviour_Base m_fireBehaviour;
-        public float m_fireRecoilTime;
+        public GameObject m_stateVisual;
+
     }
     public override void ShootInputDown(Transform p_playerCam)
     {
@@ -104,7 +105,6 @@ public class Equipment_ChargeGun : Equipment_Gun
             m_chargeStages[m_currentFiredState].m_fireBehaviour.FireBullet(m_myPhotonView, m_ownerID, m_teamLabel, m_chargeStages[m_currentFiredState].m_bulletPrefab, m_fireSpot, m_chargeStages[m_currentFiredState].m_projectileSpeed, m_chargeStages[m_currentFiredState].m_projectileDamage, m_chargeStages[m_currentFiredState].m_bulletSpread, aimedTarget);
             m_currentHeldDownTime = 0;
             StartFireDelay();
-            StartCoroutine(RecoilDisplay());
         }
         DisplayVisual(m_currentHeldDownTime, false);
     }
@@ -133,8 +133,4 @@ public class Equipment_ChargeGun : Equipment_Gun
     }
 
 
-    private IEnumerator RecoilDisplay()
-    {
-        yield return new WaitForSeconds(m_chargeStages[m_currentChargeState].m_fireRecoilTime);
-    }
 }
