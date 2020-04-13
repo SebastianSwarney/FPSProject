@@ -44,5 +44,13 @@ public class Collision_Behaviour_ExplosionDamage : MonoBehaviour, IProjectile_Co
         }
     }
 
-
+    public void CreateExplosion(int p_bulletOwner)
+    {
+        Collider[] cols = Physics.OverlapSphere(transform.position, m_explodeRadius, m_explosionHitLayer);
+        foreach (Collider col in cols)
+        {
+            Health newHealth = col.GetComponent<Health>();
+            newHealth.TakeDamage(m_explodeDamage, p_bulletOwner);
+        }
+    }
 }

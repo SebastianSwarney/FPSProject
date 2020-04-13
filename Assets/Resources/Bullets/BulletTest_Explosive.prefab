@@ -146,13 +146,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_teamLabel: {fileID: 0}
+  m_bulletOwnerID: 0
   m_velocity: {x: 0, y: 0, z: 0}
   m_gravity: 0
   m_armorPiercing: 0
   m_collisionRadius: 0.2
   m_collisionDetectionMask:
     serializedVersion: 2
-    m_Bits: 769
+    m_Bits: 1793
   m_boundsLayer:
     serializedVersion: 2
     m_Bits: 513
@@ -194,8 +195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_spawnedObject: {fileID: 1201588605853739785, guid: eaf4aa48387ac0c4084dee29e8af96b9,
     type: 3}
-  m_spawnedObject2: {fileID: 1201588605853739785, guid: fc5c39fa863a5f348835afdf7e344a38,
-    type: 3}
+  m_spawnedObject2: {fileID: 0}
 --- !u!114 &-2911448875107304531
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,8 +210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_spawnedObject: {fileID: 8156700078027560969, guid: e6ff1855612410b4fa83488b12664678,
     type: 3}
-  m_spawnedObject2: {fileID: 8156700078027560969, guid: e6ff1855612410b4fa83488b12664678,
-    type: 3}
+  m_spawnedObject2: {fileID: 0}
 --- !u!114 &2466960838539285973
 MonoBehaviour:
   m_ObjectHideFlags: 0

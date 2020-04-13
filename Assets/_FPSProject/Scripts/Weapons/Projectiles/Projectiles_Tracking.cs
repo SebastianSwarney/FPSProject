@@ -24,6 +24,7 @@ public class Projectiles_Tracking : Projectiles_Base
         }
         m_missileSpeed = p_newVelocity.magnitude;
         transform.LookAt(transform.position + p_newVelocity.normalized);
+        m_bulletOwnerID = p_ownerID;
         if (p_target != null)
         {
             m_targetUnit = p_target;

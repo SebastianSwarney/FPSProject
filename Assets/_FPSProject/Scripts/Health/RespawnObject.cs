@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class RespawnEvent : UnityEngine.Events.UnityEvent { }
 public class RespawnObject : MonoBehaviour
 {
     public float m_respawnTime;
     float m_respawnTimer;
     private Vector3 m_respawnPosition;
     private Quaternion m_respawnRotation;
+    public RespawnEvent m_respawnedEvent;
 
     public virtual void Start()
     {
@@ -33,7 +36,8 @@ public class RespawnObject : MonoBehaviour
 
     public virtual void RespawnMe()
     {
-        //transform.position = m_respawnPosition;
-        //transform.rotation = m_respawnRotation;
+        transform.position = m_respawnPosition;
+        transform.rotation = m_respawnRotation;
+        m_respawnedEvent.Invoke();
     }
 }

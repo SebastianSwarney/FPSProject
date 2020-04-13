@@ -151,7 +151,7 @@ MonoBehaviour:
   m_collisionRadius: 0.01
   m_collisionDetectionMask:
     serializedVersion: 2
-    m_Bits: 769
+    m_Bits: 1793
   m_boundsLayer:
     serializedVersion: 2
     m_Bits: 513
@@ -167,7 +167,6 @@ MonoBehaviour:
   m_debugGizmos: 1
   m_gizmosColor1: {r: 1, g: 0, b: 0, a: 1}
   m_gizmosColor2: {r: 0.07445743, g: 0.6320754, b: 0, a: 1}
-  m_isTypeTracking: 1
   m_rotateToTargetSpeed: 100
   m_lifespan: 15
   m_targetUnit: {fileID: 0}
@@ -197,5 +196,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_spawnedObject: {fileID: 8156700078027560969, guid: e6ff1855612410b4fa83488b12664678,
     type: 3}
-  m_spawnedObject2: {fileID: 8156700078027560969, guid: e6ff1855612410b4fa83488b12664678,
-    type: 3}
+  m_spawnedObject2: {fileID: 0}
