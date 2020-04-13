@@ -107,8 +107,6 @@ public class Equipment_ChargeGun : Equipment_Gun
             StartCoroutine(RecoilDisplay());
         }
         DisplayVisual(m_currentHeldDownTime, false);
-
-        Debug.Break();
     }
 
     private int CheckChargeState(float p_chargeTime)

@@ -64,6 +64,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
         type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
       propertyPath: m_chargeStages.Array.data[1].m_bulletPrefab
       value: 
       objectReference: {fileID: 3900400124138448053, guid: 64da5114f6c09da48afbbfd22172d2ff,
@@ -143,6 +148,71 @@ PrefabInstance:
         type: 3}
       propertyPath: m_aimAssist.m_maxAssistDistance
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_reloadTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilAmount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.data[0].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.data[0].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.data[1].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.data[1].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.data[1].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_verticalRecoilPattern.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_bulletProperties.m_clipSize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154977892267777843, guid: 8b11baf394617f64b85d955f9ee5ca79,
+        type: 3}
+      propertyPath: m_chargeStages.Array.data[1].m_projectileRecoilY
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3534113252068842577, guid: 8b11baf394617f64b85d955f9ee5ca79,
         type: 3}
