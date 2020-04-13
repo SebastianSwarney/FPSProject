@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 public class Equipment_BurstGun : Equipment_Gun
@@ -16,6 +17,25 @@ public class Equipment_BurstGun : Equipment_Gun
 
     private Coroutine m_burstFireCoroutine;
 
+    public override void PutEquipmentAway()
+    {
+        base.PutEquipmentAway();
+  
+    }
+    public override void SetUpEquipment(TeamTypes.TeamType p_currentTeam, EquipmentController p_equipController, PhotonView p_currentPhotonView)
+    {
+        base.SetUpEquipment(p_currentTeam, p_equipController, p_currentPhotonView);
+        if (m_burstFireCoroutine != null)
+        {
+            StopCoroutine(m_burstFireCoroutine);
+            m_burstFireCoroutine = null;
+            m_canFireBurst = true;
+        }
+        
+
+
+    }
+
     public override void ShootInputDown(Transform p_playerCam)
     {
         if (m_isReloading) return;
@@ -28,7 +48,7 @@ public class Equipment_BurstGun : Equipment_Gun
         {
             if (m_canFireBurst)
             {
-                m_inShootingPattern = true;
+
                 m_playerLetGo = false;
                 m_canFire = false;
                 m_canFireBurst = false;
@@ -81,7 +101,6 @@ public class Equipment_BurstGun : Equipment_Gun
 
 
             ///Out of burst behaviour
-            m_inShootingPattern = false;
             m_canFireBurst = true;
             m_burstCorLifeTimer += Time.deltaTime;
             if (!p_startedDelay)

@@ -116,7 +116,7 @@ public class Projectiles_Base : MonoBehaviour
     /// </summary>
     /// <param name="p_hitObject"></param>
     /// <param name="p_hitPoint"></param>
-    private void PerformAllCollisionScripts(GameObject p_hitObject, Vector3 p_hitPoint)
+    public void PerformAllCollisionScripts(GameObject p_hitObject, Vector3 p_hitPoint)
     {
         foreach(IProjectile_Collision newScript in m_projectileCollisionScripts)
         {

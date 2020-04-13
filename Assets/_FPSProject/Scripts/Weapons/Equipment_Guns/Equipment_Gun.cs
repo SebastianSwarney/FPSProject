@@ -14,30 +14,6 @@ public class Equipment_Gun : Equipment_Base
 
     public BulletProperties m_bulletProperties;
 
-
-
-    //Variables for the recoil system
-    [Header("Recoil Variables")]
-    public float m_bulletsToCompleteRecoilPattern;
-    public float m_horizontalRecoilAmount;
-    public AnimationCurve m_horizontalRecoilPattern;
-    public AnimationCurve m_horizontalRecoilDecayPattern;
-
-    public float m_verticalRecoilAmount;
-    public AnimationCurve m_verticalRecoilPattern;
-    private float m_amountOfBulletsShot;
-
-    [System.Serializable]
-    public struct BulletProperties
-    {
-        public GameObject m_bulletPrefab;
-
-        public int m_clipSize;
-
-        public float m_bulletDamage;
-        public float m_bulletSpeed;
-        public float m_gunFireDelay;
-    }
     [HideInInspector]
     public int m_currentClipSize;
     [HideInInspector]
@@ -55,11 +31,35 @@ public class Equipment_Gun : Equipment_Base
     private Coroutine m_reloadingCoroutine;
 
 
-    /// <summary>
-    /// Used for bullet recoil
-    /// </summary>
-    [HideInInspector]
-    public bool m_inShootingPattern;
+
+    [System.Serializable]
+    public struct BulletProperties
+    {
+        public GameObject m_bulletPrefab;
+
+        public int m_clipSize;
+
+        public float m_bulletDamage;
+        public float m_bulletSpeed;
+        public float m_gunFireDelay;
+    }
+
+    #endregion
+    
+    #region Recoil
+    //Variables for the recoil system
+    [Header("Recoil Variables")]
+    public float m_bulletsToCompleteRecoilPattern;
+    public float m_horizontalRecoilAmount;
+    public AnimationCurve m_horizontalRecoilPattern;
+    public AnimationCurve m_horizontalRecoilDecayPattern;
+
+    public float m_verticalRecoilAmount;
+    public AnimationCurve m_verticalRecoilPattern;
+    private float m_amountOfBulletsShot;
+
+
+
 
     #endregion
 
@@ -88,6 +88,7 @@ public class Equipment_Gun : Equipment_Base
     public Color m_gizmosColor1, m_gizmosColor2;
     #endregion
 
+    #region Setup Functions
     private void OnEnable()
     {
         m_canFire = true;
@@ -100,6 +101,35 @@ public class Equipment_Gun : Equipment_Base
         m_myPhotonView = GetComponent<PhotonView>();
         m_currentClipSize = m_bulletProperties.m_clipSize;
     }
+    public override void PutEquipmentAway()
+    {
+        base.PutEquipmentAway();
+        if (m_reloadingCoroutine != null)
+        {
+            StopCoroutine(m_reloadingCoroutine);
+            m_reloadingCoroutine = null;
+        }
+
+    }
+
+    /// <summary>
+    /// Called by the equipment controller, to properly set up the equipment when it is equiped
+    /// </summary>
+    /// <param name="p_currentTeam"></param>
+    /// <param name="p_equipController"></param>
+    /// <param name="p_currentPhotonView"></param>
+    public override void SetUpEquipment(TeamTypes.TeamType p_currentTeam, EquipmentController p_equipController, PhotonView p_currentPhotonView)
+    {
+        base.SetUpEquipment(p_currentTeam, p_equipController, p_currentPhotonView);
+        if (m_currentClipSize <= 0)
+        {
+            StartReloading();
+        }
+    }
+
+    #endregion
+
+    #region Input Functions
     public override void OnShootInputDown(Transform p_playerCam)
     {
         base.OnShootInputDown(p_playerCam);
@@ -108,7 +138,6 @@ public class Equipment_Gun : Equipment_Base
     public virtual void ShootInputDown(Transform p_playerCam)
     {
         if (m_isReloading) return;
-        m_inShootingPattern = true;
         if (m_canFire)
         {
             Transform hitPlayerObject;
@@ -118,6 +147,9 @@ public class Equipment_Gun : Equipment_Base
         }
     }
 
+    /// <summary>
+    /// Called by the equipment controller to put the equipment away
+    /// </summary>
 
     public override void OnShootInputUp(Transform p_playerCam)
     {
@@ -128,24 +160,21 @@ public class Equipment_Gun : Equipment_Base
     public virtual void ShootInputUp(Transform p_playerCam)
     {
         m_amountOfBulletsShot = 0;
-        m_inShootingPattern = false;
     }
 
     public override void OnReloadDown()
     {
         ReloadDown();
     }
+
     public virtual void ReloadDown()
     {
-        m_inShootingPattern = false;
         StartReloading();
         
     }
 
-    public bool InShootingPattern()
-    {
-        return m_inShootingPattern;
-    }
+    #endregion
+
     public void FireBullet(Transform p_playerCam, Transform p_targetObject)
     {
 
@@ -157,7 +186,6 @@ public class Equipment_Gun : Equipment_Base
         m_currentClipSize--;
         if (m_currentClipSize == 0)
         {
-            m_inShootingPattern = false;
             StopShooting();
             StartReloading();
         }
@@ -169,7 +197,6 @@ public class Equipment_Gun : Equipment_Base
     /// </summary>
     public virtual void StopShooting()
     {
-        m_inShootingPattern = false;
     }
 
     private void StartReloading()
@@ -224,8 +251,6 @@ public class Equipment_Gun : Equipment_Base
 
         m_equipController.ApplyRecoilCameraRotation(currentXRecoil, currentYRecoil * currentYDecay, m_bulletProperties.m_gunFireDelay);
     }
-
-
 
     public void PerformAimAssist(Transform p_playerCam, out Transform p_hitPlayer)
     {

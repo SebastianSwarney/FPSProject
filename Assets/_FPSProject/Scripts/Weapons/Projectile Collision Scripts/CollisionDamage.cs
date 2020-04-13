@@ -16,6 +16,7 @@ public class CollisionDamage : MonoBehaviour, IProjectile_Collision
 
     public void ActivateCollision(GameObject p_collidedObject, Vector3 p_hitPosition, int p_bulletOwnerPhotonID)
     {
+        if (p_collidedObject == null) return;
         Health newHealth = p_collidedObject.GetComponent<Health>();
         if (newHealth != null)
         {

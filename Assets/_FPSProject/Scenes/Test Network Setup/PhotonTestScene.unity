@@ -17135,7 +17135,7 @@ PrefabInstance:
     - target: {fileID: 5828551009082498910, guid: 5c1a1d727a57eca429a03ddd02cf45b4,
         type: 3}
       propertyPath: m_toggleOfflineMode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5828551009082498911, guid: 5c1a1d727a57eca429a03ddd02cf45b4,
         type: 3}

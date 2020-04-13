@@ -34,8 +34,8 @@ public class EquipmentController : MonoBehaviour
     private void SwapWeapons()
     {
         Equipment_Base temp = m_weapon;
-        m_weapon.gameObject.SetActive(false);
         m_weapon.PutEquipmentAway();
+        m_weapon.gameObject.SetActive(false);
         m_weapon = m_holsteredWeapon;
         m_weapon.gameObject.SetActive(true);
         m_weapon.SetUpEquipment(m_teamLabel.m_myTeam, this, m_photonView);

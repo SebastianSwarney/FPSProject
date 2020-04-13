@@ -10,7 +10,7 @@ public class Projectiles_Tracking : Projectiles_Base
     public float m_lifespan;
 
     private float m_missileSpeed;
-    private Transform m_targetUnit;
+    public Transform m_targetUnit;
     private WaitForSeconds m_lifeDelay;
     private Coroutine m_lifeCoroutine;
 
@@ -22,6 +22,7 @@ public class Projectiles_Tracking : Projectiles_Base
             m_lifeDelay = new WaitForSeconds(m_lifespan);
         }
         m_missileSpeed = p_newVelocity.magnitude;
+        transform.LookAt(transform.position + p_newVelocity.normalized);
         if (p_target != null)
         {
             m_targetUnit = p_target;
@@ -70,6 +71,7 @@ public class Projectiles_Tracking : Projectiles_Base
     private IEnumerator LifeTime()
     {
         yield return m_lifeDelay;
+        PerformAllCollisionScripts(null, transform.position);
         DestroyBullet();
         
     }

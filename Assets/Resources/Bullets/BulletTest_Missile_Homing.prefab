@@ -107,7 +107,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3900400124138448053}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.843603, y: 5.4205413, z: -0.28179362}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3900400123457308717}
@@ -144,16 +144,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_teamLabel: {fileID: 0}
+  m_bulletOwnerID: 0
   m_velocity: {x: 0, y: 0, z: 0}
   m_gravity: 0
   m_armorPiercing: 0
-  m_collisionRadius: 0
+  m_collisionRadius: 0.01
   m_collisionDetectionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 769
   m_boundsLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 513
   m_bulletSpawnedEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -162,13 +163,14 @@ MonoBehaviour:
       m_Calls: []
   m_projectileDamage: 0
   m_pooler: {fileID: 0}
-  m_visualsTransform: {fileID: 0}
-  m_debugGizmos: 0
-  m_gizmosColor1: {r: 1, g: 0, b: 0, a: 0}
-  m_gizmosColor2: {r: 0.07445743, g: 0.6320754, b: 0, a: 0}
-  m_isTypeTracking: 0
-  m_rotateToTargetSpeed: 0
-  m_lifespan: 0
+  m_visualsTransform: {fileID: 3900400123457308717}
+  m_debugGizmos: 1
+  m_gizmosColor1: {r: 1, g: 0, b: 0, a: 1}
+  m_gizmosColor2: {r: 0.07445743, g: 0.6320754, b: 0, a: 1}
+  m_isTypeTracking: 1
+  m_rotateToTargetSpeed: 100
+  m_lifespan: 15
+  m_targetUnit: {fileID: 0}
 --- !u!114 &6495588663871986190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,7 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01469a8ca5af4514683af5b439b4c5dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnedObject: {fileID: 1201588605853739785, guid: eaf4aa48387ac0c4084dee29e8af96b9,
+  m_spawnedObject: {fileID: 8156700078027560969, guid: e6ff1855612410b4fa83488b12664678,
     type: 3}
-  m_spawnedObject2: {fileID: 1201588605853739785, guid: fc5c39fa863a5f348835afdf7e344a38,
+  m_spawnedObject2: {fileID: 8156700078027560969, guid: e6ff1855612410b4fa83488b12664678,
     type: 3}
