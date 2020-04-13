@@ -1822,8 +1822,8 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
-        outSlope: 0
+        inSlope: 2
+        outSlope: 2
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
@@ -1831,8 +1831,8 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 1
         value: 1
-        inSlope: 2
-        outSlope: 2
+        inSlope: 0
+        outSlope: 0
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
@@ -1843,7 +1843,7 @@ MonoBehaviour:
     m_wallRunYVelocityStopTime: 0
     m_wallRunBufferTime: 0.5
     m_wallRunJumpForce: {x: 25, y: 1}
-    m_wallRunJumpGroundVelocityDecayTime: 0.5
+    m_wallRunJumpGroundVelocityDecayTime: 0.25
     m_wallRunJumpGroundVelocityDecayAnimationCurve:
       serializedVersion: 2
       m_Curve:
@@ -1902,7 +1902,6 @@ MonoBehaviour:
     m_wallClimbSpeedUpTime: 1
     m_wallClimbFactor: 0.8
     m_wallClimbJumpVelocity: {x: 0, y: 0, z: 0}
-  m_localWallFacingVector: {x: 0, y: 0, z: 0}
   m_crouchProperties:
     m_crouchTime: 0.1
     m_crouchHeight: 1

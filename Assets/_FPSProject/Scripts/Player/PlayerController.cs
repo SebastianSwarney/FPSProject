@@ -158,6 +158,7 @@ public class PlayerController : MonoBehaviour
     private Coroutine m_wallRunBufferCoroutine;
     private float m_wallRunBufferTimer;
     private float m_wallJumpOffFactor;
+    private Vector3 m_wallDirVector;
     #endregion
 
     #region Wall Climb Properties
@@ -177,8 +178,6 @@ public class PlayerController : MonoBehaviour
 
     private float m_currentWallClimbSpeed;
     private bool m_isWallClimbing;
-    [HideInInspector]
-    public Vector3 m_localWallFacingVector;
     #endregion
 
     #region Crouch Properties
@@ -643,6 +642,8 @@ public class PlayerController : MonoBehaviour
                     wallVector = Vector3.Cross(wallConnectionHit.normal, Vector3.up);
                     dirToWall = -wallConnectionHit.normal;
 
+                    m_wallDirVector = (wallVector * p_wallRunMovementDir);
+
                     Vector3 wallRunVelocity = (wallVector * p_wallRunMovementDir) * currentWallRunSpeed;
                     m_velocity = new Vector3(wallRunVelocity.x, yVelocity, wallRunVelocity.z);
 
@@ -688,7 +689,7 @@ public class PlayerController : MonoBehaviour
     {
         JumpMaxMultiplied(p_yVelocity);
 
-        while (!IsGrounded() && !m_isWallRunning)
+        while (!IsGrounded() && !m_isWallRunning && !HitSide())
         {
             Vector3 movementVelocity = p_movementDirection * p_forwardSpeed;
 
@@ -709,7 +710,7 @@ public class PlayerController : MonoBehaviour
     {
         float t = 0;
 
-        while (t < m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime)
+        while (t < m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime && !m_isWallRunning && !HitSide())
         {
             if (IsGrounded() && !m_maintainSpeed)
             {
@@ -1366,7 +1367,9 @@ public class PlayerController : MonoBehaviour
 
     private void SlideJump()
     {
-        StartCoroutine(InAirBoost(m_slideJumpForce.y, m_slideJumpForce.x, transform.forward));
+        ///StartCoroutine(InAirBoost(m_slideJumpForce.y, m_slideJumpForce.x, transform.forward));
+
+        JumpMaxVelocity();
 
         StartCoroutine(RunCrouchUp());
 
@@ -1379,6 +1382,16 @@ public class PlayerController : MonoBehaviour
         {
             StopWallRun();
             StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x, transform.forward));
+        }
+        else
+        {
+            StopWallRun();
+
+            Vector3 jumpVector = -Vector3.Reflect(transform.forward, m_wallDirVector);
+
+            StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x, jumpVector));
+
+            Debug.DrawRay(transform.position, jumpVector * 10, Color.blue, 1f);
         }
     }
 
