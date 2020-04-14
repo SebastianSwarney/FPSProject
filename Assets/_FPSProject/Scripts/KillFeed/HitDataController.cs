@@ -34,9 +34,16 @@ public class HitDataController : MonoBehaviour
     public void RPC_PlayerKilledSomeone(int p_killedObjectID)
     {
         if (!m_myPhotonView.IsMine) return;
-        PhotonView hitPhoton = PhotonView.Find(p_killedObjectID).GetComponent<PhotonView>();
-        m_killFeedManager.AddMessage("You Killed : " + hitPhoton.Owner.NickName);
-        hitPhoton.RPC("RPC_AddToEveryoneKillFeed", RpcTarget.All, m_myPhotonView.Owner.NickName, m_myPhotonView.ViewID);
+        if (p_killedObjectID != m_myPhotonView.ViewID)
+        {
+            PhotonView hitPhoton = PhotonView.Find(p_killedObjectID).GetComponent<PhotonView>();
+            m_killFeedManager.AddMessage("You Killed : " + hitPhoton.Owner.NickName);
+            hitPhoton.RPC("RPC_AddToEveryoneKillFeed", RpcTarget.All, m_myPhotonView.Owner.NickName, m_myPhotonView.ViewID);
+        }
+        else
+        {
+            m_myPhotonView.RPC("RPC_PlayerKilledThemselves", RpcTarget.All);
+        }
     }
 
     [PunRPC]
@@ -73,4 +80,16 @@ public class HitDataController : MonoBehaviour
         }
     }
 
+    [PunRPC]
+    public void RPC_PlayerKilledThemselves()
+    {
+        if (m_myPhotonView.IsMine)
+        {
+            m_killFeedManager.AddMessage("You killed yourself, you fool!");
+        }
+        else
+        {
+            m_killFeedManager.AddMessage(m_myPhotonView.Owner.NickName + " commited suicide");
+        }
+    }
 }

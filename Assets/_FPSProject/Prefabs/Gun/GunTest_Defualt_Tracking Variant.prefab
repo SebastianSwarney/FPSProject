@@ -11,7 +11,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_bulletProperties.m_bulletPrefab
       value: 
-      objectReference: {fileID: 7544096219376186682, guid: c9d06e9aa224be545991ee108a2c1cc2,
+      objectReference: {fileID: 3900400124138448053, guid: d81fe24ca1c8cb54fae71a67cdc57ddc,
         type: 3}
     - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
         type: 3}

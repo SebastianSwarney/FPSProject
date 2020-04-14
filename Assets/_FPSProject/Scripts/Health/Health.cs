@@ -121,9 +121,16 @@ public class Health : MonoBehaviour
             m_onDied.Invoke();
             m_onDiedWithID.Invoke(p_attackerID);
         }
-        
-        
+    }
 
+    public virtual void KillZoneCollision()
+    {
+        if (!m_isDead)
+        {
+            m_isDead = true;
+            m_onDied.Invoke();
+
+        }
     }
 
     public void RetoggleHealth()

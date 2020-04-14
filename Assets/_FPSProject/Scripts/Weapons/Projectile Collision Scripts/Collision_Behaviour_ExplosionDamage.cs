@@ -39,7 +39,12 @@ public class Collision_Behaviour_ExplosionDamage : MonoBehaviour, IProjectile_Co
         foreach (Collider col in cols)
         {
             Health newHealth = col.GetComponent<Health>();
-            if (newHealth.m_teamLabel.m_myTeam == m_myTeamLabel.m_myTeam) return;
+            print("Check Damage");
+            if (newHealth.m_photonView.ViewID != p_bulletOwner)
+            {
+                if (newHealth.m_teamLabel.m_myTeam == m_myTeamLabel.m_myTeam) return;
+            }
+            
             newHealth.TakeDamage(m_explodeDamage, p_bulletOwner);
         }
     }
@@ -54,3 +59,4 @@ public class Collision_Behaviour_ExplosionDamage : MonoBehaviour, IProjectile_Co
         }
     }
 }
+

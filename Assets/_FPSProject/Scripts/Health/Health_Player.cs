@@ -9,10 +9,9 @@ public class Health_Player : Health
     public TMPro.TextMeshProUGUI m_healthNum;
     public override void TakeDamage(float p_takenDamage, int p_bulletOwnerPhotonID)
     {
-        if (!m_photonView.IsMine)
-        {
+        if (!m_photonView.IsMine) return;
             m_photonView.RPC("RPC_TakeDamage", Photon.Pun.RpcTarget.AllBuffered, p_takenDamage, p_bulletOwnerPhotonID);  
-        }
+        
     }
     private void Update()
     {
@@ -26,6 +25,16 @@ public class Health_Player : Health
         if (m_photonView.IsMine)
         {
             PhotonView.Find(p_attackerID).GetComponent<PhotonView>().RPC("RPC_PlayerKilledSomeone", RpcTarget.All, m_photonView.ViewID);
+        }
+    }
+
+    public override void KillZoneCollision()
+    {
+        if (!m_isDead)
+        {
+            m_isDead = true;
+            m_onDied.Invoke();
+            m_photonView.RPC("RPC_PlayerKilledSomeone", RpcTarget.All, m_photonView.ViewID);
         }
     }
 }
