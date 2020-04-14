@@ -11,20 +11,27 @@ public class TeamLabel_Player : TeamLabel
     public Material m_redMaterial, m_blueMaterial;
     public TeamLabelPlayerEvent m_teamSetup;
 
+    public float m_delayTeamAssignTime = 1;
+
+    [Header("Debugging")]
+    public TMPro.TextMeshProUGUI m_teamName;
 
     private void Start()
     {
 
         if (!m_photonView.IsMine) return;
-        SetTeamType(TeamManager.Instance.AssignTeamType());
-        Transform newSpawn = MatchSpawningManager.Instance.SpawnPlayer(m_myTeam);
-        transform.position = newSpawn.position;
-        transform.rotation = newSpawn.rotation;
-        m_teamSetup.Invoke();
 
+        StartCoroutine(TeamAssignment());
 
     }
-
+    private IEnumerator TeamAssignment()
+    {
+        yield return new WaitForSeconds(m_delayTeamAssignTime);
+        SetTeamType(TeamManager.Instance.AssignTeamType());
+        m_teamSetup.Invoke();
+        m_teamName.text = m_myTeam.ToString();
+        m_teamName.color = (m_myTeam == TeamTypes.TeamType.Red) ? Color.red : Color.blue;
+    }
     public override void SetTeamType(TeamTypes.TeamType p_newTeamType)
     {
         base.SetTeamType(p_newTeamType);
@@ -46,12 +53,13 @@ public class TeamLabel_Player : TeamLabel
     [PunRPC]
     private void RPC_ChangeColor(int p_color)
     {
-        if(p_color == 1)
+        if (p_color == 1)
         {
             m_myTeam = TeamTypes.TeamType.Red;
             m_renderer.material = m_redMaterial;
-            
-        }else if(p_color == 2)
+
+        }
+        else if (p_color == 2)
         {
             m_myTeam = TeamTypes.TeamType.Blue;
             m_renderer.material = m_blueMaterial;
@@ -59,8 +67,13 @@ public class TeamLabel_Player : TeamLabel
         TeamManager.Instance.AddPlayerToTeam(this);
     }
 
+
+
     private void OnDestroy()
     {
         TeamManager.Instance.RemovePlayerFromTeam(this);
     }
+
+    
+
 }

@@ -33,6 +33,11 @@ public abstract class Equipment_Base : MonoBehaviour
     }
 
 
+    public virtual void ResetEquipment()
+    {
+
+    }
+
     public virtual void SetUpEquipment(TeamTypes.TeamType p_currentTeam, EquipmentController p_equipController, PhotonView p_currentPhotonView)
     {
         if (m_teamLabel == null)

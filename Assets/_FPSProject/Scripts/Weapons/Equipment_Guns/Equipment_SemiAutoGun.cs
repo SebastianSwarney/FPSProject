@@ -20,4 +20,10 @@ public class Equipment_SemiAutoGun : Equipment_Gun
         base.ShootInputUp(p_playerCam);
     }
 
+    public override void ResetEquipment()
+    {
+        base.ResetEquipment();
+        m_playerLetGo = true;
+    }
+
 }

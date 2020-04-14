@@ -229,6 +229,6 @@ MonoBehaviour:
   m_explodeDamage: 20
   m_explosionHitLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 1280
   m_debug: 1
   m_gizmoColor1: {r: 1, g: 0, b: 0, a: 1}

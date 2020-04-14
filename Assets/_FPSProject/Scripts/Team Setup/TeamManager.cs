@@ -61,10 +61,6 @@ public class TeamManager : MonoBehaviour
         }
     }
 
-
-
-
-
     public void SwapPlayerTeam(TeamLabel p_playerTeamLabel)
     {
         if (!m_photonView.IsMine) return;

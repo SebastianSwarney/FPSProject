@@ -20,10 +20,9 @@ public class RespawnObject_Player : RespawnObject
 
     public RespawnObjectEvent m_died;
     public RespawnObjectEvent m_respawned;
-    [Header("Debugging")]
-    public bool m_isDebugging;
 
-    
+
+
     public override void Start()
     {
 
@@ -32,19 +31,17 @@ public class RespawnObject_Player : RespawnObject
         m_controller = GetComponent<PlayerController>();
         m_playerInput = GetComponent<PlayerInput>();
         m_photonView = GetComponent<PhotonView>();
-        
-        if (!m_isDebugging)
+
+        DisablePlayerControl();
+        StartCoroutine(RespawnCoroutine());
+
+        m_camera.SetActive(false);
+        m_playerUI.SetActive(false);
+        if (!m_photonView.IsMine)
         {
-            
-            DisablePlayerControl();
-            StartCoroutine(RespawnCoroutine());
-            if (!m_photonView.IsMine)
-            {
-                m_camera.SetActive(false);
-                m_playerUI.SetActive(false);
-                GetComponent<CharacterController>().enabled = false;
-            }
+            GetComponent<CharacterController>().enabled = false;
         }
+
     }
 
     private void DisablePlayerControl()
@@ -69,7 +66,8 @@ public class RespawnObject_Player : RespawnObject
         if (m_photonView.IsMine)
         {
             m_photonView.RPC("RPC_Respawn", RpcTarget.All);
-
+            m_camera.SetActive(true);
+            m_playerUI.SetActive(true);
         }
     }
 
@@ -96,6 +94,6 @@ public class RespawnObject_Player : RespawnObject
         yield return new WaitForSeconds(.1f);
         m_controller.enabled = true;
         m_playerInput.enabled = true;
-        
+
     }
 }

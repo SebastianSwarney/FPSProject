@@ -40,7 +40,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8444377419081478050}
   - component: {fileID: 6692425339295825544}
-  - component: {fileID: 4579541868941658785}
   - component: {fileID: 1987952813398951558}
   m_Layer: 0
   m_Name: GunTest_Defualt
@@ -82,28 +81,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_photonView: {fileID: 0}
---- !u!114 &4579541868941658785
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6782711556069349284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 0
-  OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 0}
-  viewIdField: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!114 &1987952813398951558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,6 +105,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   m_fireSpot: {fileID: 1334400645664398639}
+  m_gunOffset: {x: 0.546, y: -0.63, z: 0.572}
   m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
   m_bulletSpread: {x: 1, y: 1}
   m_bulletProperties:
@@ -137,6 +115,10 @@ MonoBehaviour:
     m_bulletDamage: 10
     m_bulletSpeed: 150
     m_gunFireDelay: 0.05
+  m_currentClipSize: 0
+  m_canFire: 1
+  m_isReloading: 0
+  m_reloadTime: 2
   m_bulletsToCompleteRecoilPattern: 25
   m_horizontalRecoilAmount: 1
   m_horizontalRecoilPattern:
@@ -212,12 +194,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_currentClipSize: 0
-  m_canFire: 1
-  m_isReloading: 0
-  m_myPhotonView: {fileID: 0}
-  m_reloadTime: 2
-  m_inShootingPattern: 0
   m_aimAssist:
     m_hitDetectLayer:
       serializedVersion: 2

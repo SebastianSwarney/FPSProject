@@ -49,6 +49,9 @@ MonoBehaviour:
   - RPC_PlayerKilledSomeone
   - RPC_AddToEveryoneKillFeed
   - RPC_PlayerKilledThemselves
+  - RPC_RemovePlayerByID
+  - RPC_RemoveMe
+  - RPC_SpawnWeapon
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

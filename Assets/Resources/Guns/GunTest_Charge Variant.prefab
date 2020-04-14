@@ -4779,6 +4779,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   m_fireSpot: {fileID: 9056183800475932378}
+  m_gunOffset: {x: 0.546, y: 0.63, z: 0.572}
   m_fireBehaviour: {fileID: 0}
   m_bulletSpread: {x: 0, y: 0}
   m_bulletProperties:
@@ -4828,30 +4829,26 @@ MonoBehaviour:
   m_gizmosColor1: {r: 0, g: 0, b: 0, a: 0}
   m_gizmosColor2: {r: 0, g: 0, b: 0, a: 0}
   m_maxHoldTime: 3
+  m_isAutiomatic: 0
   m_chargeStages:
-  - m_stateVisual: {fileID: 2642427322433855374}
-    m_shootProjectile: 1
-    m_projectileSpeed: 150
-    m_projectileDamage: 10
-    m_projectileRecoilY: 1
-    m_bulletSpread: {x: 0, y: 0}
+  - m_shootProjectile: 1
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
       type: 3}
     m_endChargeTime: 1.5
     m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
-    m_fireRecoilTime: 0
-  - m_stateVisual: {fileID: 6372927938709582863}
-    m_shootProjectile: 1
-    m_projectileSpeed: 300
-    m_projectileDamage: 101
-    m_projectileRecoilY: 5
+    m_projectileSpeed: 150
+    m_projectileDamage: 10
     m_bulletSpread: {x: 0, y: 0}
+    m_stateVisual: {fileID: 2642427322433855374}
+  - m_shootProjectile: 1
     m_bulletPrefab: {fileID: 3900400124138448053, guid: d81fe24ca1c8cb54fae71a67cdc57ddc,
       type: 3}
     m_endChargeTime: 3
     m_fireBehaviour: {fileID: 11400000, guid: 2769c1223f55fff4eb26c671ae56eec4, type: 2}
-    m_fireRecoilTime: 0
-  m_isAutiomatic: 0
+    m_projectileSpeed: 300
+    m_projectileDamage: 101
+    m_bulletSpread: {x: 0, y: 0}
+    m_stateVisual: {fileID: 6372927938709582863}
 --- !u!1 &5329510558800433091
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ public class Equipment_Gun : Equipment_Base
     #region Gun Vairables
     [Header("Gun Variables")]
     public Transform m_fireSpot;
+    public Vector3 m_gunOffset;
     public FireBehaviour_Base m_fireBehaviour;
 
     public Vector2 m_bulletSpread;
@@ -22,8 +23,7 @@ public class Equipment_Gun : Equipment_Base
     public bool m_isReloading = false;
     private Coroutine m_cor_fireDelay;
     private float m_currentFireRateDelay = 0;
-    [HideInInspector]
-    public PhotonView m_myPhotonView;
+
 
     public float m_reloadTime;
     private float m_currentReloadingTime;
@@ -98,8 +98,7 @@ public class Equipment_Gun : Equipment_Base
     }
     private void Start()
     {
-        m_myPhotonView = GetComponent<PhotonView>();
-        m_currentClipSize = m_bulletProperties.m_clipSize;
+        m_currentClipSize = m_bulletProperties.m_clipSize;   
     }
     public override void PutEquipmentAway()
     {
@@ -110,6 +109,18 @@ public class Equipment_Gun : Equipment_Base
             m_reloadingCoroutine = null;
         }
 
+    }
+
+    public override void ResetEquipment()
+    {
+        base.ResetEquipment();
+        transform.localPosition = m_gunOffset;
+        m_currentClipSize = m_bulletProperties.m_clipSize;
+        m_canFire = true;
+        m_canUse = true;
+        StopAllCoroutines();
+        m_cor_fireDelay = null;
+        m_reloadingCoroutine = null;
     }
 
     /// <summary>
@@ -178,7 +189,7 @@ public class Equipment_Gun : Equipment_Base
     public void FireBullet(Transform p_playerCam, Transform p_targetObject)
     {
 
-        m_fireBehaviour.FireBullet(m_myPhotonView, m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
+        m_fireBehaviour.FireBullet(m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
         
         m_amountOfBulletsShot++;
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompleteRecoilPattern, 0, 1));
@@ -315,36 +326,6 @@ public class Equipment_Gun : Equipment_Base
 
         m_cor_fireDelay = null;
     }
-
-
-
-    /// <summary>
-    /// Called from the scriptable Object, creates syncronized bullets over the network
-    /// </summary>
-    /// <param name="p_bulletData"></param>
-    [PunRPC]
-    public virtual void RPC_FireBullet(string p_bulletData)
-    {
-        DeserializeBulletData(p_bulletData);
-    }
-
-    public void DeserializeBulletData(string p_bulletData)
-    {
-        BulletData newBullet = JsonUtility.FromJson<BulletData>(p_bulletData);
-        GameObject newBulletObject = ObjectPooler.instance.NewObject(Resources.Load("Bullets/" + newBullet.m_bulletPrefabName) as GameObject, new Vector3(newBullet.m_bulletStartX, newBullet.m_bulletStartY, newBullet.m_bulletStartZ), Quaternion.identity);
-        Transform target = null;
-        if (newBullet.m_targetPlayer)
-        {
-            PhotonView checkPhoton = PhotonView.Find(newBullet.m_targetPlayerPhotonID);
-            if (checkPhoton != null)
-            {
-                target = checkPhoton.transform;
-            }
-        }
-        newBulletObject.GetComponent<Projectiles_Base>().SetVariables(TeamTypes.GetTeamFromInt(newBullet.m_bulletTeam), new Vector3(newBullet.m_bulletDirX, newBullet.m_bulletDirY, newBullet.m_bulletDirZ) * newBullet.m_bulletSpeed, newBullet.m_bulletOwnerID, target, newBullet.m_bulletDamage);
-    }
-
-
 
     private void OnDrawGizmos()
     {
