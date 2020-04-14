@@ -275,26 +275,19 @@ public class PlayerController : MonoBehaviour
 
     public float m_postClamberSpeedBoost;
     public float m_postClamberSpeedBoostTime;
-
-    private bool m_jumpedDuringClamber;
-
     #endregion
 
     [HideInInspector]
     public Vector2 m_movementInput;
     private Vector2 m_lookInput;
 
-    private bool m_holdingJumpInput;
-
     private bool m_isLongJumping;
 
     private bool m_maintainSpeed;
 
-    public AnimationCurve m_explosionDecayCurve;
-
     public Vector2 m_slideJumpForce;
 
-    private Vector3 m_explosionVelocity;
+    private Vector3 m_wallJumpDir;
 
     private void Start()
     {
@@ -685,13 +678,13 @@ public class PlayerController : MonoBehaviour
         m_isWallRunning = false;
     }
 
-    private IEnumerator InAirBoost(float p_yVelocity, float p_forwardSpeed, Vector3 p_movementDirection)
+    private IEnumerator InAirBoost(float p_yVelocity, float p_forwardSpeed)
     {
         JumpMaxMultiplied(p_yVelocity);
 
         while (!IsGrounded() && !m_isWallRunning && !HitSide())
         {
-            Vector3 movementVelocity = p_movementDirection * p_forwardSpeed;
+            Vector3 movementVelocity = m_wallJumpDir * p_forwardSpeed;
 
             m_wallRunJumpVelocity = new Vector3(movementVelocity.x, 0, movementVelocity.z);
 
@@ -700,13 +693,13 @@ public class PlayerController : MonoBehaviour
 
         if (IsGrounded() && !m_isWallRunning)
         {
-            StartCoroutine(OnGroundBoost(p_forwardSpeed, p_movementDirection));
+            StartCoroutine(OnGroundBoost(p_forwardSpeed));
         }
 
         m_wallRunJumpVelocity = Vector3.zero;
     }
 
-    private IEnumerator OnGroundBoost(float p_forwardSpeed, Vector3 p_movementDirection)
+    private IEnumerator OnGroundBoost(float p_forwardSpeed)
     {
         float t = 0;
 
@@ -720,7 +713,7 @@ public class PlayerController : MonoBehaviour
             float speedProgress = m_wallRunProperties.m_wallRunJumpGroundVelocityDecayAnimationCurve.Evaluate(t / m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime);
             float currentSpeed = Mathf.Lerp(p_forwardSpeed, 0, speedProgress);
 
-            Vector3 movementVelocity = p_movementDirection * currentSpeed;
+            Vector3 movementVelocity = m_wallJumpDir * currentSpeed;
             m_wallRunJumpVelocity = movementVelocity;
 
             yield return new WaitForFixedUpdate();
@@ -938,30 +931,9 @@ public class PlayerController : MonoBehaviour
 
         velocity += m_velocity;
         velocity += m_wallRunJumpVelocity;
-        //velocity += m_slideVelocity;
-        //velocity += m_explosionVelocity;
+        velocity += m_slideVelocity;
 
         m_characterController.Move(velocity * Time.fixedDeltaTime);
-    }
-
-    private IEnumerator RunExplosion(Vector3 p_explosionDir, float p_explosionForce, float p_explosionDecayTime)
-    {
-        float t = 0;
-
-        while (t < p_explosionDecayTime)
-        {
-            t += Time.fixedDeltaTime;
-
-            float decayProgress = m_explosionDecayCurve.Evaluate(t / p_explosionDecayTime);
-            float currentExplosionForce = Mathf.Lerp(p_explosionForce, 0, decayProgress);
-
-            Vector3 currentExplosionVelocity = p_explosionDir * currentExplosionForce;
-            m_explosionVelocity = new Vector3(currentExplosionVelocity.x, currentExplosionVelocity.y, currentExplosionVelocity.z);
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_explosionVelocity = Vector3.zero;
     }
 
     private void CalculateCurrentSpeed()
@@ -1120,20 +1092,22 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator RunSlide()
     {
-        m_states.m_movementControllState = MovementControllState.MovementDisabled;
+        //m_states.m_movementControllState = MovementControllState.MovementDisabled;
         m_isSliding = true;
 
         Vector3 slideDir = transform.forward;
+
+        m_wallJumpDir = slideDir;
+
         m_slideTimer = 0;
-
-        bool hasBeenOnSlope = false;
-
-        Vector3 slideSideShiftVelocity = Vector3.zero;
-        Vector3 slideSideShiftVelocitySmoothing = Vector3.zero;
 
         m_maintainSpeed = true;
 
-        m_velocity = Vector3.zero;
+        //m_velocity = Vector3.zero;
+
+        //bool hasBeenOnSlope = false;
+        //Vector3 slideSideShiftVelocity = Vector3.zero;
+        //Vector3 slideSideShiftVelocitySmoothing = Vector3.zero;
 
         while (m_slideTimer < m_slideProperties.m_slideTime)
         {
@@ -1143,6 +1117,11 @@ public class PlayerController : MonoBehaviour
 
             float currentSlideSpeed = Mathf.Lerp(m_slideProperties.m_slideSpeed, m_baseMovementProperties.m_crouchMovementSpeed, progress);
 
+            Vector3 calculatedSlideVelocity = slideDir * currentSlideSpeed;
+            m_slideVelocity = new Vector3(calculatedSlideVelocity.x, 0, calculatedSlideVelocity.z);
+
+            #region Out for now
+            /*
             SlopeInfo slopeInfo = OnSlope();
 
             if (slopeInfo.m_onSlope)
@@ -1167,15 +1146,17 @@ public class PlayerController : MonoBehaviour
 
                 slideSideShiftVelocity = shiftVelX;
 
-                m_velocity = new Vector3(horizontalMovement.x, m_velocity.y, horizontalMovement.z);
+                m_slideVelocity = new Vector3(horizontalMovement.x, 0, horizontalMovement.z);
 
-                m_velocity += slideSideShiftVelocity;
+                m_slideVelocity += slideSideShiftVelocity;
             }
             else if (!hasBeenOnSlope)
             {
                 Vector3 calculatedSlideVelocity = slideDir * currentSlideSpeed;
                 m_slideVelocity = new Vector3(calculatedSlideVelocity.x, 0, calculatedSlideVelocity.z);
             }
+            */
+            #endregion
 
             yield return new WaitForFixedUpdate();
         }
@@ -1317,10 +1298,6 @@ public class PlayerController : MonoBehaviour
     #region Jump Code
     public void OnJumpInputDown()
     {
-        m_holdingJumpInput = true;
-
-        m_jumpedDuringClamber = true;
-
         m_jumpBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_jumpBufferTimer = (x), m_jumpingProperties.m_jumpBufferTime));
 
         if (m_isSliding)
@@ -1350,8 +1327,6 @@ public class PlayerController : MonoBehaviour
 
     public void OnJumpInputUp()
     {
-        m_holdingJumpInput = false;
-
         if (m_velocity.y > m_minJumpVelocity)
         {
             JumpMinVelocity();
@@ -1381,7 +1356,10 @@ public class PlayerController : MonoBehaviour
         if (m_wallJumpOffFactor > 0.1f)
         {
             StopWallRun();
-            StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x, transform.forward));
+
+            m_wallJumpDir = transform.forward;
+
+            StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x));
         }
         else
         {
@@ -1389,7 +1367,9 @@ public class PlayerController : MonoBehaviour
 
             Vector3 jumpVector = -Vector3.Reflect(transform.forward, m_wallDirVector);
 
-            StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x, jumpVector));
+            m_wallJumpDir = jumpVector;
+
+            StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x));
 
             Debug.DrawRay(transform.position, jumpVector * 10, Color.blue, 1f);
         }
