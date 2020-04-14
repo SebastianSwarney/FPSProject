@@ -2684,7 +2684,7 @@ Transform:
   - {fileID: 5072337886895319280}
   - {fileID: 5072337887824332878}
   - {fileID: 5072337888014259367}
-  - {fileID: 8854995047973096621}
+  - {fileID: 8854995047973096662}
   m_Father: {fileID: 5072337888155200248}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3009,7 +3009,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b11baf394617f64b85d955f9ee5ca79, type: 3}
---- !u!4 &8854995047973096621 stripped
+--- !u!4 &8854995047973096662 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1881042275879707735, guid: 8b11baf394617f64b85d955f9ee5ca79,
     type: 3}

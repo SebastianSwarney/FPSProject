@@ -10,7 +10,7 @@ public class Health_Player : Health
     public override void TakeDamage(float p_takenDamage, int p_bulletOwnerPhotonID)
     {
         if (!m_photonView.IsMine) return;
-            m_photonView.RPC("RPC_TakeDamage", Photon.Pun.RpcTarget.AllBuffered, p_takenDamage, p_bulletOwnerPhotonID);  
+            m_photonView.RPC("RPC_TakeDamage", Photon.Pun.RpcTarget.All, p_takenDamage, p_bulletOwnerPhotonID);  
         
     }
     private void Update()
