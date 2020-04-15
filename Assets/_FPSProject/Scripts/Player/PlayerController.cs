@@ -202,6 +202,7 @@ public class PlayerController : MonoBehaviour
         public float m_slideSpeed;
         public float m_slideTime;
         public AnimationCurve m_slideCurve;
+        public float m_slideCooldownTime;
 
         [Header("Slope Slide Properties")]
         public float m_slideAngleBoostMax;
@@ -221,6 +222,8 @@ public class PlayerController : MonoBehaviour
     private float m_slideTimer;
     private Vector3 m_slideVelocity;
 
+    private Coroutine m_slideCooldownCoroutine;
+    private float m_slideCooldownTimer;
     #endregion
 
     #region Grapple Properties
@@ -289,6 +292,8 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 m_wallJumpDir;
 
+    private bool m_crouchOnLanding;
+
     private void Start()
     {
         m_characterController = GetComponent<CharacterController>();
@@ -300,6 +305,7 @@ public class PlayerController : MonoBehaviour
         m_jumpBufferTimer = m_jumpingProperties.m_jumpBufferTime;
 
         m_wallRunBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_wallRunBufferTimer = (x), m_wallRunProperties.m_wallRunBufferTime));
+        m_slideCooldownCoroutine = StartCoroutine(RunBufferTimer((x) => m_slideCooldownTimer = (x), m_slideProperties.m_slideCooldownTime));
     }
 
     private void OnValidate()
@@ -602,6 +608,8 @@ public class PlayerController : MonoBehaviour
         m_states.m_gravityControllState = GravityState.GravityDisabled;
         m_states.m_movementControllState = MovementControllState.MovementDisabled;
 
+        m_crouchOnLanding = false;
+
         Vector3 dirToWall = p_dirToWallStart;
         float yVelStart = m_velocity.y;
         float speedStart = m_characterController.velocity.magnitude;
@@ -682,7 +690,7 @@ public class PlayerController : MonoBehaviour
     {
         JumpMaxMultiplied(p_yVelocity);
 
-        while (!IsGrounded() && !m_isWallRunning && !HitSide())
+        while (!IsGrounded() && !m_isWallRunning && !HitSide() && !HitCeiling())
         {
             Vector3 movementVelocity = m_wallJumpDir * p_forwardSpeed;
 
@@ -747,7 +755,7 @@ public class PlayerController : MonoBehaviour
     {
         m_isClambering = true;
 
-        m_states.m_gravityControllState = GravityState.GravityDisabled;
+        m_crouchOnLanding = false;
 
         while (m_isClambering)
         {
@@ -774,8 +782,6 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForFixedUpdate();
 
         }
-
-        m_states.m_gravityControllState = GravityState.GravityEnabled;
 
         m_isClambering = false;
     }
@@ -808,7 +814,7 @@ public class PlayerController : MonoBehaviour
     {
         m_isClimbing = true;
 
-        m_states.m_gravityControllState = GravityState.GravityDisabled;
+        m_crouchOnLanding = false;
 
         float t = 0;
 
@@ -984,10 +990,10 @@ public class PlayerController : MonoBehaviour
 
         m_canWallClimb = true;
 
-        if (m_isCrouched)
+        if (m_crouchOnLanding)
         {
-            OnSlideStart();
-            return;
+            StartCoroutine(RunCrouchDown());
+            m_crouchOnLanding = false;
         }
 
         if (CheckBuffer(ref m_jumpBufferTimer, ref m_jumpingProperties.m_jumpBufferTime, m_jumpBufferCoroutine))
@@ -1084,27 +1090,33 @@ public class PlayerController : MonoBehaviour
             {
                 if (m_movementInput.y > 0)
                 {
-                    StartCoroutine(RunSlide());
+                    if (CheckOverBuffer(ref m_slideCooldownTimer, ref m_slideProperties.m_slideCooldownTime, m_slideCooldownCoroutine))
+                    {
+                        StartCoroutine(RunSlide());
+                    }
                 }
             }
         }
     }
 
+    private void StopSlide()
+    {
+        m_slideTimer = m_slideProperties.m_slideTime;
+    }
+
     private IEnumerator RunSlide()
     {
-        //m_states.m_movementControllState = MovementControllState.MovementDisabled;
         m_isSliding = true;
 
+        //m_states.m_movementControllState = MovementControllState.MovementDisabled;
+
         Vector3 slideDir = transform.forward;
-
         m_wallJumpDir = slideDir;
-
         m_slideTimer = 0;
 
         m_maintainSpeed = true;
 
         //m_velocity = Vector3.zero;
-
         //bool hasBeenOnSlope = false;
         //Vector3 slideSideShiftVelocity = Vector3.zero;
         //Vector3 slideSideShiftVelocitySmoothing = Vector3.zero;
@@ -1165,29 +1177,73 @@ public class PlayerController : MonoBehaviour
 
         m_maintainSpeed = false;
 
-        m_isSliding = false;
+        m_slideCooldownCoroutine = StartCoroutine(RunBufferTimer((x) => m_slideCooldownTimer = (x), m_slideProperties.m_slideCooldownTime));
 
-        m_states.m_movementControllState = MovementControllState.MovementEnabled;
+        //m_states.m_movementControllState = MovementControllState.MovementEnabled;
+
+        m_isSliding = false;
     }
     #endregion
 
     #region Crouch Code
     public void OnCrouchInputDown()
     {
+        EvaluateCrouch();
+    }
+
+    private void EvaluateCrouch()
+    {
+        if (m_isWallRunning)
+        {
+            StopWallRun();
+            StartCrouch();
+            return;
+        }
+        else if (m_isWallClimbing)
+        {
+            StopWallClimb();
+            StartCrouch();
+            return;
+        }
+        else if (m_isClambering)
+        {
+            StopClamber();
+            StartCrouch();
+            return;
+        }
+
         if (!m_isCrouched)
         {
-            StartCoroutine(RunCrouchDown());
+            StartCrouch();
         }
         else
         {
-            StartCoroutine(RunCrouchUp());
+            EndCrouch();
         }
+    }
+
+    private void StartCrouch()
+    {
+        if (IsGrounded())
+        {
+            StartCoroutine(RunCrouchDown());
+            return;
+        }
+
+        if (!IsGrounded() && !m_isWallClimbing && !m_isClambering)
+        {
+            m_crouchOnLanding = true;
+            return;
+        }
+    }
+
+    private void EndCrouch()
+    {
+        StartCoroutine(RunCrouchUp());
     }
 
     private IEnumerator RunCrouchDown()
     {
-        StopWallRun();
-
         OnSlideStart();
 
         float t = 0;
@@ -1208,9 +1264,9 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator RunCrouchUp()
     {
-        m_slideTimer = m_slideProperties.m_slideTime;
-
         m_isCrouched = false;
+
+        StopSlide();
 
         float t = 0;
 
@@ -1300,9 +1356,18 @@ public class PlayerController : MonoBehaviour
     {
         m_jumpBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_jumpBufferTimer = (x), m_jumpingProperties.m_jumpBufferTime));
 
-        if (m_isSliding)
+        if (m_isCrouched)
         {
-            SlideJump();
+            if (m_isSliding)
+            {
+                SlideJump();
+            }
+            else
+            {
+                CrouchJump();
+            }
+
+            return;
         }
 
         if (CheckBuffer(ref m_graceTimer, ref m_jumpingProperties.m_graceTime, m_graceBufferCoroutine) && !IsGrounded() && m_velocity.y <= 0f)
@@ -1342,12 +1407,17 @@ public class PlayerController : MonoBehaviour
 
     private void SlideJump()
     {
-        ///StartCoroutine(InAirBoost(m_slideJumpForce.y, m_slideJumpForce.x, transform.forward));
+        StartCoroutine(InAirBoost(m_slideJumpForce.y, m_slideJumpForce.x));
 
+        EndCrouch();
         JumpMaxVelocity();
+        m_hasJumped = true;
+    }
 
-        StartCoroutine(RunCrouchUp());
-
+    private void CrouchJump()
+    {
+        EndCrouch();
+        JumpMaxVelocity();
         m_hasJumped = true;
     }
 
