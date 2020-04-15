@@ -2092,7 +2092,7 @@ MonoBehaviour:
     m_slideAngleBoostMax: 50
     m_slopeSlideAccelerationTime: 0.1
     m_slopeTolerence: 0.8
-    m_slideSideShiftMaxSpeed: 50
+    m_slideSideShiftMaxSpeed: 5
     m_slideSideShiftAcceleration: 0.1
     m_slopeTransform: {fileID: 5072337887930893715}
   m_grappleProperties:

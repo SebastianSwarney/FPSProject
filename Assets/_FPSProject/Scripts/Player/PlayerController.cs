@@ -192,6 +192,7 @@ public class PlayerController : MonoBehaviour
     public CrouchProperties m_crouchProperties;
 
     private bool m_isCrouched;
+    private bool m_isCrouching;
     #endregion
 
     #region Slide Properties
@@ -221,6 +222,8 @@ public class PlayerController : MonoBehaviour
     private bool m_isSliding;
     private float m_slideTimer;
     private Vector3 m_slideVelocity;
+    private Vector3 m_slopeVelocity;
+    private Vector3 m_slopeShiftVelocity;
 
     private Coroutine m_slideCooldownCoroutine;
     private float m_slideCooldownTimer;
@@ -294,6 +297,7 @@ public class PlayerController : MonoBehaviour
 
     private bool m_crouchOnLanding;
 
+
     private void Start()
     {
         m_characterController = GetComponent<CharacterController>();
@@ -322,16 +326,17 @@ public class PlayerController : MonoBehaviour
     {
         CalculateCurrentSpeed();
         CalculateVelocity();
-
         CheckWallConnection();
 
         CaculateTotalVelocity();
 
+        CheckLanded();
         SlopePhysics();
 
         ZeroOnGroundCeiling();
-        CheckLanded();
+        
         CheckOffLedge();
+
 
         CameraRotation();
         TiltLerp();
@@ -583,14 +588,17 @@ public class PlayerController : MonoBehaviour
         {
             if (!IsGrounded())
             {
-                if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
+                if (m_movementInput.y > 0)
                 {
-                    if (m_isClimbing)
+                    if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
                     {
-                        StopWallClimb();
-                    }
+                        if (m_isClimbing)
+                        {
+                            StopWallClimb();
+                        }
 
-                    StartCoroutine(RunWallRun(p_dirToWallStart, p_wallRunMovementDir));
+                        StartCoroutine(RunWallRun(p_dirToWallStart, p_wallRunMovementDir));
+                    }
                 }
             }
         }
@@ -938,6 +946,8 @@ public class PlayerController : MonoBehaviour
         velocity += m_velocity;
         velocity += m_wallRunJumpVelocity;
         velocity += m_slideVelocity;
+        velocity += m_slopeVelocity;
+        velocity += m_slopeShiftVelocity;
 
         m_characterController.Move(velocity * Time.fixedDeltaTime);
     }
@@ -983,27 +993,6 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    private void OnLanded()
-    {
-        m_isLanded = true;
-        m_hasJumped = false;
-
-        m_canWallClimb = true;
-
-        if (m_crouchOnLanding)
-        {
-            StartCoroutine(RunCrouchDown());
-            m_crouchOnLanding = false;
-        }
-
-        if (CheckBuffer(ref m_jumpBufferTimer, ref m_jumpingProperties.m_jumpBufferTime, m_jumpBufferCoroutine))
-        {
-            JumpMaxVelocity();
-        }
-
-        m_events.m_onLandedEvent.Invoke();
-    }
-
     private void OnOffLedge()
     {
         m_offLedge = true;
@@ -1036,12 +1025,36 @@ public class PlayerController : MonoBehaviour
     {
         if (IsGrounded() && !m_isLanded)
         {
-            OnLanded();
+            if (!m_isCrouching)
+            {
+                OnLanded();
+            }
         }
         if (!IsGrounded())
         {
             m_isLanded = false;
         }
+    }
+
+    private void OnLanded()
+    {
+        m_isLanded = true;
+        m_hasJumped = false;
+
+        m_canWallClimb = true;
+
+        if (m_crouchOnLanding)
+        {
+            StartCoroutine(RunCrouchDown());
+            m_crouchOnLanding = false;
+        }
+
+        if (CheckBuffer(ref m_jumpBufferTimer, ref m_jumpingProperties.m_jumpBufferTime, m_jumpBufferCoroutine))
+        {
+            JumpMaxVelocity();
+        }
+
+        m_events.m_onLandedEvent.Invoke();
     }
 
     private void CalculateVelocity()
@@ -1108,38 +1121,32 @@ public class PlayerController : MonoBehaviour
     {
         m_isSliding = true;
 
-        //m_states.m_movementControllState = MovementControllState.MovementDisabled;
-
         Vector3 slideDir = transform.forward;
         m_wallJumpDir = slideDir;
+        
         m_slideTimer = 0;
-
         m_maintainSpeed = true;
 
-        //m_velocity = Vector3.zero;
-        //bool hasBeenOnSlope = false;
-        //Vector3 slideSideShiftVelocity = Vector3.zero;
-        //Vector3 slideSideShiftVelocitySmoothing = Vector3.zero;
+        Vector3 slopeVelocitySmoothing = Vector3.zero;
+        Vector3 slopeShiftVelocitySmoothing = Vector3.zero;
+
+        float slideSpeedTimer = 0;
 
         while (m_slideTimer < m_slideProperties.m_slideTime)
         {
             m_slideTimer += Time.fixedDeltaTime;
 
-            float progress = m_slideProperties.m_slideCurve.Evaluate(m_slideTimer / m_slideProperties.m_slideTime);
-
+            slideSpeedTimer += Time.fixedDeltaTime;
+            float progress = m_slideProperties.m_slideCurve.Evaluate(slideSpeedTimer / m_slideProperties.m_slideTime);
             float currentSlideSpeed = Mathf.Lerp(m_slideProperties.m_slideSpeed, m_baseMovementProperties.m_crouchMovementSpeed, progress);
-
             Vector3 calculatedSlideVelocity = slideDir * currentSlideSpeed;
-            m_slideVelocity = new Vector3(calculatedSlideVelocity.x, 0, calculatedSlideVelocity.z);
 
-            #region Out for now
-            /*
+            #region Slope Slide Code
+            
             SlopeInfo slopeInfo = OnSlope();
 
             if (slopeInfo.m_onSlope)
             {
-                hasBeenOnSlope = true;
-
                 m_slideTimer = 0;
 
                 float normalX = slopeInfo.m_slopeNormal.x > 0 ? slopeInfo.m_slopeNormal.x : slopeInfo.m_slopeNormal.x * -1;
@@ -1148,38 +1155,36 @@ public class PlayerController : MonoBehaviour
                 float slopeX = Mathf.Lerp(0, m_slideProperties.m_slideAngleBoostMax, normalX / m_slideProperties.m_slopeTolerence) * Mathf.Sign(slopeInfo.m_slopeNormal.x);
                 float slopeZ = Mathf.Lerp(0, m_slideProperties.m_slideAngleBoostMax, normalZ / m_slideProperties.m_slopeTolerence) * Mathf.Sign(slopeInfo.m_slopeNormal.z);
 
-                slideDir = new Vector3(slopeX, 0, slopeZ);
-                Vector3 horizontalMovement = Vector3.SmoothDamp(m_velocity, slideDir, ref m_velocitySmoothing, m_slideProperties.m_slopeSlideAccelerationTime);
+                Vector3 slopeDir = new Vector3(slopeX, 0, slopeZ);
+                Vector3 slopeMovement = Vector3.SmoothDamp(m_slopeVelocity, slopeDir, ref slopeVelocitySmoothing, m_slideProperties.m_slopeSlideAccelerationTime);
+                m_slopeVelocity = new Vector3(slopeMovement.x, 0, slopeMovement.z);
 
                 m_slideProperties.m_slopeTransform.rotation = Quaternion.LookRotation(slideDir);
-
-                Vector3 targetX = m_slideProperties.m_slopeTransform.right * m_movementInput.x * m_slideProperties.m_slideSideShiftMaxSpeed;
-                Vector3 shiftVelX = Vector3.SmoothDamp(slideSideShiftVelocity, targetX, ref slideSideShiftVelocitySmoothing, m_slideProperties.m_slideSideShiftAcceleration);
-
-                slideSideShiftVelocity = shiftVelX;
-
-                m_slideVelocity = new Vector3(horizontalMovement.x, 0, horizontalMovement.z);
-
-                m_slideVelocity += slideSideShiftVelocity;
+                Vector3 targetShiftVelocity = m_slideProperties.m_slopeTransform.right * m_movementInput.x * m_slideProperties.m_slideSideShiftMaxSpeed;
+                Vector3 shiftMovement = Vector3.SmoothDamp(m_slopeShiftVelocity, targetShiftVelocity, ref slopeShiftVelocitySmoothing, m_slideProperties.m_slideSideShiftAcceleration);
+                m_slopeShiftVelocity = shiftMovement;
             }
-            else if (!hasBeenOnSlope)
+            #endregion
+
+            if (slideSpeedTimer < m_slideProperties.m_slideTime)
             {
-                Vector3 calculatedSlideVelocity = slideDir * currentSlideSpeed;
                 m_slideVelocity = new Vector3(calculatedSlideVelocity.x, 0, calculatedSlideVelocity.z);
             }
-            */
-            #endregion
+            else
+            {
+                m_slideVelocity = Vector3.zero;
+            }
 
             yield return new WaitForFixedUpdate();
         }
 
+        m_slopeVelocity = Vector3.zero;
         m_slideVelocity = Vector3.zero;
+        m_slopeShiftVelocity = Vector3.zero;
 
         m_maintainSpeed = false;
 
         m_slideCooldownCoroutine = StartCoroutine(RunBufferTimer((x) => m_slideCooldownTimer = (x), m_slideProperties.m_slideCooldownTime));
-
-        //m_states.m_movementControllState = MovementControllState.MovementEnabled;
 
         m_isSliding = false;
     }
@@ -1246,19 +1251,28 @@ public class PlayerController : MonoBehaviour
     {
         OnSlideStart();
 
+        m_isCrouching = true;
+
         float t = 0;
+
+        float lastHeight;
 
         while (t < m_crouchProperties.m_crouchTime)
         {
             t += Time.fixedDeltaTime;
 
             float progress = t / m_crouchProperties.m_crouchTime;
+            float currentHeight = Mathf.Lerp(2, m_crouchProperties.m_crouchHeight, progress);
 
-            m_characterController.height = Mathf.Lerp(2, m_crouchProperties.m_crouchHeight, progress);
+            lastHeight = m_characterController.height;
+            m_characterController.height = currentHeight;
+
+            m_characterController.Move(Vector3.up * (m_characterController.height - lastHeight) / 2);
 
             yield return new WaitForFixedUpdate();
         }
 
+        m_isCrouching = false;
         m_isCrouched = true;
     }
 
@@ -1268,19 +1282,30 @@ public class PlayerController : MonoBehaviour
 
         StopSlide();
 
+        m_isCrouching = true;
+
         float t = 0;
+
+        float lastHeight;
 
         while (t < m_crouchProperties.m_crouchTime)
         {
             t += Time.fixedDeltaTime;
-
             float progress = t / m_crouchProperties.m_crouchTime;
+            float currentHeight = Mathf.Lerp(m_crouchProperties.m_crouchHeight, 2, progress);
 
-            m_characterController.height = Mathf.Lerp(m_crouchProperties.m_crouchHeight, 2, progress);
+            lastHeight = m_characterController.height;
+
+            m_characterController.height = currentHeight;
+
+            m_characterController.Move(Vector3.up * (m_characterController.height - lastHeight) / 2);
+
+
 
             yield return new WaitForFixedUpdate();
         }
 
+        m_isCrouching = false;
     }
     #endregion
 
