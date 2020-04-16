@@ -49,17 +49,13 @@ public class KillCamThirdPersonController : MonoBehaviour
         m_characterController = GetComponent<CharacterController>();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         PerformController();
     }
 
-    public void PerformController()
+    private void LateUpdate()
     {
-        CalculateVelocity();
-
-        m_characterController.Move(m_velocity * Time.fixedDeltaTime);
-
         if (!m_rotateLook)
         {
             CameraRotation();
@@ -68,8 +64,13 @@ public class KillCamThirdPersonController : MonoBehaviour
         {
             RotateLook();
         }
+    }
 
+    public void PerformController()
+    {
+        CalculateVelocity();
 
+        m_characterController.Move(m_velocity * Time.deltaTime);
     }
 
     private void RotateLook()
