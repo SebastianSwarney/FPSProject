@@ -103,6 +103,7 @@ public class Equipment_BurstGun : Equipment_Gun
                 m_currentBurstAmount += 1;
                 yield return null;
             }
+            m_amountOfBulletsShot = 0;
 
 
             ///Out of burst behaviour

@@ -56,7 +56,8 @@ public class Equipment_Gun : Equipment_Base
 
     public float m_verticalRecoilAmount;
     public AnimationCurve m_verticalRecoilPattern;
-    private float m_amountOfBulletsShot;
+    [HideInInspector]
+    public float m_amountOfBulletsShot;
 
 
 
