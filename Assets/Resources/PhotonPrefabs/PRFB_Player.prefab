@@ -1966,7 +1966,7 @@ MonoBehaviour:
     m_minJumpHeight: 1
     m_timeToJumpApex: 0.5
     m_graceTime: 0.01
-    m_jumpBufferTime: 0.1
+    m_jumpBufferTime: 0.3
   m_wallRunProperties:
     m_wallRunTolerenceMax: 0.5
     m_wallRunTolerenceMin: -0.2
@@ -1997,7 +1997,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     m_wallRunYVelocityStopTime: 0
-    m_wallRunBufferTime: 0.5
+    m_wallRunBufferTime: 0.1
     m_wallRunJumpForce: {x: 25, y: 1}
     m_wallRunJumpGroundVelocityDecayTime: 0.25
     m_wallRunJumpGroundVelocityDecayAnimationCurve:

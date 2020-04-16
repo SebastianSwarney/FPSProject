@@ -679,9 +679,9 @@ public class PlayerController : MonoBehaviour
             {
                 StopWallRun();
             }
-			#endregion
+            #endregion
 
-			yield return new WaitForFixedUpdate();
+            yield return new WaitForFixedUpdate();
         }
 
 		m_tiltTarget = 0f;
@@ -1229,7 +1229,7 @@ public class PlayerController : MonoBehaviour
 
     private void StartCrouch()
     {
-        if (IsGrounded())
+        if (IsGrounded() || OnSlope().m_onSlope)
         {
             StartCoroutine(RunCrouchDown());
             return;
@@ -1327,7 +1327,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 bottom = m_characterController.transform.position - new Vector3(0, m_characterController.height / 2, 0);
 
-        if (Physics.Raycast(bottom, Vector3.down, out hit, 0.5f))
+        if (Physics.Raycast(bottom, Vector3.down, out hit, 1f))
         {
             if (hit.normal != Vector3.up)
             {
@@ -1397,8 +1397,8 @@ public class PlayerController : MonoBehaviour
 
         if (CheckBuffer(ref m_graceTimer, ref m_jumpingProperties.m_graceTime, m_graceBufferCoroutine) && !IsGrounded() && m_velocity.y <= 0f)
         {
-            GroundJump();
-            return;
+            //GroundJump();
+            //return;
         }
 
         if (m_isWallRunning)
@@ -1407,7 +1407,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (IsGrounded())
+        if (IsGrounded() || OnSlope().m_onSlope)
         {
             GroundJump();
             return;
@@ -1435,7 +1435,6 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(InAirBoost(m_slideJumpForce.y, m_slideJumpForce.x));
 
         EndCrouch();
-        JumpMaxVelocity();
         m_hasJumped = true;
     }
 
@@ -1465,9 +1464,9 @@ public class PlayerController : MonoBehaviour
             m_wallJumpDir = jumpVector;
 
             StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x));
-
-            Debug.DrawRay(transform.position, jumpVector * 10, Color.blue, 1f);
         }
+
+        m_hasJumped = true;
     }
 
     private void GroundJump()
@@ -1478,11 +1477,6 @@ public class PlayerController : MonoBehaviour
 
     private void JumpMaxVelocity()
     {
-        if (m_isCrouched)
-        {
-            StartCoroutine(RunCrouchUp());
-        }
-
         m_hasJumped = true;
         m_velocity.y = m_maxJumpVelocity;
     }
