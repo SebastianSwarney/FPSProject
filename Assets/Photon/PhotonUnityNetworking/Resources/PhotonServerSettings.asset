@@ -52,6 +52,11 @@ MonoBehaviour:
   - RPC_RemovePlayerByID
   - RPC_RemoveMe
   - RPC_SpawnWeapon
+  - RPC_UpdateTimers
+  - RPC_StartTimerClientSide
+  - RPC_ResetTimers
+  - RPC_SwitchHill
+  - RPC_ToggleTimer
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

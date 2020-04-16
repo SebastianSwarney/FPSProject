@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MatchSpawn_Zone : MonoBehaviour, ITeam
+public class MatchSpawn_Zone : MonoBehaviour
 {
 
     public TeamTypes.TeamType m_zoneTeam;
@@ -61,12 +61,15 @@ public class MatchSpawn_Zone : MonoBehaviour, ITeam
         return m_currentZoneStatus == ZoneOccupancy.Controlled;
     }
 
-    public TeamTypes.TeamType GetTeamType()
+    public void ChangeZoneOwnership(TeamTypes.TeamType p_newTeamType)
     {
-        return m_zoneTeam;
-    }
-
-    public void SetTeamType(TeamTypes.TeamType p_newTeamType)
-    {
+        if(p_newTeamType != m_zoneTeam)
+        {
+            m_currentZoneStatus = ZoneOccupancy.Neutral;
+        }
+        else
+        {
+            m_currentZoneStatus = ZoneOccupancy.Controlled;
+        }
     }
 }

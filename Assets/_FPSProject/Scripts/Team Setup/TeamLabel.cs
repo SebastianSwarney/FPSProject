@@ -6,7 +6,7 @@ using Photon.Pun;
 [System.Serializable]
 public class TeamLabelEvent : UnityEngine.Events.UnityEvent<TeamTypes.TeamType> { }
 
-public class TeamLabel : MonoBehaviour, ITeam
+public class TeamLabel : MonoBehaviour
 {
     public TeamTypes.TeamType m_myTeam;
     public TeamLabelEvent m_swappedTeams;
