@@ -82,14 +82,14 @@ public class HillBehaviour : MonoBehaviour
 
             #region Hill is neutral
             case TeamTypes.TeamType.Neutral:
-                if (m_redTeamInHill.Count == 0)
+                if (m_redTeamInHill.Count < m_blueTeamInHill.Count)
                 {
                     if (!m_startTimer)
                     {
                         m_photonView.RPC("RPC_ToggleTimer", RpcTarget.All, 2, true);
                     }
                 }
-                else if (m_blueTeamInHill.Count == 0)
+                else if (m_blueTeamInHill.Count < m_redTeamInHill.Count)
                 {
                     if (!m_startTimer)
                     {
@@ -108,14 +108,14 @@ public class HillBehaviour : MonoBehaviour
 
             #region Hill Is Red
             case TeamTypes.TeamType.Red:
-                if (m_redTeamInHill.Count == 0)
+                if (m_redTeamInHill.Count < m_blueTeamInHill.Count)
                 {
                     if (!m_startTimer)
                     {
                         m_photonView.RPC("RPC_ToggleTimer", RpcTarget.All, 2, true);
                     }
                 }
-                else if (m_blueTeamInHill.Count == 0)
+                else if (m_blueTeamInHill.Count < m_redTeamInHill.Count)
                 {
                     if (m_blueTimer > 0)
                     {
@@ -130,14 +130,14 @@ public class HillBehaviour : MonoBehaviour
             #region Hill Is Blue
 
             case TeamTypes.TeamType.Blue:
-                if (m_redTeamInHill.Count == 0)
+                if (m_redTeamInHill.Count < m_blueTeamInHill.Count)
                 {
                     if (m_redTimer > 0)
                     {
                         ResetTimers();
                     }
                 }
-                else if (m_blueTeamInHill.Count == 0)
+                else if (m_blueTeamInHill.Count < m_redTeamInHill.Count)
                 {
                     if (!m_startTimer)
                     {

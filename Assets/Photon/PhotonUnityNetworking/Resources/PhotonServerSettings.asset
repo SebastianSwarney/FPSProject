@@ -57,6 +57,14 @@ MonoBehaviour:
   - RPC_ResetTimers
   - RPC_SwitchHill
   - RPC_ToggleTimer
+  - RPC_HoldEquipment
+  - RPC_ZoneScored
+  - RPC_CheckEquipmentOnMaster
+  - RPC_RemoveHeldObjective
+  - RPC_DisplayScore
+  - DropObjectiveObject
+  - RPC_DropObjectiveObject
+  - RPC_DropObjective
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

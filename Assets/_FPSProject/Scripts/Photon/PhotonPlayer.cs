@@ -10,12 +10,26 @@ public class PhotonPlayer : MonoBehaviour
     public GameObject m_myAvatar;
     private PhotonView m_photonView;
     public List<string> m_randomNames;
-    void Start()
+
+    public static PhotonPlayer Instance { get; private set; }
+    private void Awake()
     {
         m_photonView = GetComponent<PhotonView>();
+        if (m_photonView.IsMine)
+        {
+            Instance = this;
+        }
+    }
+    void Start()
+    {
+
         RandomSpawn();
     }
 
+    public GameObject GetLocalPlayer()
+    {
+        return m_myAvatar;
+    }
 
     private void RandomSpawn()
     {

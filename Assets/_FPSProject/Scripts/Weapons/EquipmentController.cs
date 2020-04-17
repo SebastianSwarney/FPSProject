@@ -6,9 +6,9 @@ using Photon.Pun;
 public class EquipmentController : MonoBehaviour
 {
     private TeamLabel m_teamLabel;
-	private Coroutine m_aimCoroutine;
+    private Coroutine m_aimCoroutine;
     public Transform m_weaponParent;
-	public Equipment_Base m_startingWeapon;
+    public Equipment_Base m_startingWeapon;
     public Equipment_Base m_startingHolsteredWeapon;
 
     private Equipment_Base m_currentWeapon, m_currentHolsteredWeapon;
@@ -22,6 +22,19 @@ public class EquipmentController : MonoBehaviour
 
     private ObjectPooler m_pooler;
 
+    #region Holdable Objectives
+    [Header("Holdable Objective")]
+    public Transform m_heldObjectiveParent;
+    public KeyCode m_pickupObjectiveKey;
+    public LayerMask m_objectiveMask;
+    public float m_objectiveRadius;
+    public DebugTools m_debuggingTools;
+
+    private bool m_holdingObjective;
+    private HeldObjective_Base m_heldObjective;
+
+    #endregion
+
 
     private void Awake()
     {
@@ -32,14 +45,41 @@ public class EquipmentController : MonoBehaviour
     private void Start()
     {
         m_pooler = ObjectPooler.instance;
+        if (m_photonView.IsMine)
+        {
+            StartCoroutine(PerformControls());
+        }
+    }
+
+    private IEnumerator PerformControls()
+    {
+        while (true)
+        {
+            if (Input.GetKeyDown(m_swapKey))
+            {
+                SwapWeapons();
+            }
+            if (Input.GetKeyDown(m_pickupObjectiveKey))
+            {
+                if (m_heldObjective == null)
+                {
+                    CheckForObjective();
+                }
+                else
+                {
+                    DropHeldObject();
+                }
+            }
+            yield return null;
+        }
     }
     public void PlayerDied()
     {
-        if(m_currentWeapon != null)
+        if (m_currentWeapon != null)
         {
             m_pooler.ReturnToPool(m_currentWeapon.gameObject);
         }
-        if(m_currentHolsteredWeapon != null)
+        if (m_currentHolsteredWeapon != null)
         {
             m_pooler.ReturnToPool(m_currentHolsteredWeapon.gameObject);
         }
@@ -54,7 +94,7 @@ public class EquipmentController : MonoBehaviour
     [PunRPC]
     private void RPC_SpawnWeapon(string p_primaryWeapon, string p_secondaryWeapon)
     {
-        if(m_pooler == null)
+        if (m_pooler == null)
         {
             m_pooler = ObjectPooler.instance;
         }
@@ -71,13 +111,8 @@ public class EquipmentController : MonoBehaviour
         SetupEquipment();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(m_swapKey))
-        {
-            SwapWeapons();
-        }
-    }
+
+
     private void SwapWeapons()
     {
         Equipment_Base temp = m_currentWeapon;
@@ -99,17 +134,107 @@ public class EquipmentController : MonoBehaviour
         }
     }
     public void OnShootInputDown()
-	{
+    {
         if (!m_photonView.IsMine) return;
         m_currentWeapon.OnShootInputDown(m_playerCamera);
     }
-	public void OnShootInputUp()
-	{
+    public void OnShootInputUp()
+    {
         if (!m_photonView.IsMine) return;
         m_currentWeapon.OnShootInputUp(m_playerCamera);
     }
     public void ApplyRecoilCameraRotation(float p_recoilAmountX, float p_recoilAmountY, float p_fireRate)
     {
         m_playerController.AddRecoil(p_recoilAmountX, p_recoilAmountY, p_fireRate);
+    }
+
+
+
+    #region Holdable Objectives
+
+    private void CheckForObjective()
+    {
+        Collider[] cols = Physics.OverlapSphere(transform.position, m_objectiveRadius, m_objectiveMask);
+        if (cols.Length > 0)
+        {
+            if (cols[0].GetComponent<HeldObjective_Base>().CanPickUp(m_teamLabel))
+            {
+                m_photonView.RPC("RPC_CheckEquipmentOnMaster", RpcTarget.MasterClient);
+            }
+        }
+    }
+
+    [PunRPC]
+    private void RPC_CheckEquipmentOnMaster()
+    {
+        Collider[] cols = Physics.OverlapSphere(transform.position, m_objectiveRadius, m_objectiveMask);
+        if (cols.Length > 0)
+        {
+            int hitID = cols[0].GetComponent<PhotonView>().ViewID;
+            RPC_HoldEquipment(hitID);
+            m_photonView.RPC("RPC_HoldEquipment", RpcTarget.Others, hitID);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_HoldEquipment(int p_objectiveID)
+    {
+        HeldObjective_Base objective = PhotonView.Find(p_objectiveID).GetComponent<HeldObjective_Base>();
+        m_heldObjective = objective;
+        objective.ObjectPickedUp();
+        objective.transform.parent = m_heldObjectiveParent;
+        objective.transform.localPosition = Vector3.zero;
+        objective.transform.localRotation = Quaternion.identity;
+    }
+
+    public GameObject GetHeldObjective()
+    {
+        return m_heldObjective.gameObject;
+    }
+    public bool HeldObjectiveValid(GameObject p_objectiveZone)
+    {
+        if (m_heldObjective != null)
+        {
+            return m_heldObjective.InZone(p_objectiveZone);
+        }
+        return false;
+    }
+
+    public void RemoveHeldObjective()
+    {
+        if (m_heldObjective != null)
+        {
+            m_heldObjective.ObjectDropped();
+            m_heldObjective = null;
+        }
+    }
+
+    private void DropHeldObject()
+    {
+        m_photonView.RPC("RPC_DropObjective", RpcTarget.All);
+    }
+    [PunRPC]
+    private void RPC_DropObjective()
+    {
+        m_heldObjective.ObjectDropped();
+        m_heldObjective = null;
+    }
+
+    #endregion
+
+    private void OnDrawGizmos()
+    {
+        if (!m_debuggingTools.m_debugTools) return;
+        Gizmos.color = m_debuggingTools.m_gizmosColor1;
+
+        switch (m_debuggingTools.m_gizmosType)
+        {
+            case DebugTools.GizmosType.Shaded:
+                Gizmos.DrawSphere(transform.position, m_objectiveRadius);
+                break;
+            case DebugTools.GizmosType.Wire:
+                Gizmos.DrawWireSphere(transform.position, m_objectiveRadius);
+                break;
+        }
     }
 }
