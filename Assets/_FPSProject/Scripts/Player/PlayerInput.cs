@@ -8,6 +8,8 @@ public class PlayerInput : MonoBehaviour
 {
     public int m_playerId;
 
+    public float m_sensitivity;
+
     private PlayerController m_playerController;
     private Player m_playerInputController;
 
@@ -21,11 +23,18 @@ public class PlayerInput : MonoBehaviour
         m_equipmentController = GetComponent<EquipmentController>();
         m_playerController = GetComponent<PlayerController>();
         m_playerInputController = ReInput.players.GetPlayer(m_playerId);
+
+        ReadSettings();
     }
 
     private void Update()
     {
         GetInput();
+    }
+
+    private void ReadSettings()
+    {
+        //m_sensitivity = PlayerPrefs.GetFloat("sensitivity");
     }
 
     public void GetInput()
@@ -41,7 +50,7 @@ public class PlayerInput : MonoBehaviour
         if (!m_lockLooking)
         {
             Vector2 lookInput = new Vector2(m_playerInputController.GetAxis("LookHorizontal"), m_playerInputController.GetAxis("LookVertical"));
-            m_playerController.SetLookInput(lookInput);
+            m_playerController.SetLookInput(lookInput, m_sensitivity);
         }
 
         if (m_playerInputController.GetButtonDown("Jump"))
@@ -51,16 +60,6 @@ public class PlayerInput : MonoBehaviour
         if (m_playerInputController.GetButtonUp("Jump"))
         {
             m_playerController.OnJumpInputUp();
-        }
-
-        if (m_playerInputController.GetButtonDown("WallRide"))
-        {
-
-        }
-
-        if (m_playerInputController.GetButtonUp("WallRide"))
-        {
-
         }
 
         if (m_playerInputController.GetButtonDown("Crouch"))

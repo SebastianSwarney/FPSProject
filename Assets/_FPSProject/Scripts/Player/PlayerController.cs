@@ -174,10 +174,6 @@ public class PlayerController : MonoBehaviour
 
     [Header("Wall Climb Properties")]
     public WallClimbProperties m_wallClimbProperties;
-
-
-    private float m_currentWallClimbSpeed;
-    private bool m_isWallClimbing;
     #endregion
 
     #region Crouch Properties
@@ -275,8 +271,6 @@ public class PlayerController : MonoBehaviour
 
     private bool m_canWallClimb;
 
-    private float m_currentPostClamberSpeedBoost;
-
     public AnimationCurve m_postClamberSpeedBoostDecay;
 
     public float m_postClamberSpeedBoost;
@@ -286,8 +280,6 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public Vector2 m_movementInput;
     private Vector2 m_lookInput;
-
-    private bool m_isLongJumping;
 
     private bool m_maintainSpeed;
 
@@ -545,40 +537,6 @@ public class PlayerController : MonoBehaviour
             #endregion
         }
 	}
-
-    private void StartLongJump()
-    {
-        if (m_velocity.y > 0)
-        {
-            if (!m_isClambering)
-            {
-                if (!m_isLongJumping)
-                {
-                    StartCoroutine(RunLongJump());
-                }
-            }
-        }
-    }
-
-    private IEnumerator RunLongJump()
-    {
-        JumpMaxMultiplied(0.5f);
-
-        Vector3 movementDir = transform.forward;
-
-        float t = 0;
-
-        while (t < 1f)
-        {
-            t += Time.fixedDeltaTime;
-
-            Vector3 movementVelocity = movementDir * 30f;
-
-            m_velocity = new Vector3(movementVelocity.x, m_velocity.y, movementVelocity.z);
-
-            yield return new WaitForFixedUpdate();
-        }
-    }
 	#endregion
 
 	#region Wall Run Code
@@ -880,9 +838,10 @@ public class PlayerController : MonoBehaviour
         m_movementInput = p_input;
     }
 
-    public void SetLookInput(Vector2 p_input)
+    public void SetLookInput(Vector2 p_input, float p_sensitivity)
     {
         m_lookInput = p_input;
+        m_cameraProperties.m_mouseSensitivity = p_sensitivity;
     }
     #endregion
 
@@ -956,8 +915,6 @@ public class PlayerController : MonoBehaviour
     {
         float speed = m_baseMovementProperties.m_baseMovementSpeed;
 
-        speed += m_currentWallClimbSpeed;
-        speed += m_currentPostClamberSpeedBoost;
         speed += m_currentPostGrappleSpeedBoost;
 
         m_currentMovementSpeed = speed;
@@ -1204,7 +1161,7 @@ public class PlayerController : MonoBehaviour
             StartCrouch();
             return;
         }
-        else if (m_isWallClimbing)
+        else if (m_isClimbing)
         {
             StopWallClimb();
             StartCrouch();
@@ -1235,7 +1192,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (!IsGrounded() && !m_isWallClimbing && !m_isClambering)
+        if (!IsGrounded() && !m_isClimbing && !m_isClambering)
         {
             m_crouchOnLanding = true;
             return;
