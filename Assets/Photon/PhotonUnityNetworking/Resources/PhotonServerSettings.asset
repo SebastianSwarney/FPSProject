@@ -65,6 +65,8 @@ MonoBehaviour:
   - DropObjectiveObject
   - RPC_DropObjectiveObject
   - RPC_DropObjective
+  - RPC_ResetObjective
+  - CallResetObjective
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

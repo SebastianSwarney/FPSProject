@@ -69,10 +69,10 @@ public abstract class HeldObjectiveZone_Base : MonoBehaviour
         switch (m_debugTools.m_gizmosType)
         {
             case DebugTools.GizmosType.Wire:
-                Gizmos.DrawWireCube(Vector3.zero, m_areaSize);
+                Gizmos.DrawWireCube(Vector3.zero, m_areaSize*2);
                 break;
             case DebugTools.GizmosType.Shaded:
-                Gizmos.DrawCube(Vector3.zero, m_areaSize);
+                Gizmos.DrawCube(Vector3.zero, m_areaSize*2);
                 break;
         }
     }

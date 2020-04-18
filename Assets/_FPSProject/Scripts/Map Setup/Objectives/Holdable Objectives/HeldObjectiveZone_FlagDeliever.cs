@@ -11,13 +11,13 @@ public class HeldObjectiveZone_FlagDeliever : HeldObjectiveZone_Base
         if (!PhotonNetwork.IsMasterClient) return;
         if (InRadius())
         {
-            m_photonView.RPC("RPC_ZoneScored", RpcTarget.AllBuffered, TeamTypes.GetTeamAsInt(m_teamLabel.m_myTeam));
+            m_photonView.RPC("RPC_ZoneScored", RpcTarget.All, TeamTypes.GetTeamAsInt(m_teamLabel.m_myTeam));
         }
     }
 
     public override bool InRadius()
     {
-        Collider[] cols = Physics.OverlapBox(transform.position, m_areaSize / 2, transform.rotation, m_playerMask);
+        Collider[] cols = Physics.OverlapBox(transform.position, m_areaSize, transform.rotation, m_playerMask);
         foreach (Collider col in cols)
         {
             EquipmentController equiped = col.GetComponent<EquipmentController>();
@@ -42,6 +42,7 @@ public class HeldObjectiveZone_FlagDeliever : HeldObjectiveZone_Base
     private void RPC_ZoneScored(int p_teamNum)
     {
         ZoneScored();
+        KillFeedManager.Instance.AddMessage(m_teamLabel.m_myTeam.ToString() + "  team captured a flag!");
         if (PhotonNetwork.IsMasterClient)
         {
             GameMode_CaptureTheFlag.Instance.AddPoints(p_teamNum);

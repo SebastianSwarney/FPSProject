@@ -189,7 +189,11 @@ public class EquipmentController : MonoBehaviour
 
     public GameObject GetHeldObjective()
     {
-        return m_heldObjective.gameObject;
+        if (m_heldObjective != null)
+        {
+            return m_heldObjective.gameObject;
+        }
+        return null; 
     }
     public bool HeldObjectiveValid(GameObject p_objectiveZone)
     {
