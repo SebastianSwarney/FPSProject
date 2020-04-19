@@ -54,7 +54,7 @@ public class KillZone : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (!m_debugging.m_debugTools) return;
-        Gizmos.color = Color.red;
+        Gizmos.color = m_debugging.m_gizmosColor1;
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.DrawCube(Vector3.zero, m_size*2);
     }

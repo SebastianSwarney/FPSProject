@@ -27,6 +27,7 @@ public abstract class HeldObjective_Base : MonoBehaviour
         m_startingOffset = transform.localPosition;
         m_rb = GetComponent<Rigidbody>();
         m_teamLabel = GetComponent<TeamLabel>();
+        m_teamLabel.m_myTeam = transform.parent.GetComponent<TeamLabel>().m_myTeam;
         m_localPlayerTeamLabel = PhotonPlayer.Instance.GetLocalPlayer().GetComponent<TeamLabel>();
         m_photonView = GetComponent<PhotonView>();
     }

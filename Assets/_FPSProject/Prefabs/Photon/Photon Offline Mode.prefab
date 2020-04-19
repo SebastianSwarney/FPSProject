@@ -48,6 +48,7 @@ MonoBehaviour:
   m_playerPrefab: {fileID: 2380600404209478212, guid: b73a4e2cc6a57064fb4c4cef12dce054,
     type: 3}
   m_playerSpawn: {fileID: 5828551009815961647}
+  m_offlineModeTeam: 0
 --- !u!1 &5828551009815961640
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,7 +61,7 @@ GameObject:
   m_Layer: 0
   m_Name: Photon Offline Spawn
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1

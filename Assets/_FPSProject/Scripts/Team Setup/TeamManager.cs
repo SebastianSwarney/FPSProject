@@ -11,14 +11,28 @@ public class TeamManager : MonoBehaviour
     public List<TeamLabel> m_redTeam;
     public List<TeamLabel> m_blueTeam;
     private PhotonView m_photonView;
+
+    private bool m_offlineMode;
+    private TeamTypes.TeamType m_offlineModeTeam;
     private void Awake()
     {
         Instance = this;
         m_photonView = GetComponent<PhotonView>();
     }
+
+    public void AssignOfflineModeTeam(TeamTypes.TeamType p_team)
+    {
+        m_offlineMode = true;
+        m_offlineModeTeam = p_team;
+    }
     public TeamTypes.TeamType AssignTeamType()
     {
-        if(m_redTeam.Count > m_blueTeam.Count)
+        if (m_offlineMode)
+        {
+            return m_offlineModeTeam;
+        }
+
+        if (m_redTeam.Count > m_blueTeam.Count)
         {
             return TeamTypes.TeamType.Blue;
         }
@@ -28,7 +42,7 @@ public class TeamManager : MonoBehaviour
         }
     }
 
-    
+
     public void AddPlayerToTeam(TeamLabel p_playerTeamLabel)
     {
         switch (p_playerTeamLabel.m_myTeam)

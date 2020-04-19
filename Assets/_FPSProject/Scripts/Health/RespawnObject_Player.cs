@@ -78,7 +78,6 @@ public class RespawnObject_Player : RespawnObject
         {
 
             m_respawnPoint = m_matchSpawning.SpawnPlayer(m_myTeam.m_myTeam);
-            Debug.DrawLine(m_respawnPoint.position, transform.position, Color.yellow, 2);
             transform.position = m_respawnPoint.position;
             transform.rotation = m_respawnPoint.rotation;
 
