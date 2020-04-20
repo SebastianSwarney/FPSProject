@@ -103,16 +103,13 @@ public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
     private void RPC_ZoneScored(int p_scoredTeam,int p_bombHolderID)
     {
         ZoneScored();
-
-        KillFeedManager.Instance.AddMessage(PhotonView.Find(p_bombHolderID).GetComponent<TeamLabel>().m_myTeam.ToString() + " bomb detonated!");
-
         DropObjectiveObject(p_bombHolderID);
 
         
 
         if (PhotonNetwork.IsMasterClient)
         {
-            GameMode_CaptureTheFlag.Instance.AddPoints(p_scoredTeam);
+            PointsManager.Instance.AddPointsForBomb(TeamTypes.GetTeamFromInt(p_scoredTeam));
         }
     }
 
@@ -121,7 +118,5 @@ public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
     {
         m_startTimer = p_state;
     }
-
-
 
 }

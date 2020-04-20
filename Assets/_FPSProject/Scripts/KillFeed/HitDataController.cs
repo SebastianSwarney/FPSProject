@@ -12,9 +12,12 @@ public class HitDataController : MonoBehaviour
     public GameObject m_hitMarker;
 
     private KillFeedManager m_killFeedManager;
+
+    private TeamLabel m_teamLabel;
     private void Start()
     {
         m_myPhotonView = GetComponent<PhotonView>();
+        m_teamLabel = GetComponent<TeamLabel>();
         if (m_myPhotonView.IsMine)
         {
             StartCoroutine(HitMarker());
@@ -33,6 +36,11 @@ public class HitDataController : MonoBehaviour
     [PunRPC]
     public void RPC_PlayerKilledSomeone(int p_killedObjectID)
     {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PointsManager.Instance.AddPointsForKill(m_teamLabel.m_myTeam);
+        }
+
         if (!m_myPhotonView.IsMine) return;
         if (p_killedObjectID != m_myPhotonView.ViewID)
         {

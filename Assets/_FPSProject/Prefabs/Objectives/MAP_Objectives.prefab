@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5234332272849967507}
   - component: {fileID: 8182109646528378524}
   m_Layer: 5
-  m_Name: TXTRED
+  m_Name: TXT_RED
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -319,10 +319,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6527474344740644242}
-  - component: {fileID: 7682883662413345159}
-  - component: {fileID: 6290206912481571794}
+  - component: {fileID: 1790526634}
+  - component: {fileID: 3020960877947763100}
+  - component: {fileID: 3156310146620533889}
   m_Layer: 0
-  m_Name: CTF_Manager
+  m_Name: Points Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -343,24 +344,7 @@ Transform:
   m_Father: {fileID: 3046281232575868075}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7682883662413345159
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2520544219473746964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d810c8f9fcab95b429fa226e2b03aa3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_score:
-  - m_score: 0
-    m_scoreText: {fileID: 8182109646528378524}
-  - m_score: 0
-    m_scoreText: {fileID: 6904790101891591880}
---- !u!114 &6290206912481571794
+--- !u!114 &1790526634
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -382,6 +366,52 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &3020960877947763100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2520544219473746964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5504c57ee44f27b448fdd2fbfabd9d2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_pointsToWin: 100
+  m_points:
+  - m_pointTeam: 1
+    m_points: 0
+    m_numOfHills: 0
+  - m_pointTeam: 2
+    m_points: 0
+    m_numOfHills: 0
+  m_pointValues:
+    m_killPoints: 010000000200000003000000
+    m_initialHillCaptureScore: 10
+    m_hillScorePerSecond: 1
+    m_bombScore: 15
+  m_redText: {fileID: 8182109646528378524}
+  m_blueText: {fileID: 6904790101891591880}
+--- !u!114 &3156310146620533889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2520544219473746964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e46e7b8fd918af44bb267c0b9180eebc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_events:
+    m_teamInTheLead:
+      m_PersistentCalls:
+        m_Calls: []
+    m_teamWon:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!1 &3046281232575868074
 GameObject:
   m_ObjectHideFlags: 0

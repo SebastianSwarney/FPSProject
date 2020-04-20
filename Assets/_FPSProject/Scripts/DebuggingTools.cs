@@ -7,5 +7,6 @@ public struct DebugTools
     public Color m_gizmosColor1;
     public enum GizmosType { Wire, Shaded };
     public GizmosType m_gizmosType;
+
 }
 

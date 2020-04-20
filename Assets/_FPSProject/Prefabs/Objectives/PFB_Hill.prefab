@@ -496,7 +496,7 @@ GameObject:
   - component: {fileID: 6696111343120833451}
   - component: {fileID: 6696111343120833445}
   m_Layer: 0
-  m_Name: Hill
+  m_Name: PFB_Hill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -581,9 +581,13 @@ MonoBehaviour:
   m_hillCaptureTime: 3
   m_hillBar: {fileID: 6696111342522801614}
   m_hillEvents:
-    m_capturedEvent:
+    m_blueCaptured:
       m_PersistentCalls:
         m_Calls: []
+    m_redCaptured:
+      m_PersistentCalls:
+        m_Calls: []
+  m_updateScoreTime: 1
   m_debuggingTools:
     m_debugTools: 0
     m_gizmosColor1: {r: 1, g: 0, b: 0, a: 1}

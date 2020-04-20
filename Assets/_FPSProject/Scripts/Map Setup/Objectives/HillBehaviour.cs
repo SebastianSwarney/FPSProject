@@ -24,8 +24,14 @@ public class HillBehaviour : MonoBehaviour
 
     public UnityEngine.UI.Image m_hillBar;
 
+    private PointsManager m_pointsManager;
+
 
     public HillEvents m_hillEvents;
+
+    public float m_updateScoreTime;
+    private float m_updateTimer;
+
     [System.Serializable]
     public struct HillEvents
     {
@@ -39,6 +45,7 @@ public class HillBehaviour : MonoBehaviour
     {
         m_photonView = GetComponent<PhotonView>();
         m_teamLabel = GetComponent<TeamLabel>();
+        m_pointsManager = PointsManager.Instance;
 
     }
     private void Update()
@@ -68,14 +75,29 @@ public class HillBehaviour : MonoBehaviour
                     m_photonView.RPC("RPC_ToggleTimer", RpcTarget.All, 0, false);
                 }
             }
+
+            
         }
         if (m_startTimer)
         {
             PerformHillTimers();
         }
         UpdateUI();
-    }
 
+        if(m_updateTimer > m_updateScoreTime)
+        {
+            UpdateScore();
+            m_updateTimer = 0;
+        }
+        m_updateTimer += Time.deltaTime;
+
+        
+    }
+    private void UpdateScore()
+    {
+        if (m_teamLabel.m_myTeam == TeamTypes.TeamType.Neutral) return;
+        m_pointsManager.AddPointsForKeepingHill(m_teamLabel.m_myTeam);
+    }
     private void UpdateHill()
     {
         switch (m_teamLabel.m_myTeam)
@@ -195,6 +217,8 @@ public class HillBehaviour : MonoBehaviour
     private void SwitchHillTeam(TeamTypes.TeamType p_newHillTeam)
     {
         ResetTimers();
+
+        GameStateManager.Instance.ChangeHill(m_teamLabel.m_myTeam, p_newHillTeam);
         switch (p_newHillTeam)
         {
             case TeamTypes.TeamType.Red:
@@ -218,6 +242,11 @@ public class HillBehaviour : MonoBehaviour
         {
             m_teamLabel.SetTeamType(TeamTypes.TeamType.Blue);
             m_hillEvents.m_blueCaptured.Invoke();
+        }
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PointsManager.Instance.AddPointsForHillCapture((m_teamLabel.m_myTeam));
         }
 
     }

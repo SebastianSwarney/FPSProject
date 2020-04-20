@@ -67,6 +67,8 @@ MonoBehaviour:
   - RPC_DropObjective
   - RPC_ResetObjective
   - CallResetObjective
+  - RPC_AddPointsToClients
+  - RPC_ChangeHill
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

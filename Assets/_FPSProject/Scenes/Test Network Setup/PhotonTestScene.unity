@@ -15266,6 +15266,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1790526634, guid: 512a6b538c9e9aa45808ca9d3926416f, type: 3}
+      propertyPath: viewIdField
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3046281232575868074, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: m_Name
@@ -15329,52 +15333,47 @@ PrefabInstance:
     - target: {fileID: 3046281232689074783, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: viewIdField
-      value: 14
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3046281232885948422, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: viewIdField
-      value: 12
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4295847270459852049, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: viewIdField
-      value: 13
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4295847270799341384, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: viewIdField
-      value: 11
-      objectReference: {fileID: 0}
-    - target: {fileID: 6290206912481571794, guid: 512a6b538c9e9aa45808ca9d3926416f,
-        type: 3}
-      propertyPath: viewIdField
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6715876246634406662, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: viewIdField
-      value: 15
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 6715876247014881501, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: viewIdField
-      value: 17
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 7282935678424313880, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: viewIdField
-      value: 18
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7282935678861667267, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: viewIdField
-      value: 20
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8551154188078083454, guid: 512a6b538c9e9aa45808ca9d3926416f,
         type: 3}
       propertyPath: viewIdField
-      value: 21
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 512a6b538c9e9aa45808ca9d3926416f, type: 3}
@@ -16972,6 +16971,26 @@ PrefabInstance:
     - target: {fileID: 8784758666786340072, guid: 61740e533f423c942998acac98160c50,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8784758666786340076, guid: 61740e533f423c942998acac98160c50,
+        type: 3}
+      propertyPath: m_debugging.m_gizmosColor1.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8784758666786340076, guid: 61740e533f423c942998acac98160c50,
+        type: 3}
+      propertyPath: m_debugging.m_gizmosColor1.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8784758666786340076, guid: 61740e533f423c942998acac98160c50,
+        type: 3}
+      propertyPath: m_debugging.m_gizmosColor1.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8784758666786340076, guid: 61740e533f423c942998acac98160c50,
+        type: 3}
+      propertyPath: m_debugging.m_gizmosColor1.a
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

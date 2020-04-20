@@ -42,10 +42,9 @@ public class HeldObjectiveZone_FlagDeliever : HeldObjectiveZone_Base
     private void RPC_ZoneScored(int p_teamNum)
     {
         ZoneScored();
-        KillFeedManager.Instance.AddMessage(m_teamLabel.m_myTeam.ToString() + "  team captured a flag!");
         if (PhotonNetwork.IsMasterClient)
         {
-            GameMode_CaptureTheFlag.Instance.AddPoints(p_teamNum);
+            PointsManager.Instance.FlagCaptured(TeamTypes.GetTeamFromInt(p_teamNum));
         }
     }
 

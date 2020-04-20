@@ -20,6 +20,9 @@ public abstract class HeldObjectiveZone_Base : MonoBehaviour
     public PhotonView m_photonView;
 
     public ObjectiveEvents m_objectiveEvents;
+
+    public HeldObjective_Base m_heldObjective;
+
     [System.Serializable]
     public struct ObjectiveEvents
     {
@@ -46,6 +49,11 @@ public abstract class HeldObjectiveZone_Base : MonoBehaviour
     }
 
     public abstract TeamTypes.TeamType ZoneTeam();
+
+    public virtual void ChangeActiveState(bool p_activeState)
+    {
+        m_heldObjective.ChangeActiveState(p_activeState);
+    }
 
     private void OnDrawGizmos()
     {

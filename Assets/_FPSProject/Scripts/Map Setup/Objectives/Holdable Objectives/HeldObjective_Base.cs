@@ -21,6 +21,8 @@ public abstract class HeldObjective_Base : MonoBehaviour
     private float m_resetTimer;
     private bool m_startTimer;
 
+    private bool m_disableOnReset;
+    private bool m_pickedUp;
     public virtual void Start()
     {
         m_startingParent = transform.parent;
@@ -55,6 +57,7 @@ public abstract class HeldObjective_Base : MonoBehaviour
         m_rb.isKinematic = true;
         m_startTimer = false;
         m_resetTimer = 0;
+        m_pickedUp = true;
     }
     public virtual void ObjectDropped()
     {
@@ -71,6 +74,8 @@ public abstract class HeldObjective_Base : MonoBehaviour
         transform.parent = m_startingParent;
         transform.localPosition = m_startingOffset;
         transform.localRotation = Quaternion.identity;
+        gameObject.SetActive(!m_disableOnReset);
+        m_pickedUp = false;
     }
 
     
@@ -82,5 +87,17 @@ public abstract class HeldObjective_Base : MonoBehaviour
     public void RPC_ResetObjective()
     {
         ResetObjective();
+    }
+
+    public void ChangeActiveState(bool p_activeState)
+    {
+        m_disableOnReset = p_activeState;
+        if (!p_activeState)
+        {
+            if (!m_pickedUp)
+            {
+                ResetObjective();
+            }
+        }
     }
 }
