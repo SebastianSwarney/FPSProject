@@ -48,7 +48,7 @@ MonoBehaviour:
   m_playerPrefab: {fileID: 2380600404209478212, guid: b73a4e2cc6a57064fb4c4cef12dce054,
     type: 3}
   m_playerSpawn: {fileID: 5828551009815961647}
-  m_offlineModeTeam: 0
+  m_offlineModeTeam: 1
 --- !u!1 &5828551009815961640
 GameObject:
   m_ObjectHideFlags: 0

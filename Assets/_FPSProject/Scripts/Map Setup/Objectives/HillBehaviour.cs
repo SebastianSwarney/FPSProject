@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 
 [System.Serializable]
-public class HillBehaviourEvent : UnityEngine.Events.UnityEvent<TeamTypes.TeamType> { }
+public class HillBehaviourEvent : UnityEngine.Events.UnityEvent { }
 public class HillBehaviour : MonoBehaviour
 {
 
@@ -29,7 +29,8 @@ public class HillBehaviour : MonoBehaviour
     [System.Serializable]
     public struct HillEvents
     {
-        public HillBehaviourEvent m_capturedEvent;
+        public HillBehaviourEvent m_blueCaptured;
+        public HillBehaviourEvent m_redCaptured;
     }
 
     public DebugTools m_debuggingTools;
@@ -211,12 +212,12 @@ public class HillBehaviour : MonoBehaviour
         if (p_newTeam == 1)
         {
             m_teamLabel.SetTeamType(TeamTypes.TeamType.Red);
-            m_hillEvents.m_capturedEvent.Invoke(TeamTypes.TeamType.Red);
+            m_hillEvents.m_redCaptured.Invoke();
         }
         else if (p_newTeam == 2)
         {
             m_teamLabel.SetTeamType(TeamTypes.TeamType.Blue);
-            m_hillEvents.m_capturedEvent.Invoke(TeamTypes.TeamType.Blue);
+            m_hillEvents.m_blueCaptured.Invoke();
         }
 
     }

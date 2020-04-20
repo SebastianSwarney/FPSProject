@@ -5,7 +5,6 @@ using UnityEngine;
 public class MatchSpawn_Zone : MonoBehaviour
 {
 
-    public TeamTypes.TeamType m_zoneTeam;
     public enum ZoneOccupancy { Controlled, Neutral}
     public ZoneOccupancy m_currentZoneStatus;
     public List<Transform> m_spawnPoints;
@@ -61,15 +60,8 @@ public class MatchSpawn_Zone : MonoBehaviour
         return m_currentZoneStatus == ZoneOccupancy.Controlled;
     }
 
-    public void ChangeZoneOwnership(TeamTypes.TeamType p_newTeamType)
+    public void ChangeZoneOwnership(bool p_canSpawn)
     {
-        if(p_newTeamType != m_zoneTeam)
-        {
-            m_currentZoneStatus = ZoneOccupancy.Neutral;
-        }
-        else
-        {
-            m_currentZoneStatus = ZoneOccupancy.Controlled;
-        }
+        m_currentZoneStatus = (p_canSpawn) ? ZoneOccupancy.Controlled : ZoneOccupancy.Neutral;
     }
 }
