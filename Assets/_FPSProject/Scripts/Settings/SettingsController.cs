@@ -24,4 +24,20 @@ public class SettingsController : MonoBehaviour
 
 		m_player.m_cameraProperties.m_mouseSensitivity = PlayerPrefs.GetFloat("sensitivity");
 	}
+
+	public void ChangeDisplaySetting(int p_settingIndex)
+	{
+		if (p_settingIndex == 0)
+		{
+			//Debug.Log("Windowed");
+		}
+		else if (p_settingIndex == 1)
+		{
+			//Debug.Log("Fullscreen");
+		}
+		else if (p_settingIndex == 2)
+		{
+			//Debug.Log("Boarderless Windowed");
+		}
+	}
 }
