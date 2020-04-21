@@ -31,6 +31,7 @@ public class Projectiles_Tracking : Projectiles_Base
         }
         m_projectileDamage = p_projectileDamage;
         m_lifeCoroutine = StartCoroutine(LifeTime());
+        m_bulletSpawnedEvent.Invoke();
 
     }
 

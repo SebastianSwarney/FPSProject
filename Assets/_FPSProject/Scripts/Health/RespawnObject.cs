@@ -12,20 +12,23 @@ public class RespawnObject : MonoBehaviour
     private Quaternion m_respawnRotation;
     public RespawnEvent m_respawnedEvent;
 
+
     public virtual void Start()
     {
         m_respawnPosition = transform.position;
         m_respawnRotation = transform.rotation;
+
     }
 
     public IEnumerator RespawnCoroutine()
     {
         m_respawnTimer = 0;
-        while(m_respawnTimer < m_respawnTime)
+        while (m_respawnTimer < m_respawnTime)
         {
             m_respawnTimer += Time.deltaTime;
             yield return null;
         }
+
         RespawnMe();
     }
 

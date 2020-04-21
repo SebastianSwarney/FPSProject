@@ -21,7 +21,9 @@ public class RespawnObject_Player : RespawnObject
     public RespawnObjectEvent m_died;
     public RespawnObjectEvent m_respawned;
 
+    private bool m_choosingWeapon;
 
+    public GameObject m_weaponCanvas;
 
     public override void Start()
     {
@@ -40,7 +42,14 @@ public class RespawnObject_Player : RespawnObject
         if (!m_photonView.IsMine)
         {
             GetComponent<CharacterController>().enabled = false;
+
         }
+        if (LoadoutChooser.Instance != null)
+        {
+            m_weaponCanvas = LoadoutChooser.Instance.m_loadoutCanvas;
+            LoadoutChooser.Instance.AssignEquipmentController(GetComponent<EquipmentController>());
+        }
+
 
     }
 
@@ -54,8 +63,11 @@ public class RespawnObject_Player : RespawnObject
         DisablePlayerControl();
         m_visual.SetActive(false);
         m_died.Invoke();
+
         if (m_photonView.IsMine)
         {
+            PlayerInput.Instance.ChangeCursorState(true);
+            m_weaponCanvas.SetActive(true);
             StartCoroutine(RespawnCoroutine());
         }
     }
@@ -63,13 +75,19 @@ public class RespawnObject_Player : RespawnObject
 
     public override void RespawnMe()
     {
+
         if (m_photonView.IsMine)
         {
             m_photonView.RPC("RPC_Respawn", RpcTarget.All);
             m_camera.SetActive(true);
             m_playerUI.SetActive(true);
+            m_weaponCanvas.SetActive(false);
+            PlayerInput.Instance.ChangeCursorState(false);
         }
+
+
     }
+
 
     [PunRPC]
     private void RPC_Respawn()

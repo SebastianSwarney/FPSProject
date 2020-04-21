@@ -8,9 +8,7 @@ public class SpawnParticle : MonoBehaviour
     private ObjectPooler m_pooler;
     public Vector3 m_particleOffset;
 
-    [Header("Match Transform")]
-    public Transform m_matchedTransform;
-    private void Start()
+    private void Awake()
     {
         m_pooler = ObjectPooler.instance;
     }
@@ -31,12 +29,10 @@ public class SpawnParticle : MonoBehaviour
         m_pooler.NewObject(m_spawnedParticle, transform.position + m_particleOffset, Quaternion.identity);
     }
 
-    /// <summary>
-    /// Spawns an unparented particle object at the transform, matching it's rotation
-    /// </summary>
-    public void SpawnParticleWithRotation()
+
+    public void SpawnTransformFollower()
     {
-        m_pooler.NewObject(m_spawnedParticle, m_matchedTransform.position, m_matchedTransform.rotation);
+        m_pooler.NewObject(m_spawnedParticle, transform.position + m_particleOffset, Quaternion.identity).GetComponent<FollowTransform>().SetFollower(transform);
     }
 
     /// <summary>

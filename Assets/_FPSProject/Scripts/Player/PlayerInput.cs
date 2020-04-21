@@ -17,7 +17,14 @@ public class PlayerInput : MonoBehaviour
 
     private EquipmentController m_equipmentController;
 
-
+    public static PlayerInput Instance;
+    private void Awake()
+    {
+        if (GetComponent<PhotonView>().IsMine)
+        {
+            Instance = this;
+        }
+    }
     private void Start()
     {
         m_equipmentController = GetComponent<EquipmentController>();
@@ -25,6 +32,20 @@ public class PlayerInput : MonoBehaviour
         m_playerInputController = ReInput.players.GetPlayer(m_playerId);
 
         ReadSettings();
+    }
+
+    public void ChangeCursorState(bool p_activeState)
+    {
+        Cursor.visible = !false;
+        if (!p_activeState)
+        {
+
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     private void Update()

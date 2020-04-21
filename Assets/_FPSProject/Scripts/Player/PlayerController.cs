@@ -295,7 +295,6 @@ public class PlayerController : MonoBehaviour
         m_characterController = GetComponent<CharacterController>();
 
         CalculateJump();
-        LockCursor();
 
         m_currentMovementSpeed = m_baseMovementProperties.m_baseMovementSpeed;
         m_jumpBufferTimer = m_jumpingProperties.m_jumpBufferTime;
@@ -381,10 +380,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void LockCursor()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-    }
+
 
     public void ResetCamera()
     {

@@ -51,6 +51,13 @@ public class EquipmentController : MonoBehaviour
         }
     }
 
+    public void AssignLoadouts(Loadouts p_loadout)
+    {
+        m_startingWeapon = p_loadout.m_primaryGun;
+        m_startingHolsteredWeapon = p_loadout.m_secondaryGun;
+    }
+
+
     private IEnumerator PerformControls()
     {
         while (true)
