@@ -11,36 +11,11 @@ public class SettingsController : MonoBehaviour
 
 	public float m_sensitivity;
 
-	[Header("UI Theme Settings")]
-	public Color m_buttonBackgroundColor;
-
-	public Image[] m_buttonBackgroundImages;
-
-	public Color m_textColor;
-
 	private PlayerController m_player;
 
 	private void Start()
 	{
 		m_player = GetComponent<PlayerController>();
-	}
-
-	[ContextMenu("Change Colors")]
-	public void ChangeColors()
-	{
-		foreach (Image backgroundImages in m_buttonBackgroundImages)
-		{
-			backgroundImages.color = m_buttonBackgroundColor;
-		}
-
-		Text[] textComponents = GetComponentsInChildren<Text>();
-
-		foreach (Text text in textComponents)
-		{
-			text.color = m_textColor;
-		}
-
-		//Text[] textComponents1 = FindObjectsOfType<Text>();
 	}
 
 	[ContextMenu("Validate Settings")]

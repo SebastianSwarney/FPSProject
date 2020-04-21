@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb2f6f865a0679e4c97ce70b99f295e9, type: 3}
+  m_Name: UIPalletBase
+  m_EditorClassIdentifier: 
+  m_font: {fileID: 12800000, guid: f75e683dbe938854e9edfab006987a7d, type: 3}
+  m_textColor: {r: 1, g: 1, b: 1, a: 1}
+  m_buttonMainColor: {r: 0.20784315, g: 0.20784315, b: 0.20784315, a: 1}
+  m_buttonOutlineColor: {r: 0.36862746, g: 0.36862746, b: 0.36862746, a: 1}
+  m_buttonArrowColor: {r: 1, g: 1, b: 1, a: 1}
+  m_elementMainColor: {r: 0.2627451, g: 0.2627451, b: 0.2627451, a: 1}
