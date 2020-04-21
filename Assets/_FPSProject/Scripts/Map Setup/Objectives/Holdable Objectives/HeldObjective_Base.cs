@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+
+
 [RequireComponent(typeof(TeamLabel))]
 [RequireComponent(typeof(PhotonView))]
 public abstract class HeldObjective_Base : MonoBehaviour
@@ -30,8 +32,13 @@ public abstract class HeldObjective_Base : MonoBehaviour
         m_rb = GetComponent<Rigidbody>();
         m_teamLabel = GetComponent<TeamLabel>();
         m_teamLabel.m_myTeam = transform.parent.GetComponent<TeamLabel>().m_myTeam;
-        m_localPlayerTeamLabel = PhotonPlayer.Instance.GetLocalPlayer().GetComponent<TeamLabel>();
+        StartCoroutine(GetLocalPlayer());
         m_photonView = GetComponent<PhotonView>();
+    }
+    private IEnumerator GetLocalPlayer()
+    {
+        yield return new WaitForSeconds(.01f);
+        m_localPlayerTeamLabel = TeamLabel_Player.LocalPlayer.GetComponent<TeamLabel>();
     }
 
     private void Update()
@@ -39,7 +46,7 @@ public abstract class HeldObjective_Base : MonoBehaviour
         if (m_startTimer)
         {
             m_resetTimer += Time.deltaTime;
-            if(m_resetTimer >= m_resetTime)
+            if (m_resetTimer >= m_resetTime)
             {
                 if (PhotonNetwork.IsMasterClient)
                 {
@@ -70,7 +77,7 @@ public abstract class HeldObjective_Base : MonoBehaviour
 
     public virtual void ResetObjective()
     {
-        m_startTimer = false; 
+        m_startTimer = false;
         transform.parent = m_startingParent;
         transform.localPosition = m_startingOffset;
         transform.localRotation = Quaternion.identity;
@@ -78,7 +85,7 @@ public abstract class HeldObjective_Base : MonoBehaviour
         m_pickedUp = false;
     }
 
-    
+
     public void CallResetObjective()
     {
         m_photonView.RPC("RPC_ResetObjective", RpcTarget.All);
@@ -91,13 +98,11 @@ public abstract class HeldObjective_Base : MonoBehaviour
 
     public void ChangeActiveState(bool p_activeState)
     {
-        m_disableOnReset = p_activeState;
-        if (!p_activeState)
+        m_disableOnReset = !p_activeState;
+
+        if (!m_pickedUp)
         {
-            if (!m_pickedUp)
-            {
-                ResetObjective();
-            }
+            ResetObjective();
         }
     }
 }

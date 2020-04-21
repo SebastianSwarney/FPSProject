@@ -578,7 +578,7 @@ MonoBehaviour:
   m_playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  m_hillCaptureTime: 3
+  m_hillCaptureTime: 10
   m_hillBar: {fileID: 6696111342522801614}
   m_hillEvents:
     m_blueCaptured:

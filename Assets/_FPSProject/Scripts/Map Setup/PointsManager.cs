@@ -98,6 +98,7 @@ public class PointsManager : MonoBehaviour
     public void FlagCaptured(TeamTypes.TeamType p_team)
     {
         m_killFeedManager.AddMessage(p_team.ToString() + " team captured flag.");
+        m_killFeedManager.AddMessage("Game Over!");
     }
 
     public void AddHillToTeam(int p_teamNum)

@@ -26,10 +26,6 @@ public class PhotonPlayer : MonoBehaviour
         RandomSpawn();
     }
 
-    public GameObject GetLocalPlayer()
-    {
-        return m_myAvatar;
-    }
 
     private void RandomSpawn()
     {

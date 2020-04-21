@@ -86,7 +86,10 @@ public class HillBehaviour : MonoBehaviour
 
         if(m_updateTimer > m_updateScoreTime)
         {
-            UpdateScore();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                UpdateScore();
+            }
             m_updateTimer = 0;
         }
         m_updateTimer += Time.deltaTime;

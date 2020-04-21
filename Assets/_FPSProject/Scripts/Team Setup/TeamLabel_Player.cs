@@ -7,20 +7,27 @@ using Photon.Pun;
 public class TeamLabelPlayerEvent : UnityEngine.Events.UnityEvent { }
 public class TeamLabel_Player : TeamLabel
 {
+    public static TeamLabel_Player LocalPlayer;
     public MeshRenderer m_renderer;
     public Material m_redMaterial, m_blueMaterial;
     public TeamLabelPlayerEvent m_teamSetup;
-
     public float m_delayTeamAssignTime = 1;
 
     [Header("Debugging")]
     public TMPro.TextMeshProUGUI m_teamName;
-
+    public override void Awake()
+    {
+        base.Awake();
+        if (m_photonView.IsMine)
+        {
+            LocalPlayer = this;
+        }
+    }
     private void Start()
     {
 
         if (!m_photonView.IsMine) return;
-
+        
         StartCoroutine(TeamAssignment());
 
     }

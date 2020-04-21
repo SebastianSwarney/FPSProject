@@ -20,6 +20,7 @@ public class GameStateManager : MonoBehaviour
 
     private PhotonView m_photonView;
 
+    
 
 
     private void Awake()
@@ -33,6 +34,15 @@ public class GameStateManager : MonoBehaviour
     public void GameWon(TeamTypes.TeamType p_team)
     {
         m_events.m_teamWon.Invoke(p_team);
+
+        if(TeamLabel_Player.LocalPlayer.m_myTeam == p_team)
+        {
+            KillFeedManager.Instance.AddMessage("Your team won!");
+        }
+        else
+        {
+            KillFeedManager.Instance.AddMessage("You guys fucked up.");
+        }
     }
 
     public void LeaderChange(TeamTypes.TeamType p_team)

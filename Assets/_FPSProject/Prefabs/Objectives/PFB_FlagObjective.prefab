@@ -356,7 +356,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90a373c67a336124593b51e1152d9c6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resetTime: 10
+  m_resetTime: 20
   m_marker: {fileID: 335082513}
   m_teamLabel: {fileID: 0}
   m_localPlayerTeamLabel: {fileID: 0}
@@ -631,3 +631,4 @@ MonoBehaviour:
     m_zoneScored:
       m_PersistentCalls:
         m_Calls: []
+  m_heldObjective: {fileID: 0}

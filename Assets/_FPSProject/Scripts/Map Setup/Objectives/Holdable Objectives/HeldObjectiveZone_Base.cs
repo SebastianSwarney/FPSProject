@@ -35,7 +35,7 @@ public abstract class HeldObjectiveZone_Base : MonoBehaviour
         m_photonView = GetComponent<PhotonView>();
     }
 
-    private void Update()
+    public virtual void Update()
     {
         ObjectInZone();
     }

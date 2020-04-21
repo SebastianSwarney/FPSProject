@@ -28,11 +28,6 @@ PrefabInstance:
       propertyPath: m_aimAssist.m_maxAssistDistance
       value: 100
       objectReference: {fileID: 0}
-    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
-        type: 3}
-      propertyPath: m_bulletProperties.m_bulletSpeed
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 4579541868941658785, guid: 99fb11da5e730de4998fe35e7b1850c3,
         type: 3}
       propertyPath: viewIdField

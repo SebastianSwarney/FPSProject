@@ -14,7 +14,7 @@ public class TeamLabel : MonoBehaviour
     [HideInInspector]
     public PhotonView m_photonView;
 
-    private void Awake()
+    public virtual void Awake()
     {
         m_photonView = GetComponent<PhotonView>();
     }

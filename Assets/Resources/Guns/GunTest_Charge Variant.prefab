@@ -4791,7 +4791,6 @@ MonoBehaviour:
   m_currentClipSize: 0
   m_canFire: 1
   m_isReloading: 0
-  m_myPhotonView: {fileID: 0}
   m_reloadTime: 0
   m_bulletsToCompleteRecoilPattern: 0
   m_horizontalRecoilAmount: 0
@@ -4814,6 +4813,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_amountOfBulletsShot: 0
   m_aimAssist:
     m_hitDetectLayer:
       serializedVersion: 2
@@ -4836,7 +4836,7 @@ MonoBehaviour:
       type: 3}
     m_endChargeTime: 1.5
     m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
-    m_projectileSpeed: 150
+    m_projectileSpeed: 1030
     m_projectileDamage: 10
     m_bulletSpread: {x: 0, y: 0}
     m_stateVisual: {fileID: 2642427322433855374}
@@ -4845,7 +4845,7 @@ MonoBehaviour:
       type: 3}
     m_endChargeTime: 3
     m_fireBehaviour: {fileID: 11400000, guid: 2769c1223f55fff4eb26c671ae56eec4, type: 2}
-    m_projectileSpeed: 300
+    m_projectileSpeed: 1200
     m_projectileDamage: 101
     m_bulletSpread: {x: 0, y: 0}
     m_stateVisual: {fileID: 6372927938709582863}

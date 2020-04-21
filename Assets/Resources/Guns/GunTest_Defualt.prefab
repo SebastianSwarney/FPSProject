@@ -113,7 +113,7 @@ MonoBehaviour:
       type: 3}
     m_clipSize: 25
     m_bulletDamage: 10
-    m_bulletSpeed: 150
+    m_bulletSpeed: 350
     m_gunFireDelay: 0.05
   m_currentClipSize: 0
   m_canFire: 1
@@ -194,6 +194,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_amountOfBulletsShot: 0
   m_aimAssist:
     m_hitDetectLayer:
       serializedVersion: 2

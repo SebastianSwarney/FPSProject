@@ -387,7 +387,7 @@ MonoBehaviour:
     m_points: 0
     m_numOfHills: 0
   m_pointValues:
-    m_killPoints: 010000000200000003000000
+    m_killPoints: 05000000070000000a000000
     m_initialHillCaptureScore: 10
     m_hillScorePerSecond: 1
     m_bombScore: 15

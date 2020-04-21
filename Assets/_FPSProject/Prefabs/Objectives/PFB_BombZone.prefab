@@ -660,7 +660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d668fd647c23e0449eae59c0f81b9bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resetTime: 10
+  m_resetTime: 20
   m_marker: {fileID: 4055219660957103308}
   m_teamLabel: {fileID: 0}
   m_localPlayerTeamLabel: {fileID: 0}
@@ -676,6 +676,7 @@ GameObject:
   - component: {fileID: 8607792281906131778}
   - component: {fileID: 3608646713748644763}
   - component: {fileID: 5467355331008798638}
+  - component: {fileID: 4218851547882768067}
   m_Layer: 0
   m_Name: PFB_BombZone
   m_TagString: Untagged
@@ -754,7 +755,7 @@ MonoBehaviour:
   m_playerMask:
     serializedVersion: 2
     m_Bits: 256
-  m_areaSize: {x: 5, y: 5, z: 5}
+  m_areaSize: {x: 2, y: 3, z: 2}
   m_debugTools:
     m_debugTools: 1
     m_gizmosColor1: {r: 1, g: 1, b: 1, a: 1}
@@ -764,9 +765,43 @@ MonoBehaviour:
   m_objectiveEvents:
     m_zoneScored:
       m_PersistentCalls:
-        m_Calls: []
-  m_bombPlantTime: 5
+        m_Calls:
+        - m_Target: {fileID: 4218851547882768067}
+          m_MethodName: SpawnParticlePrefab
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  m_heldObjective: {fileID: 3544193293156108481}
+  m_bombPlantTime: 15
+  m_resetTime: 45
+  m_defensesRestored:
+    m_PersistentCalls:
+      m_Calls: []
   m_bombPlantUI: {fileID: 5570389733836992076}
+--- !u!114 &4218851547882768067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8767401425449971789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a303cc903b077a4b89f0336c8a9f528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnedParticle: {fileID: 8156700078027560969, guid: e6ff1855612410b4fa83488b12664678,
+    type: 3}
+  m_particleOffset: {x: 0, y: 0, z: 0}
+  m_matchedTransform: {fileID: 0}
+  m_isDebugging: 0
+  m_gizmosColor1: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &8790925779936884835
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,10 +6,16 @@ using Photon.Pun;
 public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
 {
     public float m_bombPlantTime;
-    private bool m_inRadius;
-    private bool m_startTimer;
-    private float m_timer;
+    private float m_plantingTimer;
 
+    private bool m_destroyed;
+    public float m_resetTime;
+    private float m_resetTimer;
+
+    private bool m_canBeTaken;
+    private bool m_startTimer;
+
+    public HeldObjectiveEvent m_defensesRestored;
     private EquipmentController m_equipmentController;
 
 
@@ -17,14 +23,37 @@ public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
     private void OnEnable()
     {
         m_startTimer = false;
-        m_inRadius = false;
-        m_timer = 0;
+        m_plantingTimer = 0;
     }
+
+    public override void Update()
+    {
+        if (!m_destroyed)
+        {
+            base.Update();
+        }
+        else
+        {
+            if (m_resetTimer > m_resetTime)
+            {
+                ZoneReset();
+            }
+            m_resetTimer += Time.deltaTime;
+        }
+    }
+
+    public void ZoneReset()
+    {
+        m_destroyed = false;
+        m_defensesRestored.Invoke();
+        m_resetTimer = 0;
+    }
+
     public override void ObjectInZone()
     {
         if (m_startTimer)
         {
-            m_timer += Time.deltaTime;
+            m_plantingTimer += Time.deltaTime;
         }
         UpdateUI();
         if (!PhotonNetwork.IsMasterClient) return;
@@ -32,9 +61,9 @@ public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
         {
             m_photonView.RPC("RPC_ToggleTimer", RpcTarget.All, !m_startTimer);
         }
-        if (m_timer > m_bombPlantTime)
+        if (m_plantingTimer > m_bombPlantTime)
         {
-            m_photonView.RPC("RPC_ZoneScored", RpcTarget.All, TeamTypes.GetTeamAsInt(m_equipmentController.GetComponent<TeamLabel>().m_myTeam),m_equipmentController.GetComponent<PhotonView>().ViewID);
+            m_photonView.RPC("RPC_ZoneScored", RpcTarget.All, TeamTypes.GetTeamAsInt(m_equipmentController.GetComponent<TeamLabel>().m_myTeam), m_equipmentController.GetComponent<PhotonView>().ViewID);
         }
     }
     public override bool InRadius()
@@ -55,10 +84,10 @@ public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
         }
         else
         {
-            Collider[] cols = Physics.OverlapBox(transform.position, m_areaSize , transform.rotation, m_playerMask);
+            Collider[] cols = Physics.OverlapBox(transform.position, m_areaSize, transform.rotation, m_playerMask);
             foreach (Collider col in cols)
             {
-                if(col.gameObject == m_equipmentController.gameObject)
+                if (col.gameObject == m_equipmentController.gameObject)
                 {
                     if (m_equipmentController.GetHeldObjective() != null)
                     {
@@ -66,7 +95,7 @@ public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
                     }
                 }
             }
-            
+
             return false;
         }
     }
@@ -79,10 +108,11 @@ public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
 
     public override void ZoneScored()
     {
+        
         base.ZoneScored();
         m_startTimer = false;
-        m_timer = 0;
-        m_inRadius = false;
+        m_destroyed = true;
+        m_plantingTimer = 0;
     }
 
 
@@ -90,22 +120,24 @@ public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
     {
 
         EquipmentController equiped = PhotonView.Find(p_bombHolderID).GetComponent<EquipmentController>();
-        equiped.GetHeldObjective().GetComponent<HeldObjective_Base>().ResetObjective();
+        HeldObjective_Base heldObject = equiped.GetHeldObjective().GetComponent<HeldObjective_Base>();
         equiped.RemoveHeldObjective();
+        heldObject.ResetObjective();
     }
 
 
     private void UpdateUI()
     {
-        m_bombPlantUI.fillAmount = m_timer / m_bombPlantTime;
+        m_bombPlantUI.fillAmount = m_plantingTimer / m_bombPlantTime;
     }
     [PunRPC]
-    private void RPC_ZoneScored(int p_scoredTeam,int p_bombHolderID)
+    private void RPC_ZoneScored(int p_scoredTeam, int p_bombHolderID)
     {
-        ZoneScored();
         DropObjectiveObject(p_bombHolderID);
-
+        ZoneScored();
         
+
+
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -117,6 +149,15 @@ public class HeldObjectiveZone_BombDeliever : HeldObjectiveZone_Base
     private void RPC_ToggleTimer(bool p_state)
     {
         m_startTimer = p_state;
+        if (!p_state)
+        {
+            m_plantingTimer = 0;
+        }
     }
 
+
+    public void ChangeZoneState(bool p_newState)
+    {
+        m_canBeTaken = p_newState;
+    }
 }
