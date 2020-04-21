@@ -45,12 +45,12 @@ public class SettingsController : MonoBehaviour
 		if (p_settingIndex == 0)
 		{
 			//Debug.Log("Windowed");
-			m_screenMode = FullScreenMode.ExclusiveFullScreen;
+			m_screenMode = FullScreenMode.Windowed;
 		}
 		else if (p_settingIndex == 1)
 		{
 			//Debug.Log("Fullscreen");
-			m_screenMode = FullScreenMode.Windowed;
+			m_screenMode = FullScreenMode.ExclusiveFullScreen;
 		}
 		else if (p_settingIndex == 2)
 		{

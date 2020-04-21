@@ -19,7 +19,7 @@ MonoBehaviour:
   m_buttonBackgroundColor: {r: 0.20784315, g: 0.20784315, b: 0.20784315, a: 1}
   m_buttonOutlineColor: {r: 0.36862746, g: 0.36862746, b: 0.36862746, a: 1}
   m_basicButtonTextSize: 30
-  m_settingButtonTextSize: 20
+  m_settingButtonTextSize: 25
   m_settingButtonSelectColor: {r: 1, g: 0.7019608, b: 0, a: 1}
   m_settingButtonDeselectColor: {r: 1, g: 1, b: 1, a: 1}
   m_settingButtonArrowColor: {r: 1, g: 1, b: 1, a: 1}
