@@ -24,8 +24,6 @@ public class SettingButton : MonoBehaviour
 
 	private int m_currentOption;
 	private Image[] m_settingCounterObjects;
-	
-
 
 	private void Start()
 	{
