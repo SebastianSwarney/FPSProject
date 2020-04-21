@@ -14,7 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_font: {fileID: 12800000, guid: f75e683dbe938854e9edfab006987a7d, type: 3}
   m_textColor: {r: 1, g: 1, b: 1, a: 1}
-  m_buttonMainColor: {r: 0.20784315, g: 0.20784315, b: 0.20784315, a: 1}
+  m_settingDescriptionTextSize: 50
+  m_baseElementMainColor: {r: 0.2627451, g: 0.2627451, b: 0.2627451, a: 1}
+  m_buttonBackgroundColor: {r: 0.20784315, g: 0.20784315, b: 0.20784315, a: 1}
   m_buttonOutlineColor: {r: 0.36862746, g: 0.36862746, b: 0.36862746, a: 1}
-  m_buttonArrowColor: {r: 1, g: 1, b: 1, a: 1}
-  m_elementMainColor: {r: 0.2627451, g: 0.2627451, b: 0.2627451, a: 1}
+  m_basicButtonTextSize: 30
+  m_settingButtonTextSize: 20
+  m_settingButtonSelectColor: {r: 1, g: 0.7019608, b: 0, a: 1}
+  m_settingButtonDeselectColor: {r: 1, g: 1, b: 1, a: 1}
+  m_settingButtonArrowColor: {r: 1, g: 1, b: 1, a: 1}
+  m_sliderInputTextSize: 30
+  m_sliderHandleColor: {r: 1, g: 0.7019608, b: 0, a: 1}
+  m_sliderFillColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
+  m_sliderBackgroundColor: {r: 1, g: 1, b: 1, a: 1}

@@ -4,10 +4,19 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - UIButtonMain
+  - UISettingDescriptionText
+  - UIBaseElement
+  - UIButtonBackground
   - UIButtonOutline
-  - UIButtonArrow
-  - UIElementMain
+  - UIBasicButtonText
+  - UISettingButtonText
+  - UISettingButtonSelect
+  - UISettingButtonDeselect
+  - UISettingButtonArrow
+  - UISliderInputText
+  - UISliderHandle
+  - UISliderFill
+  - UISliderBackground
   layers:
   - Default
   - TransparentFX

@@ -15,8 +15,8 @@ public class SettingButton : MonoBehaviour
 	public GameObject m_settingCounterObject;
 	public Transform m_settingCoutnerParent;
 
-	public Color m_selectedOptionColor;
-	public Color m_deselectedOptionColor;
+	public Image m_selectedOptionColor;
+	public Image m_deselectedOptionColor;
 
 	public SettingButtonEvent m_onValueChanged;
 
@@ -82,10 +82,10 @@ public class SettingButton : MonoBehaviour
 
 		foreach (Image image in m_settingCounterObjects)
 		{
-			image.color = m_deselectedOptionColor;
+			image.color = m_deselectedOptionColor.color;
 		}
 
-		m_settingCounterObjects[p_displayIndex].color = m_selectedOptionColor;
+		m_settingCounterObjects[p_displayIndex].color = m_selectedOptionColor.color;
 		m_onValueChanged.Invoke(p_displayIndex);
 	}
 }
