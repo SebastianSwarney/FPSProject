@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/_FPSProject/Scenes/Test Network Setup/Photon MatchMaking.unity
     guid: ff9b480891d8ef34384b38f2128447ba
   - enabled: 1
+    path: Assets/_FPSProject/Scenes/Test Network Setup/PVP_Map_Prototype.unity
+    guid: 4af4d47054a52534ea6765fbbe9b0815
+  - enabled: 1
     path: Assets/_FPSProject/Scenes/Test Network Setup/PhotonTestScene.unity
     guid: a2a145aeb30a4054dabd53a0324a1f98
   m_configObjects: {}
