@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 42477ce5-65c0-4c39-bbcb-736fcfda782f
+    AppIdRealtime: 
     AppIdChat: 
     AppIdVoice: 
     AppVersion: 
@@ -25,50 +25,12 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: us
+  DevRegion: 
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
   StartInOfflineMode: 0
-  RpcList:
-  - ClickRpc
-  - DestroyRpc
-  - RPC_AddPlayerToTeam
-  - RPC_SwapPlayerTeam
-  - RPC_ChangeColor
-  - RPC_SetType
-  - RPC_SetTeam
-  - RPC_Respawn
-  - RPC_FireInputDown
-  - RPC_InputUp
-  - RPC_TakeDamage
-  - AddMeToTeamManager
-  - RPC_RemovePlayerFromTeam
-  - RPC_FireBullet
-  - RPC_PlayerHitSomeone
-  - RPC_PlayerKilledSomeone
-  - RPC_AddToEveryoneKillFeed
-  - RPC_PlayerKilledThemselves
-  - RPC_RemovePlayerByID
-  - RPC_RemoveMe
-  - RPC_SpawnWeapon
-  - RPC_UpdateTimers
-  - RPC_StartTimerClientSide
-  - RPC_ResetTimers
-  - RPC_SwitchHill
-  - RPC_ToggleTimer
-  - RPC_HoldEquipment
-  - RPC_ZoneScored
-  - RPC_CheckEquipmentOnMaster
-  - RPC_RemoveHeldObjective
-  - RPC_DisplayScore
-  - DropObjectiveObject
-  - RPC_DropObjectiveObject
-  - RPC_DropObjective
-  - RPC_ResetObjective
-  - CallResetObjective
-  - RPC_AddPointsToClients
-  - RPC_ChangeHill
-  DisableAutoOpenWizard: 1
+  RpcList: []
+  DisableAutoOpenWizard: 0
   ShowSettings: 0
-  DevRegionSetOnce: 1
+  DevRegionSetOnce: 0
