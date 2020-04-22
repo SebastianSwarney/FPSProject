@@ -44,11 +44,16 @@ public class RespawnObject_Player : RespawnObject
             GetComponent<CharacterController>().enabled = false;
 
         }
-        if (LoadoutChooser.Instance != null)
+        else
         {
-            m_weaponCanvas = LoadoutChooser.Instance.m_loadoutCanvas;
-            LoadoutChooser.Instance.AssignEquipmentController(GetComponent<EquipmentController>());
+
+            if (LoadoutChooser.Instance != null)
+            {
+                m_weaponCanvas = LoadoutChooser.Instance.m_loadoutCanvas;
+                LoadoutChooser.Instance.AssignEquipmentController(GetComponent<EquipmentController>());
+            }
         }
+        
 
 
     }

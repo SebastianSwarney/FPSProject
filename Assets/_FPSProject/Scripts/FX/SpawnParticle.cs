@@ -12,6 +12,10 @@ public class SpawnParticle : MonoBehaviour
     {
         m_pooler = ObjectPooler.instance;
     }
+    private void Start()
+    {
+        m_pooler = ObjectPooler.instance;
+    }
 
     /// <summary>
     /// Spawns an unparented particle object at the p_position
