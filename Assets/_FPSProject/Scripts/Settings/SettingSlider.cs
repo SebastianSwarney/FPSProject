@@ -20,20 +20,24 @@ public class SettingSlider : MonoBehaviour
 
 	private float m_actualValue;
 
-	private void Start()
+	public void InitializeSlider(float p_valueInSettings)
 	{
+		m_actualValue = Mathf.Lerp(m_sliderMin, m_sliderMax, p_valueInSettings);
+		
 		m_slider = GetComponentInChildren<Slider>();
 		m_inputField = GetComponentInChildren<InputField>();
 
 		m_slider.minValue = m_sliderMin;
 		m_slider.maxValue = m_sliderMax;
+
+		m_slider.value = m_actualValue;
+		m_inputField.text = m_actualValue.ToString();
 	}
 
 	public void OnSliderUpdate(float p_value)
 	{
 		m_actualValue = Mathf.FloorToInt(p_value);
 		m_inputField.text = m_actualValue.ToString();
-
 		m_onValueUpdatedEvent.Invoke(m_actualValue / m_sliderMax);
 	}
 

@@ -9,9 +9,6 @@ public class SettingButtonEvent : UnityEvent<int> { }
 
 public class SettingButton : MonoBehaviour
 {
-
-	public string[] m_options;
-	
 	public GameObject m_settingCounterObject;
 	public Transform m_settingCoutnerParent;
 
@@ -21,12 +18,15 @@ public class SettingButton : MonoBehaviour
 	public SettingButtonEvent m_onValueChanged;
 
 	private Text m_currentSettingDisplayText;
-
+	private string[] m_options;
 	private int m_currentOption;
 	private Image[] m_settingCounterObjects;
 
-	private void Start()
+	public void InitializeButton(int p_optionInSettings, string[] p_options)
 	{
+		m_currentOption = p_optionInSettings;
+		m_options = p_options;
+
 		m_currentSettingDisplayText = GetComponentInChildren<Text>();
 
 		CreateSettingDisplay();

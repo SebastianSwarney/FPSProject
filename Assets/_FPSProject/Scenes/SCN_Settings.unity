@@ -1028,7 +1028,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
@@ -1055,7 +1055,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 31
+  m_AdditionalShaderChannelsFlag: 7
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -1094,11 +1094,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78530b59c8784544894b1384d899c8bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_screenMode: 3
-  m_screenResolution: {x: 1920, y: 1080}
-  m_minSensitvity: 0
-  m_maxSensitvity: 1
-  m_sensitivity: 0
+  m_currentScreenMode: 0
+  m_screenModeButton: {fileID: 1445289185}
+  m_currentResolution: 0
+  m_resolutionButton: {fileID: 1578554969}
+  m_sensitivity: 0.5
+  m_sensitivitySlider: {fileID: 82064892}
 --- !u!1 &577644648
 GameObject:
   m_ObjectHideFlags: 0
@@ -3328,7 +3329,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 568833818}
-        m_MethodName: SubmitSettings
+        m_MethodName: SubmitSettingsToPerfs
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3646,10 +3647,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11f8d84691d10d048b5391abb17da4cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_options:
-  - Windowed
-  - Fullscreen
-  - Borderless Windowed
   m_settingCounterObject: {fileID: 5609470778607233848, guid: 1fe73fa9c82241246be14c88dd535628,
     type: 3}
   m_settingCoutnerParent: {fileID: 1677043108}
@@ -3722,10 +3719,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11f8d84691d10d048b5391abb17da4cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_options:
-  - Windowed
-  - Fullscreen
-  - Borderless Windowed
   m_settingCounterObject: {fileID: 5609470778607233848, guid: 1fe73fa9c82241246be14c88dd535628,
     type: 3}
   m_settingCoutnerParent: {fileID: 1137311428}
@@ -3777,9 +3770,9 @@ RectTransform:
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 0, y: -60}
+  m_AnchorMax: {x: 1, y: 0.15}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1571865050
 MonoBehaviour:
@@ -3798,14 +3791,14 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 3
   m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
+  m_ChildScaleWidth: 1
+  m_ChildScaleHeight: 1
 --- !u!1 &1578554967
 GameObject:
   m_ObjectHideFlags: 0
@@ -3859,9 +3852,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11f8d84691d10d048b5391abb17da4cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_options:
-  - 1920 x 1080
-  - 960 x 540
   m_settingCounterObject: {fileID: 5609470778607233848, guid: 1fe73fa9c82241246be14c88dd535628,
     type: 3}
   m_settingCoutnerParent: {fileID: 1571865049}
@@ -3871,7 +3861,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 568833818}
-        m_MethodName: ChangeScreenSize
+        m_MethodName: ChangeScreenResolution
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4138,9 +4128,9 @@ RectTransform:
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 0, y: -60}
+  m_AnchorMax: {x: 1, y: 0.15}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1677043109
 MonoBehaviour:
@@ -4159,14 +4149,14 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 3
   m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
+  m_ChildScaleWidth: 1
+  m_ChildScaleHeight: 1
 --- !u!1 &1703165381
 GameObject:
   m_ObjectHideFlags: 0
