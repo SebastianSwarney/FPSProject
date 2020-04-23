@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Photon.Pun;
+using Rewired;
+using System;
 
 [System.Serializable]
 public class PlayerControllerEvent : UnityEvent { }
@@ -150,6 +152,7 @@ public class PlayerController : MonoBehaviour
     [Header("Wall Run Properties")]
     public WallRunProperties m_wallRunProperties;
     public LayerMask m_wallConnectMask;
+    public float m_wallRaycastLength;
 
     private float m_tiltTarget;
     private bool m_isWallRunning;
@@ -289,6 +292,12 @@ public class PlayerController : MonoBehaviour
 
     private bool m_crouchOnLanding;
 
+    private ControllerColliderHit m_lastWallHit;
+
+    public Transform m_wallMovementTransform;
+
+    private Vector3 m_wallVelocity;
+    private Vector3 m_wallStickVelocity;
 
     private void Start()
     {
@@ -315,9 +324,8 @@ public class PlayerController : MonoBehaviour
 
     public void PerformController()
     {
-        CalculateCurrentSpeed();
         CalculateVelocity();
-        CheckWallConnection();
+        //CheckWallConnection();
 
         CaculateTotalVelocity();
 
@@ -326,11 +334,60 @@ public class PlayerController : MonoBehaviour
 
         ZeroOnGroundCeiling();
         
-        CheckOffLedge();
-
-
         CameraRotation();
         TiltLerp();
+
+        if (!HitSide())
+        {
+            m_states.m_gravityControllState = GravityState.GravityEnabled;
+            m_wallVelocity = Vector3.zero;
+            m_wallStickVelocity = Vector3.zero;
+            m_tiltTarget = 0;
+        }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        /*
+        if (HitSide())
+        {
+            if (hit.normal.y < 0.1f)
+            {
+                float wallDotProduct = Vector3.Dot(hit.normal, Vector3.up);
+
+                if (wallDotProduct < 30)
+                {
+                    Vector3 wallVector = Vector3.Cross(hit.normal, Vector3.up);
+
+                    m_wallMovementTransform.rotation = Quaternion.LookRotation(wallVector, Vector3.up);
+
+                    float moveDir = -Vector3.Cross(hit.normal, transform.forward).y;
+
+                    Vector3 wallMovement = (wallVector * moveDir) * 5f;
+
+                    m_wallVelocity = wallMovement;
+
+                    m_wallStickVelocity = -m_wallMovementTransform.right * 1f;
+
+                    m_states.m_gravityControllState = GravityState.GravityDisabled;
+
+                    m_velocity.y = 0;
+
+                    float tiltResult = Mathf.Lerp(0, m_wallRunProperties.m_wallRunCameraMaxTilt * Mathf.Sign(-moveDir), Math.Abs(moveDir));
+                    m_tiltTarget = tiltResult;
+
+                    //float lookMovementCross = Vector3.Cross(-m_wallMovementTransform.right, transform.forward).y;
+
+                    Vector3 angleTest = Vector3.Cross(m_wallMovementTransform.forward, transform.forward);
+
+                    if (angleTest.y < 0.2)
+                    {
+                        transform.Rotate(Vector3.up * Mathf.Sign(moveDir), 1f);
+                    }
+                }
+            }
+        }
+        */
     }
 
     #region Camera Code
@@ -506,9 +563,11 @@ public class PlayerController : MonoBehaviour
 
                 if (!anyRayHit)
                 {
-                    if (Physics.Raycast(m_characterController.transform.position, raySpaceQ * transform.forward, out hit, 2f, m_wallConnectMask))
+                    if (Physics.Raycast(m_characterController.transform.position, raySpaceQ * transform.forward, out hit, m_wallRaycastLength, m_wallConnectMask))
                     {
-                        if (Vector3.Dot(hit.normal, Vector3.up) == 0)
+                        float wallDotProduct = Vector3.Dot(hit.normal, Vector3.up);
+
+                        if (wallDotProduct < 30)
                         {
                             anyRayHit = true;
 
@@ -540,20 +599,22 @@ public class PlayerController : MonoBehaviour
     {
         if (!m_isWallRunning)
         {
+            if (m_movementInput.y > 0)
+            {
+                if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
+                {
+                    if (m_isClimbing)
+                    {
+                        StopWallClimb();
+                    }
+
+                    StartCoroutine(RunWallRun(p_dirToWallStart, p_wallRunMovementDir));
+                }
+            }
+
             if (!IsGrounded())
             {
-                if (m_movementInput.y > 0)
-                {
-                    if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
-                    {
-                        if (m_isClimbing)
-                        {
-                            StopWallClimb();
-                        }
 
-                        StartCoroutine(RunWallRun(p_dirToWallStart, p_wallRunMovementDir));
-                    }
-                }
             }
         }
     }
@@ -596,9 +657,11 @@ public class PlayerController : MonoBehaviour
 
             Vector3 wallVector = Vector3.zero;
 
-            if (Physics.Raycast(m_characterController.transform.position, dirToWall, out wallConnectionHit, 2f, m_wallConnectMask))
+            if (Physics.Raycast(m_characterController.transform.position, dirToWall, out wallConnectionHit, m_wallRaycastLength, m_wallConnectMask))
             {
-                if (Vector3.Dot(wallConnectionHit.normal, Vector3.up) == 0)
+                float wallDotProduct = Vector3.Dot(wallConnectionHit.normal, Vector3.up);
+
+                if (wallDotProduct < 30)
                 {
                     //transform.position = hit.point + hit.normal * m_characterController.radius;
 
@@ -609,6 +672,8 @@ public class PlayerController : MonoBehaviour
 
                     Vector3 wallRunVelocity = (wallVector * p_wallRunMovementDir) * currentWallRunSpeed;
                     m_velocity = new Vector3(wallRunVelocity.x, yVelocity, wallRunVelocity.z);
+
+                    //Debug.Log(m_velocity.magnitude);
 
                     Vector3 wallFacingVector = Vector3.Cross(wallVector, m_cameraProperties.m_camera.transform.forward);
                     m_wallJumpOffFactor = wallFacingVector.y;
@@ -661,9 +726,9 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        if (IsGrounded() && !m_isWallRunning)
+        if (IsGrounded() && !m_isWallRunning && !HitCeiling())
         {
-            StartCoroutine(OnGroundBoost(p_forwardSpeed));
+            //StartCoroutine(OnGroundBoost(p_forwardSpeed));
         }
 
         m_wallRunJumpVelocity = Vector3.zero;
@@ -903,6 +968,8 @@ public class PlayerController : MonoBehaviour
         velocity += m_slideVelocity;
         velocity += m_slopeVelocity;
         velocity += m_slopeShiftVelocity;
+        velocity += m_wallVelocity;
+        velocity += m_wallStickVelocity;
 
         m_characterController.Move(velocity * Time.fixedDeltaTime);
     }
@@ -956,7 +1023,12 @@ public class PlayerController : MonoBehaviour
 
     private void ZeroOnGroundCeiling()
     {
-        if (IsGrounded() || HitCeiling())
+        if (IsGrounded())
+        {
+            m_velocity.y = 0;
+        }
+
+        if (HitCeiling() && m_velocity.y > 0)
         {
             m_velocity.y = 0;
         }
@@ -1014,7 +1086,7 @@ public class PlayerController : MonoBehaviour
     {
         if (m_states.m_gravityControllState == GravityState.GravityEnabled)
         {
-            m_velocity.y += m_gravity * Time.deltaTime;
+            m_velocity.y += m_gravity * Time.fixedDeltaTime;
         }
 
         if (m_states.m_movementControllState == MovementControllState.MovementEnabled)
@@ -1100,6 +1172,8 @@ public class PlayerController : MonoBehaviour
 
             if (slopeInfo.m_onSlope)
             {
+
+
                 m_slideTimer = 0;
 
                 float normalX = slopeInfo.m_slopeNormal.x > 0 ? slopeInfo.m_slopeNormal.x : slopeInfo.m_slopeNormal.x * -1;
@@ -1111,11 +1185,14 @@ public class PlayerController : MonoBehaviour
                 Vector3 slopeDir = new Vector3(slopeX, 0, slopeZ);
                 Vector3 slopeMovement = Vector3.SmoothDamp(m_slopeVelocity, slopeDir, ref slopeVelocitySmoothing, m_slideProperties.m_slopeSlideAccelerationTime);
                 m_slopeVelocity = new Vector3(slopeMovement.x, 0, slopeMovement.z);
+                m_slideProperties.m_slopeTransform.rotation = Quaternion.LookRotation(m_slopeVelocity);
 
-                m_slideProperties.m_slopeTransform.rotation = Quaternion.LookRotation(slideDir);
                 Vector3 targetShiftVelocity = m_slideProperties.m_slopeTransform.right * m_movementInput.x * m_slideProperties.m_slideSideShiftMaxSpeed;
                 Vector3 shiftMovement = Vector3.SmoothDamp(m_slopeShiftVelocity, targetShiftVelocity, ref slopeShiftVelocitySmoothing, m_slideProperties.m_slideSideShiftAcceleration);
                 m_slopeShiftVelocity = shiftMovement;
+
+                Debug.Log(Vector3.Angle(m_slideProperties.m_slopeTransform.forward, transform.forward));
+
             }
             #endregion
 
@@ -1319,8 +1396,8 @@ public class PlayerController : MonoBehaviour
             {
                 if (slopeInfo.m_slopeAngle > m_characterController.slopeLimit)
                 {
-                    m_velocity.x += (1f - hit.normal.y) * hit.normal.x * (m_baseMovementProperties.m_slopeFriction);
-                    m_velocity.z += (1f - hit.normal.y) * hit.normal.z * (m_baseMovementProperties.m_slopeFriction);
+                    //m_velocity.x += (1f - hit.normal.y) * hit.normal.x * (m_baseMovementProperties.m_slopeFriction);
+                    //m_velocity.z += (1f - hit.normal.y) * hit.normal.z * (m_baseMovementProperties.m_slopeFriction);
                 }
 
                 m_characterController.Move(new Vector3(0, -(hit.distance), 0));
