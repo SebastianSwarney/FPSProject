@@ -32,8 +32,6 @@ public class PlayerInput : MonoBehaviour
         m_playerInputController = ReInput.players.GetPlayer(m_playerId);
 
         ReadSettings();
-
-        ChangeCursorState(false);
     }
 
     public void ChangeCursorState(bool p_activeState)
