@@ -214,7 +214,7 @@ public class Equipment_Gun : Equipment_Base
     {
     }
 
-    private void StartReloading()
+    public void StartReloading()
     {
         m_amountOfBulletsShot = 0;
 

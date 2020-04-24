@@ -45,10 +45,6 @@ public class EquipmentController : MonoBehaviour
     private void Start()
     {
         m_pooler = ObjectPooler.instance;
-        if (m_photonView.IsMine)
-        {
-            StartCoroutine(PerformControls());
-        }
     }
 
     public void AssignLoadouts(Loadouts p_loadout)
@@ -58,28 +54,7 @@ public class EquipmentController : MonoBehaviour
     }
 
 
-    private IEnumerator PerformControls()
-    {
-        while (true)
-        {
-            if (Input.GetKeyDown(m_swapKey))
-            {
-                SwapWeapons();
-            }
-            if (Input.GetKeyDown(m_pickupObjectiveKey))
-            {
-                if (m_heldObjective == null)
-                {
-                    CheckForObjective();
-                }
-                else
-                {
-                    DropHeldObject();
-                }
-            }
-            yield return null;
-        }
-    }
+
     public void PlayerDied()
     {
         if (m_currentWeapon != null)
@@ -150,6 +125,28 @@ public class EquipmentController : MonoBehaviour
         if (!m_photonView.IsMine) return;
         m_currentWeapon.OnShootInputUp(m_playerCamera);
     }
+
+    public void OnReloadDown()
+    {
+        m_currentWeapon.ReloadDown();
+    }
+    public void OnEquipDown()
+    {
+        if (m_heldObjective == null)
+        {
+            CheckForObjective();
+        }
+        else
+        {
+            DropHeldObject();
+        }
+    }
+
+    public void OnSwapDown()
+    {
+        SwapWeapons();
+    }
+
     public void ApplyRecoilCameraRotation(float p_recoilAmountX, float p_recoilAmountY, float p_fireRate)
     {
         m_playerController.AddRecoil(p_recoilAmountX, p_recoilAmountY, p_fireRate);

@@ -114,5 +114,19 @@ public class PlayerInput : MonoBehaviour
         {
             
         }
+
+        if (m_playerInputController.GetButtonDown("Equip"))
+        {
+            m_equipmentController.OnEquipDown();
+        }
+        if (m_playerInputController.GetButtonDown("Reload"))
+        {
+            m_equipmentController.OnReloadDown();
+        }
+
+        if(m_playerInputController.GetAxis("SwapWeapons") != 0)
+        {
+            m_equipmentController.OnSwapDown();
+        }
     }
 }

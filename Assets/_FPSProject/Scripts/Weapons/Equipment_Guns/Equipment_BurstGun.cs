@@ -17,6 +17,8 @@ public class Equipment_BurstGun : Equipment_Gun
 
     private Coroutine m_burstFireCoroutine;
 
+    private bool m_reload;
+    private bool m_inBurst;
     public override void ResetEquipment()
     {
         base.ResetEquipment();
@@ -82,6 +84,18 @@ public class Equipment_BurstGun : Equipment_Gun
         }
     }
 
+    public override void ReloadDown()
+    {
+        if (m_inBurst)
+        {
+            m_reload = true;
+        }
+        else
+        {
+            StartReloading();
+        }
+    }
+
     private IEnumerator FireBurst(Transform p_playerCam)
     {
         bool p_startedDelay = false;
@@ -89,6 +103,7 @@ public class Equipment_BurstGun : Equipment_Gun
         {
             while (m_currentBurstAmount < m_burstAmount)
             {
+                m_inBurst = true;
                 p_startedDelay = false;
                 Transform targetHit;
                 PerformAimAssist(p_playerCam, out targetHit);
@@ -105,6 +120,12 @@ public class Equipment_BurstGun : Equipment_Gun
             }
             m_amountOfBulletsShot = 0;
 
+            m_inBurst = false;
+            if (m_reload)
+            {
+                StartReloading();
+                m_reload = false;
+            }
 
             ///Out of burst behaviour
             m_canFireBurst = true;
