@@ -152,11 +152,6 @@ PrefabInstance:
       propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[0].time
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
-        type: 3}
-      propertyPath: m_aimAssist.m_hitDetectLayer.m_Bits
-      value: 1793
-      objectReference: {fileID: 0}
     - target: {fileID: 6782711556069349284, guid: 99fb11da5e730de4998fe35e7b1850c3,
         type: 3}
       propertyPath: m_Name
