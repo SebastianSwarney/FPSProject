@@ -7,10 +7,160 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_bulletProperties.m_clipSize
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_bulletProperties.m_gunFireDelay
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_bulletsToCompleteRecoilPattern
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[0].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilDecayPattern.m_Curve.Array.data[0].time
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_verticalRecoilAmount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilAmount
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[0].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_horizontalRecoilPattern.m_Curve.Array.data[0].time
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_aimAssist.m_hitDetectLayer.m_Bits
+      value: 1793
+      objectReference: {fileID: 0}
     - target: {fileID: 6782711556069349284, guid: 99fb11da5e730de4998fe35e7b1850c3,
         type: 3}
       propertyPath: m_Name
-      value: GunTest_Rifle
+      value: GunTest_Rifle Variant
       objectReference: {fileID: 0}
     - target: {fileID: 8444377419081478050, guid: 99fb11da5e730de4998fe35e7b1850c3,
         type: 3}
