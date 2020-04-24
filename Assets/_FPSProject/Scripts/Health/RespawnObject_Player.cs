@@ -8,7 +8,6 @@ public class RespawnObject_Player : RespawnObject
 {
     public GameObject m_visual;
     public GameObject m_camera;
-    public GameObject m_playerUI;
     private MatchSpawningManager m_matchSpawning;
     private Transform m_respawnPoint;
     private TeamLabel m_myTeam;
@@ -16,14 +15,10 @@ public class RespawnObject_Player : RespawnObject
     private PlayerInput m_playerInput;
     private PhotonTransformView m_transformView;
     private PhotonView m_photonView;
-
+    private PlayerUIUpdate m_playerUI;
 
     public RespawnObjectEvent m_died;
     public RespawnObjectEvent m_respawned;
-
-    private bool m_choosingWeapon;
-
-    public GameObject m_weaponCanvas;
 
     public override void Start()
     {
@@ -33,12 +28,12 @@ public class RespawnObject_Player : RespawnObject
         m_controller = GetComponent<PlayerController>();
         m_playerInput = GetComponent<PlayerInput>();
         m_photonView = GetComponent<PhotonView>();
+        m_playerUI = GetComponent<PlayerUIUpdate>();
 
         DisablePlayerControl();
         StartCoroutine(RespawnCoroutine());
 
         m_camera.SetActive(false);
-        m_playerUI.SetActive(false);
         if (!m_photonView.IsMine)
         {
             GetComponent<CharacterController>().enabled = false;
@@ -49,7 +44,6 @@ public class RespawnObject_Player : RespawnObject
 
             if (LoadoutChooser.Instance != null)
             {
-                m_weaponCanvas = LoadoutChooser.Instance.m_loadoutCanvas;
                 LoadoutChooser.Instance.AssignEquipmentController(GetComponent<EquipmentController>());
             }
         }
@@ -72,7 +66,7 @@ public class RespawnObject_Player : RespawnObject
         if (m_photonView.IsMine)
         {
             PlayerInput.Instance.ChangeCursorState(true);
-            m_weaponCanvas.SetActive(true);
+            m_playerUI.PlayerDeathState(true);
             StartCoroutine(RespawnCoroutine());
         }
     }
@@ -85,8 +79,7 @@ public class RespawnObject_Player : RespawnObject
         {
             m_photonView.RPC("RPC_Respawn", RpcTarget.All);
             m_camera.SetActive(true);
-            m_playerUI.SetActive(true);
-            m_weaponCanvas.SetActive(false);
+            m_playerUI.PlayerDeathState(false);
             PlayerInput.Instance.ChangeCursorState(false);
         }
 

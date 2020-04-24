@@ -6,22 +6,14 @@ using Photon.Pun;
 public class HitDataController : MonoBehaviour
 {
     private PhotonView m_myPhotonView;
-
-    public float m_hitMarkerAppearTime;
-    private float m_currentHitTime;
-    public GameObject m_hitMarker;
-
     private KillFeedManager m_killFeedManager;
-
     private TeamLabel m_teamLabel;
+    private PlayerUIUpdate m_playerUI;
     private void Start()
     {
         m_myPhotonView = GetComponent<PhotonView>();
         m_teamLabel = GetComponent<TeamLabel>();
-        if (m_myPhotonView.IsMine)
-        {
-            StartCoroutine(HitMarker());
-        }
+        m_playerUI = GetComponent<PlayerUIUpdate>();
         m_killFeedManager = KillFeedManager.Instance;
     }
     [PunRPC]
@@ -29,7 +21,7 @@ public class HitDataController : MonoBehaviour
     {
         if (!m_myPhotonView.IsMine) return;
 
-        m_currentHitTime = 0;
+        m_playerUI.ShowHitMarker();
 
     }
 
@@ -70,23 +62,7 @@ public class HitDataController : MonoBehaviour
         }
     }
 
-    private IEnumerator HitMarker()
-    {
-        while (true)
-        {
-            if (m_currentHitTime < m_hitMarkerAppearTime)
-            {
-                m_hitMarker.SetActive(true);
-                m_currentHitTime += Time.deltaTime;
 
-            }
-            else
-            {
-                m_hitMarker.SetActive(false);
-            }
-            yield return null;
-        }
-    }
 
     [PunRPC]
     public void RPC_PlayerKilledThemselves()

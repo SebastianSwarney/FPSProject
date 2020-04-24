@@ -10,7 +10,6 @@ public class LoadoutChooser : MonoBehaviour
 
 
     public EquipmentController m_localPlayerEquipmentController;
-    public GameObject m_loadoutCanvas;
     private void Awake()
     {
         Instance = this;

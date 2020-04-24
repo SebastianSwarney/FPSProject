@@ -12,9 +12,6 @@ public class TeamLabel_Player : TeamLabel
     public Material m_redMaterial, m_blueMaterial;
     public TeamLabelPlayerEvent m_teamSetup;
     public float m_delayTeamAssignTime = 1;
-
-    [Header("Debugging")]
-    public TMPro.TextMeshProUGUI m_teamName;
     public override void Awake()
     {
         base.Awake();
@@ -36,8 +33,7 @@ public class TeamLabel_Player : TeamLabel
         yield return new WaitForSeconds(m_delayTeamAssignTime);
         SetTeamType(TeamManager.Instance.AssignTeamType());
         m_teamSetup.Invoke();
-        m_teamName.text = m_myTeam.ToString();
-        m_teamName.color = (m_myTeam == TeamTypes.TeamType.Red) ? Color.red : Color.blue;
+
     }
     public override void SetTeamType(TeamTypes.TeamType p_newTeamType)
     {

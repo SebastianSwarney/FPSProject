@@ -8,10 +8,10 @@ public class EquipmentController : MonoBehaviour
     private TeamLabel m_teamLabel;
     private Coroutine m_aimCoroutine;
     public Transform m_weaponParent;
-    public Equipment_Base m_startingWeapon;
-    public Equipment_Base m_startingHolsteredWeapon;
+    public Equipment_Gun m_startingWeapon;
+    public Equipment_Gun m_startingHolsteredWeapon;
 
-    private Equipment_Base m_currentWeapon, m_currentHolsteredWeapon;
+    private Equipment_Gun m_currentWeapon, m_currentHolsteredWeapon;
 
     public Transform m_playerCamera;
 
@@ -25,7 +25,7 @@ public class EquipmentController : MonoBehaviour
     #region Holdable Objectives
     [Header("Holdable Objective")]
     public Transform m_heldObjectiveParent;
-    public KeyCode m_pickupObjectiveKey;
+    public KeyCode m_pickupObjectiveKey, m_reloadKey;
     public LayerMask m_objectiveMask;
     public float m_objectiveRadius;
     public DebugTools m_debuggingTools;
@@ -105,12 +105,12 @@ public class EquipmentController : MonoBehaviour
         {
             m_pooler = ObjectPooler.instance;
         }
-        Equipment_Base newWeapon = m_pooler.NewObject(Resources.Load("Guns/" + p_primaryWeapon) as GameObject, m_weaponParent.position, m_weaponParent.rotation).GetComponent<Equipment_Base>();
+        Equipment_Gun newWeapon = m_pooler.NewObject(Resources.Load("Guns/" + p_primaryWeapon) as GameObject, m_weaponParent.position, m_weaponParent.rotation).GetComponent<Equipment_Gun>();
         newWeapon.transform.parent = m_weaponParent;
         newWeapon.ResetEquipment();
         m_currentWeapon = newWeapon;
 
-        newWeapon = m_pooler.NewObject(Resources.Load("Guns/" + p_secondaryWeapon) as GameObject, m_weaponParent.position, m_weaponParent.rotation).GetComponent<Equipment_Base>();
+        newWeapon = m_pooler.NewObject(Resources.Load("Guns/" + p_secondaryWeapon) as GameObject, m_weaponParent.position, m_weaponParent.rotation).GetComponent<Equipment_Gun>();
         newWeapon.transform.parent = m_weaponParent;
         newWeapon.ResetEquipment();
         m_currentHolsteredWeapon = newWeapon;
@@ -122,7 +122,7 @@ public class EquipmentController : MonoBehaviour
 
     private void SwapWeapons()
     {
-        Equipment_Base temp = m_currentWeapon;
+        Equipment_Gun temp = m_currentWeapon;
         m_currentWeapon.PutEquipmentAway();
         m_currentWeapon.gameObject.SetActive(false);
         m_currentWeapon = m_currentHolsteredWeapon;
@@ -154,6 +154,7 @@ public class EquipmentController : MonoBehaviour
     {
         m_playerController.AddRecoil(p_recoilAmountX, p_recoilAmountY, p_fireRate);
     }
+
 
 
 
@@ -200,7 +201,7 @@ public class EquipmentController : MonoBehaviour
         {
             return m_heldObjective.gameObject;
         }
-        return null; 
+        return null;
     }
     public bool HeldObjectiveValid(GameObject p_objectiveZone)
     {
@@ -231,6 +232,27 @@ public class EquipmentController : MonoBehaviour
         m_heldObjective = null;
     }
 
+    #endregion
+
+
+    #region UI Functions
+    public bool CheckReloading()
+    {
+        if (m_currentWeapon != null)
+        {
+
+            return m_currentWeapon.m_isReloading;
+        }
+        return false;
+    }
+    public Vector3Int GetAmmoAmount()
+    {
+        if (m_currentWeapon == null)
+        {
+            return Vector3Int.zero;
+        }
+        return m_currentWeapon.GetAmmoAmount();
+    }
     #endregion
 
     private void OnDrawGizmos()

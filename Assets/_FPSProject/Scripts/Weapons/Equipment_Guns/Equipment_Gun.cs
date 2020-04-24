@@ -17,6 +17,7 @@ public class Equipment_Gun : Equipment_Base
 
     [HideInInspector]
     public int m_currentClipSize;
+    private int m_totalAmmoAmount;
     [HideInInspector]
     public bool m_canFire = true;
     [HideInInspector]
@@ -38,6 +39,7 @@ public class Equipment_Gun : Equipment_Base
         public GameObject m_bulletPrefab;
 
         public int m_clipSize;
+        public int m_startingClipAmount;
 
         public float m_bulletDamage;
         public float m_bulletSpeed;
@@ -122,6 +124,7 @@ public class Equipment_Gun : Equipment_Base
         StopAllCoroutines();
         m_cor_fireDelay = null;
         m_reloadingCoroutine = null;
+        m_totalAmmoAmount = m_bulletProperties.m_clipSize * m_bulletProperties.m_startingClipAmount;
     }
 
     /// <summary>
@@ -326,6 +329,12 @@ public class Equipment_Gun : Equipment_Base
         }
 
         m_cor_fireDelay = null;
+    }
+
+
+    public Vector3Int GetAmmoAmount()
+    {
+        return new Vector3Int(m_totalAmmoAmount, m_currentClipSize, m_bulletProperties.m_clipSize);
     }
 
     private void OnDrawGizmos()
