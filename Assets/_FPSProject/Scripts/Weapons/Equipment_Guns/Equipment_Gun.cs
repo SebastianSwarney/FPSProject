@@ -31,6 +31,17 @@ public class Equipment_Gun : Equipment_Base
     private float m_currentReloadCoroutineLife;
     private Coroutine m_reloadingCoroutine;
 
+    [Header("Camera Shake")]
+    public CameraShakeProperties m_cameraShakeProperties;
+    [System.Serializable]
+    public struct CameraShakeProperties
+    {
+        public float m_shakeTime;
+        [Range(0,0.5f)]
+        public float m_kickbackAmount;
+        public Vector2 m_shakeAmount;
+    }
+
 
 
     [System.Serializable]
@@ -197,7 +208,7 @@ public class Equipment_Gun : Equipment_Base
         
         m_amountOfBulletsShot++;
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompleteRecoilPattern, 0, 1));
-        
+        m_equipController.ShakeCamera(m_cameraShakeProperties.m_shakeTime, m_cameraShakeProperties.m_kickbackAmount, m_cameraShakeProperties.m_shakeAmount);
         m_currentClipSize--;
         if (m_currentClipSize == 0)
         {

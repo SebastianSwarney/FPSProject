@@ -13,14 +13,14 @@ public class EquipmentController : MonoBehaviour
 
     private Equipment_Gun m_currentWeapon, m_currentHolsteredWeapon;
 
-    public Transform m_playerCamera;
-
+    public CameraShake m_cameraShake;
     private PhotonView m_photonView;
     private PlayerController m_playerController;
 
     public KeyCode m_swapKey;
 
     private ObjectPooler m_pooler;
+
 
     #region Holdable Objectives
     [Header("Holdable Objective")]
@@ -34,6 +34,7 @@ public class EquipmentController : MonoBehaviour
     private HeldObjective_Base m_heldObjective;
 
     #endregion
+
 
 
     private void Awake()
@@ -118,12 +119,12 @@ public class EquipmentController : MonoBehaviour
     public void OnShootInputDown()
     {
         if (!m_photonView.IsMine) return;
-        m_currentWeapon.OnShootInputDown(m_playerCamera);
+        m_currentWeapon.OnShootInputDown(m_weaponParent);
     }
     public void OnShootInputUp()
     {
         if (!m_photonView.IsMine) return;
-        m_currentWeapon.OnShootInputUp(m_playerCamera);
+        m_currentWeapon.OnShootInputUp(m_weaponParent);
     }
 
     public void OnReloadDown()
@@ -252,6 +253,10 @@ public class EquipmentController : MonoBehaviour
     }
     #endregion
 
+    public void ShakeCamera(float p_shakeTime, float p_kickbackAmount, Vector2 p_shakeAmount)
+    {
+        m_cameraShake.StartShakeCamera(p_shakeTime, p_kickbackAmount, p_shakeAmount);
+    }
     private void OnDrawGizmos()
     {
         if (!m_debuggingTools.m_debugTools) return;
