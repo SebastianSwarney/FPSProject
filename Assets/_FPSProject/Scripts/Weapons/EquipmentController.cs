@@ -13,19 +13,15 @@ public class EquipmentController : MonoBehaviour
 
     private Equipment_Gun m_currentWeapon, m_currentHolsteredWeapon;
 
-    public CameraShake m_cameraShake;
+    public PlayerCamera m_camera;
     private PhotonView m_photonView;
     private PlayerController m_playerController;
-
-    public KeyCode m_swapKey;
-
     private ObjectPooler m_pooler;
 
 
     #region Holdable Objectives
     [Header("Holdable Objective")]
     public Transform m_heldObjectiveParent;
-    public KeyCode m_pickupObjectiveKey, m_reloadKey;
     public LayerMask m_objectiveMask;
     public float m_objectiveRadius;
     public DebugTools m_debuggingTools;
@@ -148,6 +144,21 @@ public class EquipmentController : MonoBehaviour
         SwapWeapons();
     }
 
+    public void OnAimDown()
+    {
+        m_currentWeapon.ToggleZoom();
+    }
+    public void OnAimUp()
+    {
+        m_currentWeapon.ToggleZoom();
+    }
+
+    public void OnDoubleAimDown()
+    {
+        m_currentWeapon.ToggleDoubleZoom();
+    }
+
+
     public void ApplyRecoilCameraRotation(float p_recoilAmountX, float p_recoilAmountY, float p_fireRate)
     {
         m_playerController.AddRecoil(p_recoilAmountX, p_recoilAmountY, p_fireRate);
@@ -253,9 +264,10 @@ public class EquipmentController : MonoBehaviour
     }
     #endregion
 
+    #region Camera Functions
     public void ShakeCamera(float p_shakeTime, float p_kickbackAmount, Vector2 p_shakeAmount)
     {
-        m_cameraShake.StartShakeCamera(p_shakeTime, p_kickbackAmount, p_shakeAmount);
+        m_camera.StartShakeCamera(p_shakeTime, p_kickbackAmount, p_shakeAmount);
     }
     private void OnDrawGizmos()
     {
@@ -272,4 +284,18 @@ public class EquipmentController : MonoBehaviour
                 break;
         }
     }
+
+    public void ZoomCamera(bool p_isZoom, float p_newFov = 90, float p_sensitivtyMultiplier = 1)
+    {
+        if (!p_isZoom)
+        {
+            m_camera.ResetFOV();
+            return;
+        }
+        else
+        {
+            m_camera.ChangeFOV(p_newFov, p_sensitivtyMultiplier);
+        }
+    }
+    #endregion
 }

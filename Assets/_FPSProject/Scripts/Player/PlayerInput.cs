@@ -9,6 +9,7 @@ public class PlayerInput : MonoBehaviour
     public int m_playerId;
 
     public float m_sensitivity;
+    private float m_currentSensitivity;
 
     private PlayerController m_playerController;
     private Player m_playerInputController;
@@ -24,6 +25,7 @@ public class PlayerInput : MonoBehaviour
         {
             Instance = this;
         }
+        m_currentSensitivity = m_sensitivity;
     }
     private void Start()
     {
@@ -72,7 +74,7 @@ public class PlayerInput : MonoBehaviour
         if (!m_lockLooking)
         {
             Vector2 lookInput = new Vector2(m_playerInputController.GetAxis("LookHorizontal"), m_playerInputController.GetAxis("LookVertical"));
-            m_playerController.SetLookInput(lookInput, m_sensitivity);
+            m_playerController.SetLookInput(lookInput, m_currentSensitivity);
         }
 
         if (m_playerInputController.GetButtonDown("Jump"))
@@ -105,14 +107,17 @@ public class PlayerInput : MonoBehaviour
 
         if (m_playerInputController.GetButtonDown("Aim"))
         {
-
-            
-
+            m_equipmentController.OnAimDown();
         }
 
         if (m_playerInputController.GetButtonUp("Aim"))
         {
-            
+            m_equipmentController.OnAimUp();
+        }
+
+        if (m_playerInputController.GetButtonDown("DoubleAim"))
+        {
+            m_equipmentController.OnDoubleAimDown();
         }
 
         if (m_playerInputController.GetButtonDown("Equip"))
@@ -128,5 +133,10 @@ public class PlayerInput : MonoBehaviour
         {
             m_equipmentController.OnSwapDown();
         }
+    }
+
+    public void ChangeSensitivity(float m_multiplier)
+    {
+        m_currentSensitivity = m_sensitivity * m_multiplier;
     }
 }

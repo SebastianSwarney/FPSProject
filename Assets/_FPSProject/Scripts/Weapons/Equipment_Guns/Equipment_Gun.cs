@@ -32,14 +32,28 @@ public class Equipment_Gun : Equipment_Base
     private Coroutine m_reloadingCoroutine;
 
     [Header("Camera Shake")]
-    public CameraShakeProperties m_cameraShakeProperties;
+    public CameraProperties m_cameraPropeties;
+    private bool m_isZoomed, m_isDoubleZoomed;
     [System.Serializable]
-    public struct CameraShakeProperties
+    public struct CameraProperties
     {
+        [Header("Shake Properties")]
         public float m_shakeTime;
         [Range(0,0.5f)]
         public float m_kickbackAmount;
         public Vector2 m_shakeAmount;
+
+        [Header("Zoom Properties")]
+        public bool m_canZoom;
+        public float m_zoomFOV;
+        [Range(0f, 1f)]
+        public float m_sensitivtyMultiplier;
+        public bool m_canDoubleZoom;
+        public float m_doubleZoomFOV;
+        [Range(0f, 1f)]
+        public float m_doubleSensitivtyMultiplier;
+
+
     }
 
 
@@ -208,7 +222,7 @@ public class Equipment_Gun : Equipment_Base
         
         m_amountOfBulletsShot++;
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompleteRecoilPattern, 0, 1));
-        m_equipController.ShakeCamera(m_cameraShakeProperties.m_shakeTime, m_cameraShakeProperties.m_kickbackAmount, m_cameraShakeProperties.m_shakeAmount);
+        m_equipController.ShakeCamera(m_cameraPropeties.m_shakeTime, m_cameraPropeties.m_kickbackAmount, m_cameraPropeties.m_shakeAmount);
         m_currentClipSize--;
         if (m_currentClipSize == 0)
         {
@@ -347,6 +361,44 @@ public class Equipment_Gun : Equipment_Base
     {
         return new Vector3Int(m_totalAmmoAmount, m_currentClipSize, m_bulletProperties.m_clipSize);
     }
+
+
+    public void ToggleZoom()
+    {
+        if (!m_cameraPropeties.m_canZoom) return;
+        if (!m_isZoomed)
+        {
+            m_isZoomed = true;
+            m_equipController.ZoomCamera(true, m_cameraPropeties.m_zoomFOV, m_cameraPropeties.m_sensitivtyMultiplier);
+        }
+        else
+        {
+            m_isZoomed = false;
+            m_isDoubleZoomed = false;
+            m_equipController.ZoomCamera(false);
+        }
+        
+    }
+
+    public void ToggleDoubleZoom()
+    {
+        if (!m_isZoomed) return;
+        if (!m_cameraPropeties.m_canZoom || !m_cameraPropeties.m_canDoubleZoom) return;
+        if (!m_isDoubleZoomed)
+        {
+            m_isDoubleZoomed = true;
+            m_equipController.ZoomCamera(true, m_cameraPropeties.m_doubleZoomFOV, m_cameraPropeties.m_doubleSensitivtyMultiplier);
+        }
+        else
+        {
+            m_isDoubleZoomed = false;
+            m_equipController.ZoomCamera(true, m_cameraPropeties.m_zoomFOV, m_cameraPropeties.m_sensitivtyMultiplier);
+        }
+            
+        
+    }
+
+
 
     private void OnDrawGizmos()
     {

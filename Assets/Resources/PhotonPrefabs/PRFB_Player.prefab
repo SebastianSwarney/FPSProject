@@ -332,7 +332,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f139220a0d8eb84f8951316b85bde3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_camera: {fileID: 5072337886895319182}
   m_photonView: {fileID: 9093942990688630308}
+  m_zoomTime: 0.1
 --- !u!1 &5072337886965772377
 GameObject:
   m_ObjectHideFlags: 0
@@ -1167,14 +1169,10 @@ MonoBehaviour:
   m_weaponParent: {fileID: 5072337888881270402}
   m_startingWeapon: {fileID: 1247831585174017658, guid: 39abcb6c2b8c41144988f94d7efb3ac9,
     type: 3}
-  m_startingHolsteredWeapon: {fileID: 5153138044214453368, guid: 228308fb78eb9a843b9d7a958976c6ac,
+  m_startingHolsteredWeapon: {fileID: 7862494595707429250, guid: ae01e2d48abb1a74c836d6be8cdcc05c,
     type: 3}
-  m_playerCamera: {fileID: 5072337888881270402}
-  m_cameraShake: {fileID: 6096080169852310685}
-  m_swapKey: 101
+  m_camera: {fileID: 6096080169852310685}
   m_heldObjectiveParent: {fileID: 7872261177474917456}
-  m_pickupObjectiveKey: 113
-  m_reloadKey: 0
   m_objectiveMask:
     serializedVersion: 2
     m_Bits: 2048
