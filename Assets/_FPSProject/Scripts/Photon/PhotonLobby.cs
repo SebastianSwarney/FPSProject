@@ -27,7 +27,6 @@ public class PhotonLobby : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Player Connected");
         PhotonNetwork.AutomaticallySyncScene = true;
         m_joinButton.SetActive(true);
     }

@@ -30,7 +30,6 @@ public class Team_Barrier : MonoBehaviour
             {
                 if (m_localTeamLabel.m_myTeam != m_teamLabel.m_myTeam)
                 {
-                    print("enable Colliders");
                     m_onSameTeam = false;
                     ChangeCollidersState(true);
                 }
@@ -39,7 +38,6 @@ public class Team_Barrier : MonoBehaviour
             {
                 if (m_localTeamLabel.m_myTeam == m_teamLabel.m_myTeam)
                 {
-                    print("Disable Colliders");
                     m_onSameTeam = true;
                     ChangeCollidersState(false);
                 }

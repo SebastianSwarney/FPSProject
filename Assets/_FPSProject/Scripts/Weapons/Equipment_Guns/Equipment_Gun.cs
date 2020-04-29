@@ -31,17 +31,24 @@ public class Equipment_Gun : Equipment_Base
     private float m_currentReloadCoroutineLife;
     private Coroutine m_reloadingCoroutine;
 
-    [Header("Camera Shake")]
+    [Header("Camera Properties")]
     public CameraProperties m_cameraPropeties;
     private bool m_isZoomed, m_isDoubleZoomed;
     [System.Serializable]
     public struct CameraProperties
     {
+        [System.Serializable]
+        public struct ShakeProperties
+        {
+
+            public float m_shakeTime;
+            [Range(0, 0.5f)]
+            public float m_kickbackAmount;
+            public Vector2 m_shakeAmount;
+        }
         [Header("Shake Properties")]
-        public float m_shakeTime;
-        [Range(0,0.5f)]
-        public float m_kickbackAmount;
-        public Vector2 m_shakeAmount;
+        public ShakeProperties m_normalShake;
+        public ShakeProperties m_zoomedShake, m_doubleZoomedShake;
 
         [Header("Zoom Properties")]
         public bool m_canZoom;
@@ -72,7 +79,7 @@ public class Equipment_Gun : Equipment_Base
     }
 
     #endregion
-    
+
     #region Recoil
     //Variables for the recoil system
     [Header("Recoil Variables")]
@@ -94,6 +101,7 @@ public class Equipment_Gun : Equipment_Base
     #region Aim Assist
     [Header("Aim Assist")]
     public AimAssist m_aimAssist;
+    private float m_aimAssistAngle;
     [System.Serializable]
     public struct AimAssist
     {
@@ -126,7 +134,8 @@ public class Equipment_Gun : Equipment_Base
     }
     private void Start()
     {
-        m_currentClipSize = m_bulletProperties.m_clipSize;   
+        m_currentClipSize = m_bulletProperties.m_clipSize;
+        m_aimAssistAngle = Vector3.Angle(Vector3.forward, new Vector3(0, m_aimAssist.m_aimAssistRadius, (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)));
     }
     public override void PutEquipmentAway()
     {
@@ -210,7 +219,7 @@ public class Equipment_Gun : Equipment_Base
     public virtual void ReloadDown()
     {
         StartReloading();
-        
+
     }
 
     #endregion
@@ -219,10 +228,10 @@ public class Equipment_Gun : Equipment_Base
     {
 
         m_fireBehaviour.FireBullet(m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
-        
+
         m_amountOfBulletsShot++;
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompleteRecoilPattern, 0, 1));
-        m_equipController.ShakeCamera(m_cameraPropeties.m_shakeTime, m_cameraPropeties.m_kickbackAmount, m_cameraPropeties.m_shakeAmount);
+        PerformCameraShake();
         m_currentClipSize--;
         if (m_currentClipSize == 0)
         {
@@ -232,6 +241,21 @@ public class Equipment_Gun : Equipment_Base
 
     }
 
+    private void PerformCameraShake()
+    {
+        if (m_isDoubleZoomed)
+        {
+            m_equipController.ShakeCamera(m_cameraPropeties.m_doubleZoomedShake.m_shakeTime, m_cameraPropeties.m_doubleZoomedShake.m_kickbackAmount, m_cameraPropeties.m_doubleZoomedShake.m_shakeAmount);
+        }
+        else if (m_isZoomed)
+        {
+            m_equipController.ShakeCamera(m_cameraPropeties.m_zoomedShake.m_shakeTime, m_cameraPropeties.m_zoomedShake.m_kickbackAmount, m_cameraPropeties.m_zoomedShake.m_shakeAmount);
+        }
+        else
+        {
+            m_equipController.ShakeCamera(m_cameraPropeties.m_normalShake.m_shakeTime, m_cameraPropeties.m_normalShake.m_kickbackAmount, m_cameraPropeties.m_normalShake.m_shakeAmount);
+        }
+    }
     /// <summary>
     /// Used to stop any coroutines if the clip size becomes zero in the middle of the coroutine
     /// </summary>
@@ -299,22 +323,41 @@ public class Equipment_Gun : Equipment_Base
         {
             m_fireSpot.LookAt(hit.point);
 
-            if (Physics.SphereCast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius, p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer))
+            RaycastHit[] hits = Physics.SphereCastAll(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius, p_playerCam.forward, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer);
+            if (hits.Length > 0)
             {
-                p_hitPlayer = hit.transform;
-                m_fireSpot.LookAt(hit.point);
-                return;
+                foreach (RaycastHit newHit in hits)
+                {
+                    Debug.DrawLine(newHit.collider.ClosestPointOnBounds(p_playerCam.position + p_playerCam.forward * Vector3.Distance(p_playerCam.transform.position, newHit.point)),p_playerCam.position, Color.green, 3f);
+
+                    if (Vector3.Angle(newHit.collider.ClosestPointOnBounds(p_playerCam.position + p_playerCam.forward * Vector3.Distance(p_playerCam.transform.position, newHit.point)) - p_playerCam.position, p_playerCam.forward) < m_aimAssistAngle)
+                    {
+                        p_hitPlayer = newHit.transform;
+                        m_fireSpot.LookAt(newHit.point);
+                        return;
+                    }
+                }
             }
             p_hitPlayer = null;
             return;
         }
         else
         {
-            if (Physics.SphereCast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius, p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer))
+            RaycastHit[] hits = Physics.SphereCastAll(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius, p_playerCam.forward, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_playerLayer);
+            if (hits.Length > 0)
             {
-                p_hitPlayer = hit.transform;
-                m_fireSpot.LookAt(hit.point);
-                return;
+                foreach (RaycastHit newHit in hits)
+                {
+                    Debug.DrawLine(newHit.collider.ClosestPointOnBounds(p_playerCam.transform.forward * Vector3.Distance(p_playerCam.transform.position, newHit.point)), p_playerCam.position, Color.green, 3f);
+
+                    if (Vector3.Angle(newHit.collider.ClosestPointOnBounds(p_playerCam.position + p_playerCam.forward * Vector3.Distance(p_playerCam.transform.position, newHit.point)) - p_playerCam.position, p_playerCam.forward) < m_aimAssistAngle)
+                    {
+
+                        p_hitPlayer = newHit.transform;
+                        m_fireSpot.LookAt(newHit.point);
+                        return;
+                    }
+                }
             }
             else
             {
@@ -323,6 +366,9 @@ public class Equipment_Gun : Equipment_Base
                 return;
             }
         }
+        m_fireSpot.localRotation = Quaternion.identity;
+        p_hitPlayer = null;
+        return;
     }
 
     public void StartFireDelay()
@@ -377,7 +423,7 @@ public class Equipment_Gun : Equipment_Base
             m_isDoubleZoomed = false;
             m_equipController.ZoomCamera(false);
         }
-        
+
     }
 
     public void ToggleDoubleZoom()
@@ -394,8 +440,8 @@ public class Equipment_Gun : Equipment_Base
             m_isDoubleZoomed = false;
             m_equipController.ZoomCamera(true, m_cameraPropeties.m_zoomFOV, m_cameraPropeties.m_sensitivtyMultiplier);
         }
-            
-        
+
+
     }
 
 
@@ -403,16 +449,23 @@ public class Equipment_Gun : Equipment_Base
     private void OnDrawGizmos()
     {
         if (!m_debugGizmos) return;
+        #region Aim Assist
         Gizmos.color = m_gizmosColor1;
-        Gizmos.DrawWireSphere(transform.position + (transform.forward * m_aimAssist.m_minAssistDistance), m_aimAssist.m_aimAssistRadius);
         Gizmos.DrawLine(transform.position + (transform.forward * m_aimAssist.m_minAssistDistance), transform.position + transform.forward * m_aimAssist.m_maxAssistDistance);
         Gizmos.DrawWireSphere(transform.position + transform.forward * m_aimAssist.m_maxAssistDistance, m_aimAssist.m_aimAssistRadius);
 
+        Gizmos.DrawLine(m_fireSpot.transform.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.transform.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, Vector3.right) * m_fireSpot.transform.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
+        Gizmos.DrawLine(m_fireSpot.transform.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.transform.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, -Vector3.right) * m_fireSpot.transform.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
+        Gizmos.DrawLine(m_fireSpot.transform.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.transform.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, Vector3.up) * m_fireSpot.transform.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
+        Gizmos.DrawLine(m_fireSpot.transform.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.transform.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, -Vector3.up) * m_fireSpot.transform.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
+        #endregion
 
+        #region Bullet Spread
         Gizmos.color = m_gizmosColor2;
         Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
         Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(-m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
         Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
         Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(-m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
+        #endregion
     }
 }
