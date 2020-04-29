@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
-using Photon.Pun;
-using Rewired;
 using System;
 
-[System.Serializable]
+[Serializable]
 public class PlayerControllerEvent : UnityEvent { }
 
 public class PlayerController : MonoBehaviour
@@ -128,19 +125,27 @@ public class PlayerController : MonoBehaviour
     public struct WallRunProperties
     {
         [Header("Basic Wall Run Properties")]
-        public float m_wallRunTolerenceMax;
-        public float m_wallRunTolerenceMin;
+        public float m_wallRunForwardSpeed;
+        public float m_wallRunForwardAccelerationTime;
 
-        public float m_wallRunSpeed;
-        public float m_wallRunSpeedUpTime;
-        public AnimationCurve m_wallRunSpeedUpCurve;
+        public float m_wallRunTime;
+        public float m_wallRunEndingDuration;
 
-        public float m_wallRunYVelocityStopTime;
+        public float m_wallRunStickSpeed;
+        public float m_wallRunStickAccelerationTime;
 
         public float m_wallRunBufferTime;
 
+        public Transform m_wallMovementTransform;
+
+        public float m_wallMidpointAngle;
+
+        public float m_wallRunYVelocityStopTime;
+
+        public AnimationCurve m_wallYVelocitySlowdownCurve;
+
         [Header("Wall Run Jump Properties")]
-        public Vector2 m_wallRunJumpForce;
+        public Vector3 m_wallRunJumpForce;
         public float m_wallRunJumpGroundVelocityDecayTime;
         public AnimationCurve m_wallRunJumpGroundVelocityDecayAnimationCurve;
 
@@ -160,8 +165,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 m_wallRunJumpVelocity;
     private Coroutine m_wallRunBufferCoroutine;
     private float m_wallRunBufferTimer;
-    private float m_wallJumpOffFactor;
-    private Vector3 m_wallDirVector;
     #endregion
 
     #region Wall Climb Properties
@@ -294,10 +297,13 @@ public class PlayerController : MonoBehaviour
 
     private ControllerColliderHit m_lastWallHit;
 
-    public Transform m_wallMovementTransform;
+
 
     private Vector3 m_wallVelocity;
     private Vector3 m_wallStickVelocity;
+
+    
+    private Vector3 m_wallJumpVector;
 
     private void Start()
     {
@@ -337,18 +343,14 @@ public class PlayerController : MonoBehaviour
         CameraRotation();
         TiltLerp();
 
-        if (!HitSide())
+        if (!HitSide() || IsGrounded())
         {
-            m_states.m_gravityControllState = GravityState.GravityEnabled;
-            m_wallVelocity = Vector3.zero;
-            m_wallStickVelocity = Vector3.zero;
-            m_tiltTarget = 0;
+            EndWallRunNew();
         }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        /*
         if (HitSide())
         {
             if (hit.normal.y < 0.1f)
@@ -359,35 +361,249 @@ public class PlayerController : MonoBehaviour
                 {
                     Vector3 wallVector = Vector3.Cross(hit.normal, Vector3.up);
 
-                    m_wallMovementTransform.rotation = Quaternion.LookRotation(wallVector, Vector3.up);
+                    m_wallRunProperties.m_wallMovementTransform.rotation = Quaternion.LookRotation(wallVector, Vector3.up);
 
-                    float moveDir = -Vector3.Cross(hit.normal, transform.forward).y;
-
-                    Vector3 wallMovement = (wallVector * moveDir) * 5f;
-
-                    m_wallVelocity = wallMovement;
-
-                    m_wallStickVelocity = -m_wallMovementTransform.right * 1f;
-
-                    m_states.m_gravityControllState = GravityState.GravityDisabled;
-
-                    m_velocity.y = 0;
-
-                    float tiltResult = Mathf.Lerp(0, m_wallRunProperties.m_wallRunCameraMaxTilt * Mathf.Sign(-moveDir), Math.Abs(moveDir));
-                    m_tiltTarget = tiltResult;
-
-                    //float lookMovementCross = Vector3.Cross(-m_wallMovementTransform.right, transform.forward).y;
-
-                    Vector3 angleTest = Vector3.Cross(m_wallMovementTransform.forward, transform.forward);
-
-                    if (angleTest.y < 0.2)
+                    if (m_lastWallHit == null)
                     {
-                        transform.Rotate(Vector3.up * Mathf.Sign(moveDir), 1f);
+                        m_lastWallHit = hit;
                     }
+
+                    if (hit.collider != m_lastWallHit.collider)
+                    {
+                        m_lastWallHit = hit;
+                    }
+
+                    StartWallRunNew();
                 }
             }
         }
-        */
+    }
+
+    private void StartWallRunNew()
+    {
+        if (!m_isWallRunning)
+        {
+            if (m_hasJumped)
+            {
+                if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
+                {
+                    StartCoroutine(RunWallRunNew());
+                }
+            }
+        }
+    }
+
+    private void EndWallRunNew()
+    {
+        if (m_isWallRunning)
+        {
+            m_isWallRunning = false;
+            m_wallRunBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_wallRunBufferTimer = (x), m_wallRunProperties.m_wallRunBufferTime));
+        }
+    }
+
+    private void JumpOffWall()
+    {
+        EndWallRunNew();
+        StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x, m_wallJumpVector));
+    }
+
+    private IEnumerator RunWallRunNew()
+    {
+        m_isWallRunning = true;
+        m_states.m_gravityControllState = GravityState.GravityDisabled;
+        m_states.m_movementControllState = MovementControllState.MovementDisabled;
+
+        float angleIntoWallStart = Vector3.Cross(m_wallRunProperties.m_wallMovementTransform.forward, transform.forward).y;
+
+        if (angleIntoWallStart > -m_wallRunProperties.m_wallMidpointAngle)
+        {
+            m_velocity.y += 5f;
+        }
+        else
+        {
+            //m_wallVelocity.y += 20f;
+            JumpMaxVelocity();
+        }
+
+        m_wallVelocity = Vector3.up * m_velocity.y;
+        m_velocity = Vector3.zero;
+
+        Vector3 wallForwardSmoothingVelocity = Vector3.zero;
+        Vector3 wallStickSmoothingVelocity = Vector3.zero;
+
+        float t = 0;
+        float cameraDisconnectTimer = 0;
+        float yVelocityStopTimer = 0;
+        float yVelocityOnSlowdownStart = m_wallVelocity.y;
+        bool yVelocityGoingUp = true;
+
+        if (yVelocityOnSlowdownStart < 0)
+        {
+            yVelocityGoingUp = false;
+        }
+
+        m_wallStickVelocity = m_wallRunProperties.m_wallMovementTransform.right * -10;
+
+        while (t < m_wallRunProperties.m_wallRunTime && m_isWallRunning)
+        {
+            t += Time.fixedDeltaTime;
+
+            m_velocity.y = 0;
+
+			#region Wall Movement
+			Vector3 forwardMovement = transform.forward * m_movementInput.y;
+            Vector3 rightMovement = transform.right * m_movementInput.x;
+            Vector3 playerInput = Vector3.ClampMagnitude(forwardMovement + rightMovement, 1f);
+
+            float wallInputRight = Vector3.Cross(playerInput, -m_wallRunProperties.m_wallMovementTransform.forward).y;
+            float currentWallStickSpeed = Mathf.Lerp(-m_wallRunProperties.m_wallRunStickSpeed, m_wallRunProperties.m_wallRunStickSpeed, wallInputRight);
+            Vector3 targetWallStickMovement = m_wallRunProperties.m_wallMovementTransform.right * currentWallStickSpeed;
+            Vector3 wallStickMovement = Vector3.SmoothDamp(m_wallStickVelocity, targetWallStickMovement, ref wallStickSmoothingVelocity, m_wallRunProperties.m_wallRunStickAccelerationTime);
+            m_wallStickVelocity = wallStickMovement;
+
+            float wallInputForward = Vector3.Cross(playerInput, m_wallRunProperties.m_wallMovementTransform.right).y;
+            float currentWallForwardSpeed = Mathf.Lerp(0, m_wallRunProperties.m_wallRunForwardSpeed, Mathf.Abs(wallInputForward));
+            Vector3 targetWallForwardMovement = (m_wallRunProperties.m_wallMovementTransform.forward * Mathf.Sign(wallInputForward)) * currentWallForwardSpeed;
+            Vector3 wallForwardMovement = Vector3.SmoothDamp(m_wallVelocity, targetWallForwardMovement, ref wallForwardSmoothingVelocity, m_wallRunProperties.m_wallRunForwardAccelerationTime);
+            m_wallVelocity = new Vector3(wallForwardMovement.x, m_wallVelocity.y, wallForwardMovement.z);
+			#endregion
+
+			#region Wall Jump
+			Vector3 offWallVector = m_wallRunProperties.m_wallMovementTransform.right;
+            Vector3 forwardDir = m_wallRunProperties.m_wallMovementTransform.forward * wallInputForward;
+
+            if (Vector3.Cross(m_wallRunProperties.m_wallMovementTransform.forward, playerInput).y < 0)
+            {
+                forwardDir = Vector3.Reflect(forwardDir, m_wallRunProperties.m_wallMovementTransform.right);
+            }
+
+            Vector3 jumpVector = (offWallVector * 15)  + (forwardDir * 25);
+            m_wallJumpVector = jumpVector;
+			#endregion
+
+			#region Camera Calculation
+			float lookDirCross = Mathf.Abs(Vector3.Cross(m_wallRunProperties.m_wallMovementTransform.right, transform.forward).y);
+            float angleIntoWall = Vector3.Cross(m_wallRunProperties.m_wallMovementTransform.forward, transform.forward).y;
+
+            float lookDir = Mathf.Sign(Vector3.Cross(m_wallRunProperties.m_wallMovementTransform.right, transform.forward).y);
+
+            if (angleIntoWall > -m_wallRunProperties.m_wallMidpointAngle)
+            {
+                if (t < (m_wallRunProperties.m_wallRunTime * m_wallRunProperties.m_wallRunEndingDuration))
+                {
+                    float tiltResult = Mathf.Lerp(0, m_wallRunProperties.m_wallRunCameraMaxTilt * lookDir, lookDirCross);
+                    m_tiltTarget = tiltResult;
+                }
+                else
+                {
+                    cameraDisconnectTimer += Time.fixedDeltaTime;
+                    float cameraDisconnectProgress = cameraDisconnectTimer / 1;
+                    float targetCameraAngle = Mathf.Lerp(0, m_wallRunProperties.m_wallRunCameraMaxTilt * lookDir, lookDirCross);
+                    float cameraResetAngle = Mathf.Lerp(targetCameraAngle, 0, cameraDisconnectProgress);
+                    m_tiltTarget = cameraResetAngle;
+                }
+
+                if (angleIntoWall < 0.1)
+                {
+                    transform.Rotate(Vector3.up * -lookDir, 1f); ;
+                }
+            }
+            else
+            {
+                m_tiltTarget = 0;
+            }
+			#endregion
+
+			#region Y Velocity Calculation
+			if (yVelocityGoingUp)
+            {
+                m_wallVelocity.y += m_gravity * Time.fixedDeltaTime;
+
+                if (m_wallVelocity.y <= 0)
+                {
+                    yVelocityGoingUp = false;
+                    yVelocityOnSlowdownStart = 0;
+                    yVelocityStopTimer = 0;
+                }
+            }
+            else
+            {
+                if (wallInputRight < -0.5 || m_movementInput.y > 0)
+                {
+                    yVelocityStopTimer += Time.fixedDeltaTime;
+                    float yStopProgress = m_wallRunProperties.m_wallYVelocitySlowdownCurve.Evaluate(yVelocityStopTimer / m_wallRunProperties.m_wallRunYVelocityStopTime);
+                    m_wallVelocity.y = Mathf.Lerp(yVelocityOnSlowdownStart, 0, yStopProgress);
+                }
+                else
+                {
+                    yVelocityStopTimer = 0;
+                    m_wallVelocity.y += (m_gravity / 2) * Time.fixedDeltaTime;
+                    yVelocityOnSlowdownStart = m_wallVelocity.y;
+                }
+            }
+			#endregion
+
+			yield return new WaitForFixedUpdate();
+        }
+
+        if (t >= m_wallRunProperties.m_wallRunTime)
+        {
+            m_velocity = m_wallRunProperties.m_wallMovementTransform.right * 10;
+        }
+
+        m_wallVelocity = Vector3.zero;
+        m_wallStickVelocity = Vector3.zero;
+        m_tiltTarget = 0;
+
+        m_states.m_gravityControllState = GravityState.GravityEnabled;
+        m_states.m_movementControllState = MovementControllState.MovementEnabled;
+        m_isWallRunning = false;
+    }
+
+    private IEnumerator InAirBoost(float p_yVelocity, float p_forwardSpeed, Vector3 p_wallJumpVelocity)
+    {
+        JumpMaxMultiplied(p_yVelocity);
+
+        while (!IsGrounded() && !m_isWallRunning && !HitCeiling())
+        {
+            //Vector3 movementVelocity = m_wallJumpDir * p_forwardSpeed;
+            Vector3 movementVelocity = p_wallJumpVelocity;
+
+            m_wallRunJumpVelocity = new Vector3(movementVelocity.x, 0, movementVelocity.z);
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        if (IsGrounded() && !m_isWallRunning && !HitCeiling())
+        {
+            //StartCoroutine(OnGroundBoost(p_forwardSpeed));
+        }
+
+        m_wallRunJumpVelocity = Vector3.zero;
+    }
+
+    private IEnumerator OnGroundBoost(float p_forwardSpeed)
+    {
+        float t = 0;
+
+        while (t < m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime && !m_isWallRunning && !HitSide())
+        {
+            if (IsGrounded() && !m_maintainSpeed)
+            {
+                t += Time.fixedDeltaTime;
+            }
+
+            float speedProgress = m_wallRunProperties.m_wallRunJumpGroundVelocityDecayAnimationCurve.Evaluate(t / m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime);
+            float currentSpeed = Mathf.Lerp(p_forwardSpeed, 0, speedProgress);
+
+            Vector3 movementVelocity = m_wallJumpDir * currentSpeed;
+            m_wallRunJumpVelocity = movementVelocity;
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        m_wallRunJumpVelocity = Vector3.zero;
     }
 
     #region Camera Code
@@ -509,255 +725,6 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    #region Wall Code
-    private void CheckWallConnection()
-    {
-        bool anyRayHit = false;
-
-        if (HitSide())
-        {
-            bool collidedTop = false;
-            bool collidedBottom = false;
-
-            Vector3 top = m_characterController.transform.position + new Vector3(0, m_characterController.height / 2, 0);
-            Vector3 bottom = m_characterController.transform.position - new Vector3(0, m_characterController.height / 2, 0);
-
-            RaycastHit hitTop;
-            RaycastHit hitBottom;
-
-            if (Physics.Raycast(top, transform.forward, out hitTop, 1f, m_wallClamberMask))
-            {
-                collidedTop = true;
-            }
-
-            if (Physics.Raycast(bottom, transform.forward, out hitBottom, 1f, m_wallClamberMask))
-            {
-                collidedBottom = true;
-            }
-
-            if (collidedBottom && !collidedTop)
-            {
-                //StartLongJump();
-                //return;
-            }
-
-            if (collidedBottom && !collidedTop)
-            {
-                StartWallClamber();
-                return;
-            }
-
-            if (collidedBottom && collidedTop)
-            {
-                StartWallClimb();
-                return;
-            }
-
-            #region Wall run
-            float m_angleBetweenRays = 360f / 2;
-
-            for (int i = 0; i < 2; i++)
-            {
-                Quaternion raySpaceQ = Quaternion.Euler(0, (i * m_angleBetweenRays) - (m_angleBetweenRays / 2), 0);
-                RaycastHit hit;
-
-                if (!anyRayHit)
-                {
-                    if (Physics.Raycast(m_characterController.transform.position, raySpaceQ * transform.forward, out hit, m_wallRaycastLength, m_wallConnectMask))
-                    {
-                        float wallDotProduct = Vector3.Dot(hit.normal, Vector3.up);
-
-                        if (wallDotProduct < 30)
-                        {
-                            anyRayHit = true;
-
-                            Vector3 wallVector = Vector3.Cross(hit.normal, Vector3.up);
-                            Vector3 wallFacingVector = Vector3.Cross(wallVector, m_cameraProperties.m_camera.transform.forward);
-
-                            float moveDir = -Mathf.Sign(Vector3.Cross(hit.normal, m_cameraProperties.m_camera.transform.forward).y);
-
-                            Debug.DrawLine(m_characterController.transform.position, hit.point);
-
-                            if (wallFacingVector.y < (m_wallRunProperties.m_wallRunTolerenceMin * -1))
-                            {
-                                if (wallFacingVector.y > (m_wallRunProperties.m_wallRunTolerenceMax * -1))
-                                {
-                                    StartWallRun(-hit.normal, moveDir);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            #endregion
-        }
-	}
-	#endregion
-
-	#region Wall Run Code
-	private void StartWallRun(Vector3 p_dirToWallStart, float p_wallRunMovementDir)
-    {
-        if (!m_isWallRunning)
-        {
-            if (m_movementInput.y > 0)
-            {
-                if (CheckOverBuffer(ref m_wallRunBufferTimer, ref m_wallRunProperties.m_wallRunBufferTime, m_wallRunBufferCoroutine))
-                {
-                    if (m_isClimbing)
-                    {
-                        StopWallClimb();
-                    }
-
-                    StartCoroutine(RunWallRun(p_dirToWallStart, p_wallRunMovementDir));
-                }
-            }
-
-            if (!IsGrounded())
-            {
-
-            }
-        }
-    }
-
-    private void StopWallRun()
-    {
-        m_isWallRunning = false;
-    }
-
-    private IEnumerator RunWallRun(Vector3 p_dirToWallStart, float p_wallRunMovementDir)
-    {
-        m_isWallRunning = true;
-
-        m_states.m_gravityControllState = GravityState.GravityDisabled;
-        m_states.m_movementControllState = MovementControllState.MovementDisabled;
-
-        m_crouchOnLanding = false;
-
-        Vector3 dirToWall = p_dirToWallStart;
-        float yVelStart = m_velocity.y;
-        float speedStart = m_characterController.velocity.magnitude;
-
-        float t = 0;
-
-        while (m_isWallRunning)
-        {
-            t += Time.fixedDeltaTime;
-
-            float speedProgress = m_wallRunProperties.m_wallRunSpeedUpCurve.Evaluate(t / m_wallRunProperties.m_wallRunSpeedUpTime);
-            float currentWallRunSpeed = Mathf.Lerp(speedStart, m_wallRunProperties.m_wallRunSpeed, speedProgress);
-
-            float yProgress = t / m_wallRunProperties.m_wallRunYVelocityStopTime;
-            float yVelocity = Mathf.Lerp(yVelStart, 0, yProgress);
-
-            float tiltResult = Mathf.Lerp(-m_wallRunProperties.m_wallRunCameraMaxTilt, m_wallRunProperties.m_wallRunCameraMaxTilt, -p_wallRunMovementDir);
-            m_tiltTarget = tiltResult;
-
-			#region Check if still connected to the wall
-			RaycastHit wallConnectionHit;
-
-            Vector3 wallVector = Vector3.zero;
-
-            if (Physics.Raycast(m_characterController.transform.position, dirToWall, out wallConnectionHit, m_wallRaycastLength, m_wallConnectMask))
-            {
-                float wallDotProduct = Vector3.Dot(wallConnectionHit.normal, Vector3.up);
-
-                if (wallDotProduct < 30)
-                {
-                    //transform.position = hit.point + hit.normal * m_characterController.radius;
-
-                    wallVector = Vector3.Cross(wallConnectionHit.normal, Vector3.up);
-                    dirToWall = -wallConnectionHit.normal;
-
-                    m_wallDirVector = (wallVector * p_wallRunMovementDir);
-
-                    Vector3 wallRunVelocity = (wallVector * p_wallRunMovementDir) * currentWallRunSpeed;
-                    m_velocity = new Vector3(wallRunVelocity.x, yVelocity, wallRunVelocity.z);
-
-                    //Debug.Log(m_velocity.magnitude);
-
-                    Vector3 wallFacingVector = Vector3.Cross(wallVector, m_cameraProperties.m_camera.transform.forward);
-                    m_wallJumpOffFactor = wallFacingVector.y;
-                }
-                else
-                {
-                    StopWallRun();
-                }
-            }
-            else
-            {
-                StopWallRun();
-            }
-			#endregion
-
-			#region Check to see if wall is in front of player
-			RaycastHit wallStopHit;
-
-            Debug.DrawRay(m_characterController.transform.position, wallVector * p_wallRunMovementDir, Color.red);
-
-            if (Physics.Raycast(m_characterController.transform.position, wallVector * p_wallRunMovementDir, out wallStopHit, 2f, m_wallConnectMask))
-            {
-                StopWallRun();
-            }
-            #endregion
-
-            yield return new WaitForFixedUpdate();
-        }
-
-		m_tiltTarget = 0f;
-
-        m_states.m_movementControllState = MovementControllState.MovementEnabled;
-        m_states.m_gravityControllState = GravityState.GravityEnabled;
-
-        m_wallRunBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_wallRunBufferTimer = (x), m_wallRunProperties.m_wallRunBufferTime));
-
-        m_isWallRunning = false;
-    }
-
-    private IEnumerator InAirBoost(float p_yVelocity, float p_forwardSpeed)
-    {
-        JumpMaxMultiplied(p_yVelocity);
-
-        while (!IsGrounded() && !m_isWallRunning && !HitSide() && !HitCeiling())
-        {
-            Vector3 movementVelocity = m_wallJumpDir * p_forwardSpeed;
-
-            m_wallRunJumpVelocity = new Vector3(movementVelocity.x, 0, movementVelocity.z);
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        if (IsGrounded() && !m_isWallRunning && !HitCeiling())
-        {
-            //StartCoroutine(OnGroundBoost(p_forwardSpeed));
-        }
-
-        m_wallRunJumpVelocity = Vector3.zero;
-    }
-
-    private IEnumerator OnGroundBoost(float p_forwardSpeed)
-    {
-        float t = 0;
-
-        while (t < m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime && !m_isWallRunning && !HitSide())
-        {
-            if (IsGrounded() && !m_maintainSpeed)
-            {
-                t += Time.fixedDeltaTime;
-            }
-
-            float speedProgress = m_wallRunProperties.m_wallRunJumpGroundVelocityDecayAnimationCurve.Evaluate(t / m_wallRunProperties.m_wallRunJumpGroundVelocityDecayTime);
-            float currentSpeed = Mathf.Lerp(p_forwardSpeed, 0, speedProgress);
-
-            Vector3 movementVelocity = m_wallJumpDir * currentSpeed;
-            m_wallRunJumpVelocity = movementVelocity;
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_wallRunJumpVelocity = Vector3.zero;
-    }
-    #endregion
-
     #region Wall Clamber Code
     private void StartWallClamber()
     {
@@ -811,78 +778,6 @@ public class PlayerController : MonoBehaviour
         }
 
         m_isClambering = false;
-    }
-	#endregion
-
-	#region Wall Climb Code
-    private void StartWallClimb()
-    {
-        if (m_hasJumped)
-        {
-            if (!m_isWallRunning)
-            {
-                if (!m_isClimbing)
-                {
-                    if (m_canWallClimb)
-                    {
-                        StartCoroutine(RunWallClimb());
-                    }
-                }
-            }
-        }
-    }
-
-    private void StopWallClimb()
-    {
-        m_isClimbing = false;
-    }
-
-	private IEnumerator RunWallClimb()
-    {
-        m_isClimbing = true;
-
-        m_crouchOnLanding = false;
-
-        float t = 0;
-
-        while (t < m_climbTime && m_isClimbing)
-        {
-            t += Time.fixedDeltaTime;
-
-            float progress = m_climbSpeedDecreaseCurve.Evaluate(t / m_climbTime);
-
-            Vector3 top = m_characterController.transform.position + new Vector3(0, m_characterController.height / 2, 0);
-
-            RaycastHit hitTop;
-
-            if (!Physics.Raycast(top, transform.forward, out hitTop, Mathf.Infinity, m_wallClamberMask))
-            {
-                t = m_climbTime;
-
-                StartWallClimb();
-            }
-
-            if (!HitSide())
-            {
-                t = m_climbTime;
-            }
-
-
-            float currentClimbSpeed = Mathf.Lerp(m_climbSpeed, 0, progress);
-
-            m_velocity.y = currentClimbSpeed;
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        if (!m_isWallRunning)
-        {
-            m_states.m_gravityControllState = GravityState.GravityEnabled;
-        }
-
-        m_canWallClimb = false;
-
-        m_isClimbing = false;
     }
 	#endregion
 
@@ -1230,13 +1125,11 @@ public class PlayerController : MonoBehaviour
     {
         if (m_isWallRunning)
         {
-            StopWallRun();
             StartCrouch();
             return;
         }
         else if (m_isClimbing)
         {
-            StopWallClimb();
             StartCrouch();
             return;
         }
@@ -1449,7 +1342,7 @@ public class PlayerController : MonoBehaviour
     {
         if (m_velocity.y > m_minJumpVelocity)
         {
-            JumpMinVelocity();
+            //JumpMinVelocity();
         }
     }
 
@@ -1462,7 +1355,7 @@ public class PlayerController : MonoBehaviour
 
     private void SlideJump()
     {
-        StartCoroutine(InAirBoost(m_slideJumpForce.y, m_slideJumpForce.x));
+        //StartCoroutine(InAirBoost(m_slideJumpForce.y, m_slideJumpForce.x));
 
         EndCrouch();
         m_hasJumped = true;
@@ -1477,25 +1370,7 @@ public class PlayerController : MonoBehaviour
 
     private void WallRunningJump()
     {
-        if (m_wallJumpOffFactor > 0.1f)
-        {
-            StopWallRun();
-
-            m_wallJumpDir = transform.forward;
-
-            StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x));
-        }
-        else
-        {
-            StopWallRun();
-
-            Vector3 jumpVector = -Vector3.Reflect(transform.forward, m_wallDirVector);
-
-            m_wallJumpDir = jumpVector;
-
-            StartCoroutine(InAirBoost(m_wallRunProperties.m_wallRunJumpForce.y, m_wallRunProperties.m_wallRunJumpForce.x));
-        }
-
+        JumpOffWall();
         m_hasJumped = true;
     }
 
