@@ -1346,6 +1346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_maxHealth: 100
   m_currentHealth: 0
+  m_cantDie: 0
   m_isDead: 0
   m_onDied:
     m_PersistentCalls:
@@ -1381,6 +1382,10 @@ MonoBehaviour:
   m_shieldRegeneration: 0
   m_shieldRegenDelay: 0
   m_shieldRegenTimeToFull: 0
+  m_useHealthRegeneration: 0
+  m_maxHealthRegenerationAmount: 0
+  m_healthRegnerationDelay: 0
+  m_healthRegenTimeToFull: 0
   m_teamLabel: {fileID: 0}
   m_photonView: {fileID: 0}
 --- !u!136 &3040379365549537033

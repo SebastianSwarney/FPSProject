@@ -21,6 +21,7 @@ public class Projectiles_Base : MonoBehaviour
     public BulletEvent m_bulletSpawnedEvent;
     public BulletEvent m_bulletHitEvent;
 
+
     [HideInInspector]
     public float m_projectileDamage;
 
@@ -49,11 +50,12 @@ public class Projectiles_Base : MonoBehaviour
         m_pooler = ObjectPooler.instance;
         
     }
-    public virtual void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, int p_ownerID, Transform p_target = null, float p_projectileDamage = 0)
+    public virtual void SetVariables(TeamTypes.TeamType p_myNewTeam, Vector3 p_newVelocity, int p_ownerID, Transform p_target = null, float p_projectileDamage = 0, bool p_armorPiercing = false)
     {
-
+        
         m_teamLabel.SetTeamType(p_myNewTeam);
         m_velocity = p_newVelocity;
+        m_armorPiercing = p_armorPiercing;
         m_bulletSpawnedEvent.Invoke();
         m_projectileDamage = p_projectileDamage;
         m_bulletOwnerID = p_ownerID;
@@ -71,29 +73,44 @@ public class Projectiles_Base : MonoBehaviour
         {
             Vector3 hitPos = transform.position + m_velocity.normalized * hit.distance;
 
-            bool destroyObject = true;
-
+         
 
             if (m_armorPiercing)
             {
-                if (Physics.SphereCast(new Ray(transform.position, m_velocity.normalized), m_collisionRadius, m_velocity.magnitude * Time.fixedDeltaTime, m_boundsLayer))
+
+                HitObject(hit.transform.gameObject, hitPos, false);
+
+                RaycastHit hitt;   
+                if (Physics.SphereCast(transform.position,  m_collisionRadius, m_velocity.normalized, out hitt,  m_velocity.magnitude * Time.fixedDeltaTime, m_boundsLayer))
                 {
+                    RaycastHit[] allhits = Physics.SphereCastAll(new Ray(transform.position, m_velocity.normalized), m_collisionRadius, m_velocity.magnitude * Time.fixedDeltaTime, m_collisionDetectionMask);
+                    if(allhits.Length > 0)
+                    {
+                        HitMultipleObjects(allhits);
+                    }
+                    hitPos = transform.position + m_velocity.normalized * hitt.distance;
                     transform.position = hitPos;
+                    HitObject(hit.transform.gameObject, hitPos, true);
                 }
                 else
                 {
                     transform.position += m_velocity * Time.fixedDeltaTime;
-                    destroyObject = false;
                 }
             }
             else
             {
                 transform.position = hitPos;
+                HitObject(hit.transform.gameObject, hitPos, true);
             }
 
 
-            HitObject(hit.transform.gameObject, hitPos, destroyObject);
 
+
+        }else if (Physics.SphereCast(transform.position, m_collisionRadius, m_velocity.normalized, out hit, m_velocity.magnitude * Time.fixedDeltaTime, m_boundsLayer))
+        {
+            
+            transform.position = transform.position + m_velocity.normalized * hit.distance;
+            HitObject(hit.transform.gameObject, transform.position, true);
         }
         else
         {
@@ -108,6 +125,14 @@ public class Projectiles_Base : MonoBehaviour
         if (p_objectPool)
         {
             DestroyBullet();
+        }
+    }
+
+    public void HitMultipleObjects(RaycastHit[] p_hitObjects)
+    {
+        foreach(RaycastHit hit in p_hitObjects)
+        {
+            HitObject(hit.transform.gameObject, hit.point, false);
         }
     }
 

@@ -9,6 +9,7 @@ public class Equipment_Gun : Equipment_Base
     [Header("Gun Variables")]
     public Transform m_fireSpot;
     public Vector3 m_gunOffset;
+    public bool m_centerFireSpot = true;
     public FireBehaviour_Base m_fireBehaviour;
 
     public Vector2 m_bulletSpread;
@@ -76,6 +77,7 @@ public class Equipment_Gun : Equipment_Base
         public float m_bulletDamage;
         public float m_bulletSpeed;
         public float m_gunFireDelay;
+        public bool m_armorPiercing;
     }
 
     #endregion
@@ -134,6 +136,7 @@ public class Equipment_Gun : Equipment_Base
     }
     private void Start()
     {
+        m_fireSpot.localPosition = new Vector3(-m_gunOffset.x, -m_gunOffset.y, m_fireSpot.localPosition.z);
         m_currentClipSize = m_bulletProperties.m_clipSize;
         m_aimAssistAngle = Vector3.Angle(Vector3.forward, new Vector3(0, m_aimAssist.m_aimAssistRadius, (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)));
     }
@@ -227,7 +230,7 @@ public class Equipment_Gun : Equipment_Base
     public void FireBullet(Transform p_playerCam, Transform p_targetObject)
     {
 
-        m_fireBehaviour.FireBullet(m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject);
+        m_fireBehaviour.FireBullet(m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject, m_bulletProperties.m_armorPiercing);
 
         m_amountOfBulletsShot++;
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompleteRecoilPattern, 0, 1));
@@ -319,6 +322,18 @@ public class Equipment_Gun : Equipment_Base
     public void PerformAimAssist(Transform p_playerCam, out Transform p_hitPlayer)
     {
         RaycastHit hit;
+        Debug.DrawLine(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance) + p_playerCam.forward * (1000), Color.blue, 1f);
+        
+        if (Physics.Raycast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.forward, out hit, (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance), m_aimAssist.m_playerLayer))
+        {
+
+            m_fireSpot.LookAt(hit.point);
+            p_hitPlayer = hit.transform;
+            return;
+
+        }
+
+        #region Bullet Magnetism
         if (Physics.Raycast(p_playerCam.position + (p_playerCam.forward * m_aimAssist.m_minAssistDistance), p_playerCam.forward, out hit, m_aimAssist.m_maxAssistDistance, m_aimAssist.m_hitDetectLayer))
         {
             m_fireSpot.LookAt(hit.point);
@@ -366,6 +381,8 @@ public class Equipment_Gun : Equipment_Base
                 return;
             }
         }
+
+        #endregion
         m_fireSpot.localRotation = Quaternion.identity;
         p_hitPlayer = null;
         return;
@@ -454,10 +471,20 @@ public class Equipment_Gun : Equipment_Base
         Gizmos.DrawLine(transform.position + (transform.forward * m_aimAssist.m_minAssistDistance), transform.position + transform.forward * m_aimAssist.m_maxAssistDistance);
         Gizmos.DrawWireSphere(transform.position + transform.forward * m_aimAssist.m_maxAssistDistance, m_aimAssist.m_aimAssistRadius);
 
-        Gizmos.DrawLine(m_fireSpot.transform.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.transform.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, Vector3.right) * m_fireSpot.transform.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
-        Gizmos.DrawLine(m_fireSpot.transform.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.transform.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, -Vector3.right) * m_fireSpot.transform.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
-        Gizmos.DrawLine(m_fireSpot.transform.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.transform.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, Vector3.up) * m_fireSpot.transform.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
-        Gizmos.DrawLine(m_fireSpot.transform.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.transform.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, -Vector3.up) * m_fireSpot.transform.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
+        if (transform.parent == null)
+        {
+            Gizmos.DrawLine(m_fireSpot.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, Vector3.right) * m_fireSpot.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
+            Gizmos.DrawLine(m_fireSpot.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, -Vector3.right) * m_fireSpot.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
+            Gizmos.DrawLine(m_fireSpot.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, Vector3.up) * m_fireSpot.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
+            Gizmos.DrawLine(m_fireSpot.position + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance), m_fireSpot.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, -Vector3.up) * m_fireSpot.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (m_fireSpot.forward * m_aimAssist.m_minAssistDistance));
+        }
+        else
+        {
+            Gizmos.DrawLine(transform.parent.position + (transform.parent.forward * m_aimAssist.m_minAssistDistance), transform.parent.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, Vector3.right) * transform.parent.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (transform.parent.forward * m_aimAssist.m_minAssistDistance));
+            Gizmos.DrawLine(transform.parent.position + (transform.parent.forward * m_aimAssist.m_minAssistDistance), transform.parent.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, -Vector3.right) * transform.parent.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (transform.parent.forward * m_aimAssist.m_minAssistDistance));
+            Gizmos.DrawLine(transform.parent.position + (transform.parent.forward * m_aimAssist.m_minAssistDistance), transform.parent.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, Vector3.up) * transform.parent.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (transform.parent.forward * m_aimAssist.m_minAssistDistance));
+            Gizmos.DrawLine(transform.parent.position + (transform.parent.forward * m_aimAssist.m_minAssistDistance), transform.parent.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, -Vector3.up) * transform.parent.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (transform.parent.forward * m_aimAssist.m_minAssistDistance));
+        }
         #endregion
 
         #region Bullet Spread

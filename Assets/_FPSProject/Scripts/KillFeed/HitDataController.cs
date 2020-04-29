@@ -30,7 +30,10 @@ public class HitDataController : MonoBehaviour
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            PointsManager.Instance.AddPointsForKill(m_teamLabel.m_myTeam);
+            if (PointsManager.Instance != null)
+            {
+                PointsManager.Instance.AddPointsForKill(m_teamLabel.m_myTeam);
+            }
         }
 
         if (!m_myPhotonView.IsMine) return;

@@ -36,6 +36,6 @@ public class ProjectileManager : MonoBehaviour
                 target = checkPhoton.transform;
             }
         }
-        newBulletObject.GetComponent<Projectiles_Base>().SetVariables(TeamTypes.GetTeamFromInt(newBullet.m_bulletTeam), new Vector3(newBullet.m_bulletDirX, newBullet.m_bulletDirY, newBullet.m_bulletDirZ) * newBullet.m_bulletSpeed, newBullet.m_bulletOwnerID, target, newBullet.m_bulletDamage);
+        newBulletObject.GetComponent<Projectiles_Base>().SetVariables(TeamTypes.GetTeamFromInt(newBullet.m_bulletTeam), new Vector3(newBullet.m_bulletDirX, newBullet.m_bulletDirY, newBullet.m_bulletDirZ) * newBullet.m_bulletSpeed, newBullet.m_bulletOwnerID, target, newBullet.m_bulletDamage, newBullet.m_armorPiercing);
     }
 }

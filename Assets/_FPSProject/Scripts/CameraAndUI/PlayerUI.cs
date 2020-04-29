@@ -37,8 +37,22 @@ public class PlayerUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        m_hitTimer = m_playerHud.m_hitMarkerTime;
+        
     }
+    private void Update()
+    {
+        if (m_hitTimer < m_playerHud.m_hitMarkerTime)
+        {
+            m_playerHud.m_hitMarker.SetActive(true);
+            m_hitTimer += Time.deltaTime;
 
+        }
+        else
+        {
+            m_playerHud.m_hitMarker.SetActive(false);
+        }
+    }
     public void UpdatePlayerHud(int p_healthAmount, Vector3Int p_ammoStats)
     {
         m_playerHud.m_healthBar.fillAmount = (float)p_healthAmount / 100f;
@@ -71,23 +85,7 @@ public class PlayerUI : MonoBehaviour
         m_hitTimer = 0;
     }
 
-    private IEnumerator HitMarker()
-    {
-        while (true)
-        {
-            if (m_hitTimer < m_playerHud.m_hitMarkerTime)
-            {
-                m_playerHud.m_hitMarker.SetActive(true);
-                m_hitTimer += Time.deltaTime;
 
-            }
-            else
-            {
-                m_playerHud.m_hitMarker.SetActive(false);
-            }
-            yield return null;
-        }
-    }
 
 
     public void PlayerDeathState(bool p_isDead)

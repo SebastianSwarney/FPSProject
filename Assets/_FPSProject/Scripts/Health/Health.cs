@@ -15,6 +15,7 @@ public class Health : MonoBehaviour
     #region Generic Health Values
     public float m_maxHealth;
     public float m_currentHealth;
+    public bool m_cantDie;
     [HideInInspector]
     public bool m_isDead;
     public HealthActivationEvent m_onDied = new HealthActivationEvent();
@@ -36,6 +37,18 @@ public class Health : MonoBehaviour
     private WaitForSeconds m_shieldRegenDelayTimer;
     #endregion
 
+
+    #region Health Regeneration Values
+    [Header("Health Regeneration")]
+    public bool m_useHealthRegeneration = false;
+    public float m_maxHealthRegenerationAmount;
+    public float m_healthRegnerationDelay;
+    public float m_healthRegenTimeToFull;
+    private float m_healthRegenCurrentTime;
+    private Coroutine m_healthRegenCorotine;
+    private WaitForSeconds m_healthRegenDelayTimer;
+    #endregion
+
     private bool m_canLoseHealth = true;
 
     private ObjectPooler m_pooler;
@@ -50,6 +63,7 @@ public class Health : MonoBehaviour
         m_teamLabel = GetComponent<TeamLabel>();
         m_pooler = ObjectPooler.instance;
         m_shieldRegenDelayTimer = new WaitForSeconds(m_shieldRegenDelay);
+        m_healthRegenDelayTimer = new WaitForSeconds(m_healthRegnerationDelay);
         m_photonView = GetComponent<PhotonView>();
         Respawn();
     }
@@ -97,11 +111,19 @@ public class Health : MonoBehaviour
             else
             {
                 m_currentHealth -= p_takenDamage;
-                if (m_currentHealth > 0)
+                if(m_currentHealth < 0)
+                {
+                    m_currentHealth = 0;
+                }
+                if (m_currentHealth > 0 || m_cantDie)
                 {
                     if (m_useShields)
                     {
                         m_shieldRegenerationCoroutine = StartCoroutine(RegenShield());
+                    }
+                    else if (m_useHealthRegeneration && m_currentHealth < m_maxHealthRegenerationAmount)
+                    {
+                        m_healthRegenCorotine = StartCoroutine(RegenHealth());
                     }
                 }
                 else
@@ -133,6 +155,11 @@ public class Health : MonoBehaviour
         }
     }
 
+    public Vector2 GetHealthValues()
+    {
+        return new Vector2(m_currentHealth, m_maxHealth);
+    }
+
     public void RetoggleHealth()
     {
         m_canLoseHealth = false;
@@ -152,7 +179,21 @@ public class Health : MonoBehaviour
         m_currentShieldStrength = m_maxShieldStrength;
         m_shieldRegenerationCoroutine = null;
     }
+    IEnumerator RegenHealth()
+    {
+        yield return m_healthRegenDelayTimer;
 
+        float regenRate = ((m_maxHealth / m_healthRegenTimeToFull) / 60f);
+
+        while (m_currentHealth < m_maxHealthRegenerationAmount)
+        {
+            m_currentHealth += regenRate;
+            yield return null;
+        }
+        m_currentHealth = m_maxHealthRegenerationAmount;
+        m_healthRegenCorotine = null;
+
+    }
     public void ReturnToPool()
     {
         m_pooler.ReturnToPool(this.gameObject);
