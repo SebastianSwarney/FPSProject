@@ -25,7 +25,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: us
+  DevRegion: cae
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -69,6 +69,7 @@ MonoBehaviour:
   - CallResetObjective
   - RPC_AddPointsToClients
   - RPC_ChangeHill
+  - RPC_SwapWeapons
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

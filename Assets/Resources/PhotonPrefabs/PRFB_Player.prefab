@@ -1547,8 +1547,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5072337888881270402}
-  - component: {fileID: 6236259221616935953}
-  - component: {fileID: 5063393178725459362}
+  - component: {fileID: 1195838294201652648}
+  - component: {fileID: 1828199162112989950}
   m_Layer: 8
   m_Name: Camera Tilt
   m_TagString: Untagged
@@ -1573,7 +1573,7 @@ Transform:
   m_Father: {fileID: 5072337888155200248}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6236259221616935953
+--- !u!114 &1195838294201652648
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1591,11 +1591,11 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 5063393178725459362}
+  - {fileID: 1828199162112989950}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &5063393178725459362
+--- !u!114 &1828199162112989950
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1607,7 +1607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
+  m_SynchronizePosition: 0
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
 --- !u!1 &5180824102492158607

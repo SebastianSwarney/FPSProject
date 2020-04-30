@@ -77,11 +77,20 @@ public class EquipmentController : MonoBehaviour
         {
             m_pooler = ObjectPooler.instance;
         }
+        if (m_currentWeapon != null)
+        {
+            m_currentWeapon.transform.parent = null;
+            if(m_currentHolsteredWeapon != null)
+            {
+                m_currentHolsteredWeapon.transform.parent = null;
+            }
+        } 
+        
         Equipment_Gun newWeapon = m_pooler.NewObject(Resources.Load("Guns/" + p_primaryWeapon) as GameObject, m_weaponParent.position, m_weaponParent.rotation).GetComponent<Equipment_Gun>();
         newWeapon.transform.parent = m_weaponParent;
         newWeapon.ResetEquipment();
         m_currentWeapon = newWeapon;
-
+        
         newWeapon = m_pooler.NewObject(Resources.Load("Guns/" + p_secondaryWeapon) as GameObject, m_weaponParent.position, m_weaponParent.rotation).GetComponent<Equipment_Gun>();
         newWeapon.transform.parent = m_weaponParent;
         newWeapon.ResetEquipment();
@@ -91,8 +100,8 @@ public class EquipmentController : MonoBehaviour
     }
 
 
-
-    private void SwapWeapons()
+    [PunRPC]
+    private void RPC_SwapWeapons()
     {
         Equipment_Gun temp = m_currentWeapon;
         m_currentWeapon.PutEquipmentAway();
@@ -141,7 +150,7 @@ public class EquipmentController : MonoBehaviour
 
     public void OnSwapDown()
     {
-        SwapWeapons();
+        m_photonView.RPC("RPC_SwapWeapons", RpcTarget.All);
     }
 
     public void OnAimDown()

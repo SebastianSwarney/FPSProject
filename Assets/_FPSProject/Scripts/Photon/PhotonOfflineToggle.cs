@@ -21,6 +21,11 @@ public class PhotonOfflineToggle : MonoBehaviourPunCallbacks
             PhotonNetwork.CreateRoom("Room" + randomRoomNum, newRoomOps);
             PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", m_playerPrefab.name), m_playerSpawn.position, m_playerSpawn.rotation, 0);
         }
+        else
+        {
+            PhotonNetwork.SendRate = 10;
+            PhotonNetwork.SerializationRate = 10;
+        }
     }
     private void Start()
     {
