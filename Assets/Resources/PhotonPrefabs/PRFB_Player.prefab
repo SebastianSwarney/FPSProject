@@ -334,7 +334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_camera: {fileID: 5072337886895319182}
   m_photonView: {fileID: 9093942990688630308}
-  m_zoomTime: 0.1
+  m_zoomTime: 0.05
 --- !u!1 &5072337886965772377
 GameObject:
   m_ObjectHideFlags: 0

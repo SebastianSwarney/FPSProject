@@ -112,6 +112,7 @@ MonoBehaviour:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
       type: 3}
     m_clipSize: 25
+    m_startingClipAmount: 0
     m_bulletDamage: 10
     m_bulletSpeed: 350
     m_gunFireDelay: 0.05
@@ -198,7 +199,7 @@ MonoBehaviour:
   m_aimAssist:
     m_hitDetectLayer:
       serializedVersion: 2
-      m_Bits: 512
+      m_Bits: 1793
     m_playerLayer:
       serializedVersion: 2
       m_Bits: 256

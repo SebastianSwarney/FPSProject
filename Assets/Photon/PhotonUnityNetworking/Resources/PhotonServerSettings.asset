@@ -25,7 +25,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: cae
+  DevRegion: 
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -33,43 +33,28 @@ MonoBehaviour:
   RpcList:
   - ClickRpc
   - DestroyRpc
-  - RPC_AddPlayerToTeam
-  - RPC_SwapPlayerTeam
+  - RPC_AddPointsToClients
+  - RPC_AddToEveryoneKillFeed
   - RPC_ChangeColor
-  - RPC_SetType
-  - RPC_SetTeam
-  - RPC_Respawn
-  - RPC_FireInputDown
-  - RPC_InputUp
-  - RPC_TakeDamage
-  - AddMeToTeamManager
-  - RPC_RemovePlayerFromTeam
+  - RPC_ChangeHill
+  - RPC_CheckEquipmentOnMaster
+  - RPC_DropObjective
+  - RPC_DropObjectiveObject
   - RPC_FireBullet
+  - RPC_HoldEquipment
   - RPC_PlayerHitSomeone
   - RPC_PlayerKilledSomeone
-  - RPC_AddToEveryoneKillFeed
   - RPC_PlayerKilledThemselves
-  - RPC_RemovePlayerByID
-  - RPC_RemoveMe
-  - RPC_SpawnWeapon
-  - RPC_UpdateTimers
-  - RPC_StartTimerClientSide
-  - RPC_ResetTimers
-  - RPC_SwitchHill
-  - RPC_ToggleTimer
-  - RPC_HoldEquipment
-  - RPC_ZoneScored
-  - RPC_CheckEquipmentOnMaster
-  - RPC_RemoveHeldObjective
-  - RPC_DisplayScore
-  - DropObjectiveObject
-  - RPC_DropObjectiveObject
-  - RPC_DropObjective
   - RPC_ResetObjective
-  - CallResetObjective
-  - RPC_AddPointsToClients
-  - RPC_ChangeHill
+  - RPC_ResetTimers
+  - RPC_Respawn
+  - RPC_SpawnWeapon
+  - RPC_SwapPlayerTeam
   - RPC_SwapWeapons
+  - RPC_SwitchHill
+  - RPC_TakeDamage
+  - RPC_ToggleTimer
+  - RPC_ZoneScored
   DisableAutoOpenWizard: 1
   ShowSettings: 0
-  DevRegionSetOnce: 1
+  DevRegionSetOnce: 0
