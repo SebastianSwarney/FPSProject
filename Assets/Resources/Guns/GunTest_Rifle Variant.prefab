@@ -517,6 +517,36 @@ PrefabInstance:
       propertyPath: m_cameraPropeties.m_zoomedShake.m_kickbackAmount
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_shakeTime
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_kickbackAmount
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_shakeAmount.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_shakeAmount.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_bulletSpread.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_bulletSpread.y
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6782711556069349284, guid: 99fb11da5e730de4998fe35e7b1850c3,
         type: 3}
       propertyPath: m_Name

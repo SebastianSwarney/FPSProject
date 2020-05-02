@@ -18,6 +18,8 @@ public class PlayerCamera : MonoBehaviour
     private float m_currentTargetFOV, m_startingLerpFOV;
     private float m_zoomLerpTimer;
     private bool m_isZoomLerping;
+    private bool m_shakeRandom;
+    private Vector3 m_shakePos;
 
     private void Start()
     {
@@ -46,11 +48,12 @@ public class PlayerCamera : MonoBehaviour
         else
         {
             m_currentShakeTime += Time.deltaTime;
-            SetPosition();
+            SetPosition(m_shakeRandom);
+
         }
 
     }
-    public void StartShakeCamera(float p_shakeTime, float p_kickbackAmount, Vector2 p_shakeAmount)
+    public void StartShakeCamera(float p_shakeTime, float p_kickbackAmount, Vector2 p_shakeAmount, bool p_shakeRandom)
     {
         if (m_isShaking)
         {
@@ -60,18 +63,28 @@ public class PlayerCamera : MonoBehaviour
                 return;
             }
         }
+        m_shakeRandom = p_shakeRandom;
         m_isShaking = true;
         m_currentShakeTime = 0;
         m_shakeTime = p_shakeTime;
         m_kickbackAmount = p_kickbackAmount;
         m_shakeAmount = p_shakeAmount;
+        SetPosition(true);
     }
-    private void SetPosition()
+    private void SetPosition(bool p_changeShake)
     {
-        float percent = m_currentShakeTime / m_shakeTime;
-        Vector2 max2d = new Vector2(Mathf.Lerp(m_shakeAmount.x, 0, percent), Mathf.Lerp(m_shakeAmount.y, 0, percent));
+        if (p_changeShake)
+        {
+            float percent = m_currentShakeTime / m_shakeTime;
+            Vector2 max2d = new Vector2(Mathf.Lerp(m_shakeAmount.x, 0, percent), Mathf.Lerp(m_shakeAmount.y, 0, percent));
 
-        m_camera.transform.localPosition = new Vector3(Random.Range(-max2d.x, max2d.x), Random.Range(-max2d.y, max2d.y), Mathf.Lerp(-m_kickbackAmount, 0, percent));
+            m_camera.transform.localPosition = new Vector3(Random.Range(-max2d.x, max2d.x), Random.Range(-max2d.y, max2d.y), Mathf.Lerp(-m_kickbackAmount, 0, percent));
+            m_shakePos = m_camera.transform.localPosition;
+        }
+        else
+        {
+            m_camera.transform.localPosition = Vector3.Lerp(m_shakePos, Vector3.zero, m_currentShakeTime / m_shakeTime);
+        }
     }
 
     private void PerformZoom()

@@ -274,9 +274,9 @@ public class EquipmentController : MonoBehaviour
     #endregion
 
     #region Camera Functions
-    public void ShakeCamera(float p_shakeTime, float p_kickbackAmount, Vector2 p_shakeAmount)
+    public void ShakeCamera(float p_shakeTime, float p_kickbackAmount, Vector2 p_shakeAmount, bool p_shakeRandom)
     {
-        m_camera.StartShakeCamera(p_shakeTime, p_kickbackAmount, p_shakeAmount);
+        m_camera.StartShakeCamera(p_shakeTime, p_kickbackAmount, p_shakeAmount, p_shakeRandom);
     }
     private void OnDrawGizmos()
     {

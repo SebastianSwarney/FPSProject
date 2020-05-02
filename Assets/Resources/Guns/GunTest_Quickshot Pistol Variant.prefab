@@ -25,8 +25,8 @@ MonoBehaviour:
         m_Calls: []
   m_fireSpot: {fileID: 2981825543908350168}
   m_gunOffset: {x: 0.546, y: -0.63, z: 0.572}
+  m_centerFireSpot: 1
   m_fireBehaviour: {fileID: 11400000, guid: a1c8a06c324fd8f469a3c9ca9c58500b, type: 2}
-  m_bulletSpread: {x: 1, y: 1}
   m_bulletProperties:
     m_bulletPrefab: {fileID: 3900400124138448053, guid: 5832344ebfa90b14fa6e58da133b9ff8,
       type: 3}
@@ -35,10 +35,36 @@ MonoBehaviour:
     m_bulletDamage: 13
     m_bulletSpeed: 750
     m_gunFireDelay: 0.001
+    m_armorPiercing: 0
   m_currentClipSize: 0
   m_canFire: 1
   m_isReloading: 0
   m_reloadTime: 0.5
+  m_zoomStates:
+    m_defaultState:
+      m_shakeTime: 0.125
+      m_kickbackAmount: 0.05
+      m_shakeAmount: {x: 0.25, y: 0.25}
+      m_shakeRandom: 0
+      m_bulletSpread: {x: 1, y: 1}
+    m_zoomedState:
+      m_shakeTime: 0.1
+      m_kickbackAmount: 0.05
+      m_shakeAmount: {x: 0.125, y: 0.125}
+      m_shakeRandom: 0
+      m_bulletSpread: {x: 0.25, y: 0.25}
+    m_doubleZoomedState:
+      m_shakeTime: 0
+      m_kickbackAmount: 0
+      m_shakeAmount: {x: 0, y: 0}
+      m_shakeRandom: 0
+      m_bulletSpread: {x: 0, y: 0}
+    m_canZoom: 1
+    m_zoomFOV: 60
+    m_sensitivtyMultiplier: 0.75
+    m_canDoubleZoom: 0
+    m_doubleZoomFOV: 0
+    m_doubleSensitivtyMultiplier: 0
   m_bulletsToCompleteRecoilPattern: 24
   m_horizontalRecoilAmount: 0
   m_horizontalRecoilPattern:

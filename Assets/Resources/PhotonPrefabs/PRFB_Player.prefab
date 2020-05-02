@@ -1172,7 +1172,7 @@ MonoBehaviour:
   m_weaponParent: {fileID: 5072337888881270402}
   m_startingWeapon: {fileID: 1247831585174017658, guid: 39abcb6c2b8c41144988f94d7efb3ac9,
     type: 3}
-  m_startingHolsteredWeapon: {fileID: 7862494595707429250, guid: ae01e2d48abb1a74c836d6be8cdcc05c,
+  m_startingHolsteredWeapon: {fileID: 4317457166896468572, guid: d3960df1d0db621488ef806626dc643b,
     type: 3}
   m_camera: {fileID: 6096080169852310685}
   m_heldObjectiveParent: {fileID: 7872261177474917456}

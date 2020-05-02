@@ -12,8 +12,6 @@ public class Equipment_Gun : Equipment_Base
     public bool m_centerFireSpot = true;
     public FireBehaviour_Base m_fireBehaviour;
 
-    public Vector2 m_bulletSpread;
-
     public BulletProperties m_bulletProperties;
 
     [HideInInspector]
@@ -32,24 +30,26 @@ public class Equipment_Gun : Equipment_Base
     private float m_currentReloadCoroutineLife;
     private Coroutine m_reloadingCoroutine;
 
-    [Header("Camera Properties")]
-    public CameraProperties m_cameraPropeties;
+    [Header("Zoom Properties")]
+    public ZoomStates m_zoomStates;
     private bool m_isZoomed, m_isDoubleZoomed;
     [System.Serializable]
-    public struct CameraProperties
+    public struct ZoomStates
     {
         [System.Serializable]
-        public struct ShakeProperties
+        public struct ZoomProperties
         {
-
             public float m_shakeTime;
             [Range(0, 0.5f)]
             public float m_kickbackAmount;
             public Vector2 m_shakeAmount;
+            public bool m_shakeRandom;
+            public Vector2 m_bulletSpread;
         }
-        [Header("Shake Properties")]
-        public ShakeProperties m_normalShake;
-        public ShakeProperties m_zoomedShake, m_doubleZoomedShake;
+
+        [Header("Zoom Values")]
+        public ZoomProperties m_defaultState;
+        public ZoomProperties m_zoomedState, m_doubleZoomedState;
 
         [Header("Zoom Properties")]
         public bool m_canZoom;
@@ -227,10 +227,26 @@ public class Equipment_Gun : Equipment_Base
 
     #endregion
 
+
+    private ZoomStates.ZoomProperties GetCurrentZoomState()
+    {
+        if(m_isDoubleZoomed && m_isZoomed)
+        {
+            return m_zoomStates.m_doubleZoomedState;
+        }else if (m_isZoomed)
+        {
+            return m_zoomStates.m_zoomedState;
+        }
+        else
+        {
+            return m_zoomStates.m_defaultState;
+        }
+    }
+
     public void FireBullet(Transform p_playerCam, Transform p_targetObject)
     {
 
-        m_fireBehaviour.FireBullet(m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, m_bulletSpread, p_targetObject, m_bulletProperties.m_armorPiercing);
+        m_fireBehaviour.FireBullet(m_ownerID, m_teamLabel, m_bulletProperties.m_bulletPrefab, m_fireSpot, m_bulletProperties.m_bulletSpeed, m_bulletProperties.m_bulletDamage, GetCurrentZoomState().m_bulletSpread, p_targetObject, m_bulletProperties.m_armorPiercing);
 
         m_amountOfBulletsShot++;
         ApplyRecoil(Mathf.Clamp(m_amountOfBulletsShot / m_bulletsToCompleteRecoilPattern, 0, 1));
@@ -248,15 +264,15 @@ public class Equipment_Gun : Equipment_Base
     {
         if (m_isDoubleZoomed)
         {
-            m_equipController.ShakeCamera(m_cameraPropeties.m_doubleZoomedShake.m_shakeTime, m_cameraPropeties.m_doubleZoomedShake.m_kickbackAmount, m_cameraPropeties.m_doubleZoomedShake.m_shakeAmount);
+            m_equipController.ShakeCamera(m_zoomStates.m_doubleZoomedState.m_shakeTime, m_zoomStates.m_doubleZoomedState.m_kickbackAmount, m_zoomStates.m_doubleZoomedState.m_shakeAmount, m_zoomStates.m_doubleZoomedState.m_shakeRandom);
         }
         else if (m_isZoomed)
         {
-            m_equipController.ShakeCamera(m_cameraPropeties.m_zoomedShake.m_shakeTime, m_cameraPropeties.m_zoomedShake.m_kickbackAmount, m_cameraPropeties.m_zoomedShake.m_shakeAmount);
+            m_equipController.ShakeCamera(m_zoomStates.m_zoomedState.m_shakeTime, m_zoomStates.m_zoomedState.m_kickbackAmount, m_zoomStates.m_zoomedState.m_shakeAmount, m_zoomStates.m_zoomedState.m_shakeRandom);
         }
         else
         {
-            m_equipController.ShakeCamera(m_cameraPropeties.m_normalShake.m_shakeTime, m_cameraPropeties.m_normalShake.m_kickbackAmount, m_cameraPropeties.m_normalShake.m_shakeAmount);
+            m_equipController.ShakeCamera(m_zoomStates.m_defaultState.m_shakeTime, m_zoomStates.m_defaultState.m_kickbackAmount, m_zoomStates.m_defaultState.m_shakeAmount, m_zoomStates.m_defaultState.m_shakeRandom);
         }
     }
     /// <summary>
@@ -428,11 +444,11 @@ public class Equipment_Gun : Equipment_Base
 
     public void ToggleZoom()
     {
-        if (!m_cameraPropeties.m_canZoom) return;
+        if (!m_zoomStates.m_canZoom) return;
         if (!m_isZoomed)
         {
             m_isZoomed = true;
-            m_equipController.ZoomCamera(true, m_cameraPropeties.m_zoomFOV, m_cameraPropeties.m_sensitivtyMultiplier);
+            m_equipController.ZoomCamera(true, m_zoomStates.m_zoomFOV, m_zoomStates.m_sensitivtyMultiplier);
         }
         else
         {
@@ -446,16 +462,16 @@ public class Equipment_Gun : Equipment_Base
     public void ToggleDoubleZoom()
     {
         if (!m_isZoomed) return;
-        if (!m_cameraPropeties.m_canZoom || !m_cameraPropeties.m_canDoubleZoom) return;
+        if (!m_zoomStates.m_canZoom || !m_zoomStates.m_canDoubleZoom) return;
         if (!m_isDoubleZoomed)
         {
             m_isDoubleZoomed = true;
-            m_equipController.ZoomCamera(true, m_cameraPropeties.m_doubleZoomFOV, m_cameraPropeties.m_doubleSensitivtyMultiplier);
+            m_equipController.ZoomCamera(true, m_zoomStates.m_doubleZoomFOV, m_zoomStates.m_doubleSensitivtyMultiplier);
         }
         else
         {
             m_isDoubleZoomed = false;
-            m_equipController.ZoomCamera(true, m_cameraPropeties.m_zoomFOV, m_cameraPropeties.m_sensitivtyMultiplier);
+            m_equipController.ZoomCamera(true, m_zoomStates.m_zoomFOV, m_zoomStates.m_sensitivtyMultiplier);
         }
 
 
@@ -485,14 +501,6 @@ public class Equipment_Gun : Equipment_Base
             Gizmos.DrawLine(transform.parent.position + (transform.parent.forward * m_aimAssist.m_minAssistDistance), transform.parent.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, Vector3.up) * transform.parent.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (transform.parent.forward * m_aimAssist.m_minAssistDistance));
             Gizmos.DrawLine(transform.parent.position + (transform.parent.forward * m_aimAssist.m_minAssistDistance), transform.parent.position + (Quaternion.AngleAxis(Mathf.Tan(m_aimAssist.m_aimAssistRadius / (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) * Mathf.Rad2Deg, -Vector3.up) * transform.parent.forward * (m_aimAssist.m_maxAssistDistance - m_aimAssist.m_minAssistDistance)) + (transform.parent.forward * m_aimAssist.m_minAssistDistance));
         }
-        #endregion
-
-        #region Bullet Spread
-        Gizmos.color = m_gizmosColor2;
-        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
-        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(-m_bulletSpread.x, m_fireSpot.up) * (m_fireSpot.forward * 5));
-        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
-        Gizmos.DrawLine(m_fireSpot.position, m_fireSpot.position + Quaternion.AngleAxis(-m_bulletSpread.y, m_fireSpot.right) * (m_fireSpot.forward * 5));
         #endregion
     }
 }

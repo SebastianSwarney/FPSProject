@@ -33,6 +33,121 @@ PrefabInstance:
       propertyPath: m_centerFireSpot
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_shakeTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_kickbackAmount
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_shakeAmount.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_shakeAmount.y
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_bulletSpread.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_defaultState.m_bulletSpread.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_zoomedState.m_shakeTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_zoomedState.m_kickbackAmount
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_zoomedState.m_shakeRandom
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_zoomedState.m_shakeAmount.x
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_zoomedState.m_shakeAmount.y
+      value: 0.0625
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_zoomedState.m_bulletSpread.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_zoomedState.m_bulletSpread.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_doubleZoomedState.m_shakeTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_doubleZoomedState.m_shakeAmount.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_doubleZoomedState.m_shakeAmount.y
+      value: 0.0625
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_doubleZoomedState.m_kickbackAmount
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_canZoom
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_canDoubleZoom
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_sensitivtyMultiplier
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_zoomFOV
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_doubleZoomFOV
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987952813398951558, guid: 99fb11da5e730de4998fe35e7b1850c3,
+        type: 3}
+      propertyPath: m_zoomStates.m_doubleSensitivtyMultiplier
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4579541868941658785, guid: 99fb11da5e730de4998fe35e7b1850c3,
         type: 3}
       propertyPath: viewIdField
